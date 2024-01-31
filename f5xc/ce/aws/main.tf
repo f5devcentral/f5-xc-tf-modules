@@ -36,22 +36,24 @@ module "network_common" {
 }
 
 module "network_node" {
-  source                  = "./network/node"
-  for_each                = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
-  owner_tag               = var.owner_tag
-  node_name               = format("%s-%s", var.f5xc_cluster_name, each.key)
-  common_tags             = local.common_tags
-  is_multi_nic            = local.is_multi_nic
-  has_public_ip           = var.has_public_ip
-  aws_vpc_az              = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
-  aws_vpc_id              = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
-  aws_sg_sli_ids          = local.is_multi_nic ? module.network_common.common["sg_sli_ids"] : []
-  aws_sg_slo_ids          = module.network_common.common["sg_slo_ids"]
-  aws_subnet_slo_cidr     = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_slo_subnet"]
-  aws_subnet_sli_cidr     = local.is_multi_nic ? var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_sli_subnet"] : null
-  aws_slo_subnet_rt_id    = module.network_common.common["slo_subnet_rt"]["id"]
-  aws_sli_subnet_rt_id    = local.is_multi_nic ? module.network_common.common["sli_subnet_rt"]["id"] : null
-  f5xc_is_secure_cloud_ce = var.f5xc_is_secure_cloud_ce
+  source                     = "./network/node"
+  for_each                   = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  owner_tag                  = var.owner_tag
+  node_name                  = format("%s-%s", var.f5xc_cluster_name, each.key)
+  common_tags                = local.common_tags
+  is_multi_nic               = local.is_multi_nic
+  has_public_ip              = var.has_public_ip
+  aws_vpc_az                 = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
+  aws_vpc_id                 = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
+  aws_sg_sli_ids             = local.is_multi_nic ? module.network_common.common["sg_sli_ids"] : []
+  aws_sg_slo_ids             = module.network_common.common["sg_slo_ids"]
+  aws_subnet_slo_cidr        = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_slo_subnet"]
+  aws_subnet_sli_cidr        = local.is_multi_nic ? var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_sli_subnet"] : null
+  aws_slo_subnet_rt_id       = module.network_common.common["slo_subnet_rt"]["id"]
+  aws_sli_subnet_rt_id       = local.is_multi_nic ? module.network_common.common["sli_subnet_rt"]["id"] : null
+  aws_existing_sli_subnet_id = var.aws_existing_sli_subnet_id
+  aws_existing_slo_subnet_id = var.aws_existing_slo_subnet_id
+  f5xc_is_secure_cloud_ce    = var.f5xc_is_secure_cloud_ce
 }
 
 module "secure_ce" {
@@ -83,7 +85,7 @@ module "config" {
   f5xc_site_token              = volterra_token.site.id
   f5xc_cluster_name            = var.f5xc_cluster_name
   f5xc_server_roles            = local.server_roles[each.key]
-  f5xc_cluster_labels          = var.f5xc_cluster_labels
+  f5xc_cluster_labels          = {} # var.f5xc_cluster_labels
   f5xc_cluster_workload        = var.cluster_workload
   f5xc_cluster_latitude        = var.f5xc_cluster_latitude
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
@@ -94,7 +96,23 @@ module "config" {
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
 }
 
+module "secure_mesh_site" {
+  count                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  source                 = "../../secure-mesh-site"
+  f5xc_nodes             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]
+  f5xc_tenant            = var.f5xc_tenant
+  f5xc_api_url           = var.f5xc_api_url
+  f5xc_namespace         = var.f5xc_namespace
+  f5xc_api_token         = var.f5xc_api_token
+  f5xc_cluster_name      = var.f5xc_cluster_name
+  f5xc_cluster_labels    = {} # var.f5xc_cluster_labels
+  f5xc_ce_gateway_type   = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude  = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude = var.f5xc_cluster_longitude
+}
+
 module "node" {
+  depends_on                  = [module.secure_mesh_site]
   source                      = "./nodes"
   for_each                    = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
   owner_tag                   = var.owner_tag
@@ -108,8 +126,12 @@ module "node" {
   f5xc_node_name              = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name           = var.f5xc_cluster_name
   f5xc_cluster_size           = length(var.f5xc_aws_vpc_az_nodes)
+  f5xc_cluster_labels         = {} # var.f5xc_cluster_labels
   f5xc_instance_config        = module.config[each.key].ce["user_data"]
+  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
   f5xc_registration_retry     = var.f5xc_registration_retry
+  f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
   f5xc_registration_wait_time = var.f5xc_registration_wait_time
   aws_instance_type           = var.instance_type
   aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
