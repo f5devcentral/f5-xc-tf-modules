@@ -272,9 +272,15 @@ variable "f5xc_cluster_name" {
 }
 
 variable "f5xc_is_secure_cloud_ce" {
-  description = "whether CE should be secured by applying security rules on SLO and SLI"
+  description = "whether CE should be secured by applying security rules on SLO and SLI + NAT GW + SLO private IP"
   type        = bool
   default     = false
+}
+
+variable "f5xc_is_private_cloud_ce" {
+  description = "whether CE should be private with SLO has private IP and NAT GW in front"
+  type    = bool
+  default = false
 }
 
 variable "f5xc_ce_slo_enable_secure_sg" {
