@@ -1,3 +1,35 @@
+resource "aws_instance" "master" {
+  count                  = var.master_nodes_count
+  ami                    = var.f5xc_ce_machine_image["voltstack"][var.f5xc_aws_region]
+  instance_type          = var.instance_type_master
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.id
+  user_data_base64       = var.f5xc_instance_config
+  vpc_security_group_ids = [
+    resource.aws_security_group.allow_traffic.id
+  ]
+  subnet_id                   = [for subnet in aws_subnet.slo : subnet.id][count.index % length(aws_subnet.slo)]
+  source_dest_check           = false
+  associate_public_ip_address = true
+
+  root_block_device {
+    volume_size = 40
+  }
+
+  tags = {
+    Name                                             = format("%s-m%s", var.f5xc_cluster_name, count.index)
+    Creator                                          = var.owner_tag
+    "kubernetes.io/cluster/${var.f5xc_cluster_name}" = "owned"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "volterra_ce_attachment" {
+  count            = var.master_nodes_count == 3 ? 3 : 0
+  target_group_arn = aws_lb_target_group.controllers.id
+  target_id        = aws_instance.master[count.index].id
+  port             = 6443
+}
+
+
 resource "aws_instance" "instance" {
   ami                  = var.aws_instance_image
   tags                 = local.common_tags
@@ -63,23 +95,3 @@ resource "aws_lb_target_group_attachment" "volterra_ce_attachment" {
   port             = 6443
 }
 
-resource "volterra_registration_approval" "nodes" {
-  depends_on   = [aws_instance.instance]
-  retry        = var.f5xc_registration_retry
-  hostname     = regex("[0-9A-Za-z_-]+", aws_instance.instance.private_dns)
-  latitude     = var.f5xc_cluster_latitude
-  longitude    = var.f5xc_cluster_longitude
-  wait_time    = var.f5xc_registration_wait_time
-  tunnel_type  = lookup(var.f5xc_ce_to_re_tunnel_types, var.f5xc_ce_to_re_tunnel_type)
-  cluster_name = var.f5xc_cluster_name
-  cluster_size = var.f5xc_cluster_size
-}
-
-resource "volterra_site_state" "decommission_when_delete" {
-  depends_on = [volterra_registration_approval.nodes]
-  name       = var.f5xc_node_name
-  when       = "delete"
-  state      = "DECOMMISSIONING"
-  wait_time  = var.f5xc_registration_wait_time
-  retry      = var.f5xc_registration_retry
-}
