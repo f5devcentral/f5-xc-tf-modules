@@ -23,7 +23,7 @@ module "network_interface_slo" {
   custom_tags                     = merge(var.common_tags, {
     "ves.io/interface-type" = "site-local-outside"
     "ves-io-eni-type"       = "outside-network"
-    "ves-io-eni-az"         = var.aws_existing_slo_subnet_id != "" ? var.aws_existing_slo_subnet_id : aws_subnet.slo.0.availability_zone
+    "ves-io-eni-az"         = var.aws_existing_slo_subnet_id != null ? var.aws_existing_slo_subnet_id : aws_subnet.slo.0.availability_zone
   })
 }
 
