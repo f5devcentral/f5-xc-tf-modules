@@ -1,7 +1,6 @@
 variable "is_sensitive" {
   description = "mark module output as sensitive"
   type        = bool
-
 }
 
 variable "has_public_ip" {
@@ -45,18 +44,6 @@ variable "ssh_public_key" {
 
 variable "aws_existing_vpc_id" {
   description = "inject existing aws vpc id"
-  type        = string
-  default     = ""
-}
-
-variable "aws_existing_slo_subnet_id" {
-  description = "inject existing aws slo subnet id"
-  type        = string
-  default     = ""
-}
-
-variable "aws_existing_sli_subnet_id" {
-  description = "inject existing aws sli subnet id"
   type        = string
   default     = ""
 }
@@ -280,7 +267,8 @@ variable "f5xc_aws_region" {
 }
 
 variable "f5xc_cluster_name" {
-  type = string
+  description = "F5XC Site / Cluster name"
+  type        = string
 }
 
 variable "f5xc_is_secure_cloud_ce" {

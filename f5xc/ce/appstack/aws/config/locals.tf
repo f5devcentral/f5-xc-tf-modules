@@ -6,13 +6,6 @@ locals {
     }
   )
 
-  hosts_context_pool = templatefile("${path.module}/${var.templates_dir}/hosts",
-    {
-      public_address = var.f5xc_ce_hosts_public_address
-      public_name    = var.f5xc_ce_hosts_public_name
-    }
-  )
-
   vpm_config = yamlencode({
     Vpm = {
       Labels                    = var.f5xc_cluster_labels,
@@ -33,7 +26,7 @@ locals {
     }
   })
 
-  master_cloud_cfg = templatefile("./${var.templates_dir}/cloud_init.yaml", {
+  master_cloud_cfg = templatefile("${path.module}/${var.templates_dir}/cloud_init.yaml", {
     ntp_servers       = var.ntp_servers
     hosts_context     = base64encode(local.hosts_context_node)
     ssh_public_key    = var.ssh_public_key
@@ -41,7 +34,7 @@ locals {
     vp_manager_config = base64encode(local.vpm_config)
   })
 
-  worker_cloud_cfg = templatefile("./${var.templates_dir}/cloud_init_worker.yaml", {
+  worker_cloud_cfg = templatefile("${path.module}/${var.templates_dir}/cloud_init_worker.yaml", {
     ntp_servers       = var.ntp_servers
     hosts_context     = base64encode(local.hosts_context_node)
     ssh_public_key    = var.ssh_public_key

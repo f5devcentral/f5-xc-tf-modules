@@ -51,8 +51,8 @@ module "network_node" {
   aws_subnet_sli_cidr        = local.is_multi_nic ? var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_sli_subnet"] : null
   aws_slo_subnet_rt_id       = module.network_common.common["slo_subnet_rt"]["id"]
   aws_sli_subnet_rt_id       = local.is_multi_nic ? module.network_common.common["sli_subnet_rt"]["id"] : null
-  aws_existing_sli_subnet_id = var.aws_existing_sli_subnet_id
-  aws_existing_slo_subnet_id = var.aws_existing_slo_subnet_id
+  aws_existing_sli_subnet_id = local.is_multi_nic && lookup(var.f5xc_aws_vpc_az_nodes[each.key], "aws_existing_sli_subnet_id") != "" ? var.f5xc_aws_vpc_az_nodes[each.key]["aws_existing_sli_subnet_id"] : null
+  aws_existing_slo_subnet_id = lookup(var.f5xc_aws_vpc_az_nodes[each.key], "aws_existing_slo_subnet_id") != "" ? var.f5xc_aws_vpc_az_nodes[each.key]["aws_existing_slo_subnet_id"] : null
   f5xc_is_secure_cloud_ce    = var.f5xc_is_secure_cloud_ce
 }
 

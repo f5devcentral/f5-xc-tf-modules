@@ -4,6 +4,5 @@ output "ce" {
     user_data_master   = local.master_cloud_cfg
     user_data_worker   = local.worker_cloud_cfg
     hosts_context_node = local.hosts_context_node
-    hosts_context_pool = local.hosts_context_pool
   }
 }

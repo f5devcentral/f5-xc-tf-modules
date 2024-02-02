@@ -1,39 +1,171 @@
 variable "is_sensitive" {
-  type = bool
+  description = "mark module output as sensitive"
+  type        = bool
 }
 
 variable "owner_tag" {
-  type = string
+  description = "set a tag called owner"
+  type        = string
 }
 
 variable "f5xc_cluster_name" {
-  type = string
+  description = "F5XC Site / Cluster name"
+  type        = string
+}
+
+
+variable "f5xc_cluster_labels" {
+  description = "F5 XC CE Cluster labels"
+  type        = map(string)
+}
+
+variable "f5xc_cluster_latitude" {
+  description = "geo latitude"
+  type        = number
+  default     = -73.935242
+}
+
+variable "f5xc_cluster_longitude" {
+  description = "geo longitude"
+  type        = number
+  default     = 40.730610
 }
 
 variable "f5xc_api_url" {
-  type = string
+  description = "F5 XC tenant api URL"
+  type        = string
 }
 
 variable "f5xc_api_ca_cert" {
-  type    = string
-  default = ""
+  description = "F5 XC api ca cert"
+  type        = string
+  default     = ""
 }
 
 variable "f5xc_api_token" {
-  type = string
+  description = "F5 XC api token"
+  type        = string
 }
 
 variable "f5xc_tenant" {
-  type = string
-}
-
-variable "f5xc_namespace" {
-  type = string
+  description = "F5 XC tenant"
+  type        = string
 }
 
 variable "f5xc_token_name" {
+  description = "F5 XC api token name"
+  type        = string
+  default     = ""
+}
+
+variable "f5xc_namespace" {
+  description = "F5 XC namespace"
+  type        = string
+}
+
+variable "f5xc_ce_gateway_type_voltstack" {
   type    = string
-  default = ""
+  default = "voltstack"
+}
+
+variable "f5xc_aws_region" {
+  description = "AWS region"
+  type        = string
+}
+
+variable "f5xc_aws_vpc_az_nodes" {
+  type = map(map(string))
+  validation {
+    condition     = length(var.f5xc_aws_vpc_az_nodes) == 1 || length(var.f5xc_aws_vpc_az_nodes) == 3 || length(var.f5xc_aws_vpc_az_nodes) == 0
+    error_message = "f5xc_aws_vpc_az_nodes must be 0,1 or 3"
+  }
+}
+
+variable "f5xc_ce_gateway_type" {
+  type = string
+  validation {
+    condition     = contains(["voltstack"], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: voltstack")
+  }
+}
+
+variable "f5xc_ce_hosts_public_name" {
+  type    = string
+  default = "vip"
+}
+
+variable "aws_security_group_rules_slo_egress" {
+  description = "provide custom aws security groups assigned to slo egress"
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    cidr_blocks = list(string)
+  }))
+}
+
+variable "aws_security_group_rules_slo_ingress" {
+  description = "provide custom aws security groups assigned to slo ingress"
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    cidr_blocks = list(string)
+  }))
+}
+
+variable "aws_security_group_rules_slo_egress_default" {
+  description = "default aws security groups assigned to slo egress"
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    cidr_blocks = list(string)
+  }))
+  default = [
+    {
+      from_port   = -1
+      to_port     = -1
+      ip_protocol = -1
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}
+
+variable "aws_security_group_rules_slo_ingress_default" {
+  description = "default aws security groups assigned to slo ingress"
+  type        = list(object({
+    from_port   = number
+    to_port     = number
+    ip_protocol = string
+    cidr_blocks = list(string)
+  }))
+  default = [
+    {
+      from_port   = -1
+      to_port     = -1
+      ip_protocol = -1
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  ]
+}
+
+variable "create_new_aws_vpc" {
+  description = "create new aws vpc"
+  type        = bool
+  default     = true
+}
+
+variable "aws_vpc_cidr_block" {
+  description = "AWS vpc CIDR block"
+  type        = string
+  default     = ""
+}
+
+variable "aws_existing_vpc_id" {
+  description = "inject existing aws vpc id"
+  type        = string
+  default     = ""
 }
 
 variable "f5xc_ce_machine_image" {
@@ -179,6 +311,12 @@ variable "f5xc_ce_machine_image" {
       us-west-2      = "ami-04b388d0bc88442db"
     }
   }
+}
+
+variable "has_public_ip" {
+  description = "whether the CE gets a public IP assigned to SLO"
+  type        = bool
+  default     = true
 }
 
 variable "ssh_public_key" {
