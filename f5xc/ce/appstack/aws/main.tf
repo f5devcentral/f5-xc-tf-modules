@@ -37,7 +37,7 @@ module "network_node" {
   aws_sg_slo_ids             = module.network_common.common["sg_slo_ids"]
   aws_subnet_slo_cidr        = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_slo_subnet"]
   aws_slo_subnet_rt_id       = module.network_common.common["slo_subnet_rt"]["id"]
-  aws_existing_slo_subnet_id = lookup(var.f5xc_aws_vpc_az_nodes[each.key], "aws_existing_slo_subnet_id") ? var.f5xc_aws_vpc_az_nodes[each.key]["aws_existing_slo_subnet_id"] : null
+  aws_existing_slo_subnet_id = contains(keys(var.f5xc_aws_vpc_az_nodes[each.key]), "aws_existing_slo_subnet_id") ? var.f5xc_aws_vpc_az_nodes[each.key]["aws_existing_slo_subnet_id"] : null
 }
 
 module "config" {
