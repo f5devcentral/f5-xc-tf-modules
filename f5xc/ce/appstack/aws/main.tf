@@ -120,6 +120,11 @@ module "node_master" {
   f5xc_cluster_name           = var.f5xc_cluster_name
   f5xc_cluster_size           = length(var.f5xc_cluster_nodes.master)
   f5xc_instance_config        = module.config_master_node[each.key].ce["user_data"]
+  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
+  f5xc_registration_retry     = var.f5xc_registration_retry
+  f5xc_registration_wait_time = var.f5xc_registration_wait_time
+  f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
   aws_instance_type           = var.aws_instance_type_master
   aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
   aws_interface_slo_id        = module.network_master_node[each.key].ce["slo"]["id"]
@@ -134,27 +139,36 @@ module "node_worker" {
   for_each                    = {for k, v in var.f5xc_cluster_nodes.worker : k=>v}
   owner_tag                   = var.owner_tag
   common_tags                 = local.common_tags
-  f5xc_node_name              = format("%s-worker-%s", var.f5xc_cluster_name, each.key)
-  f5xc_instance_config        = module.config_worker_node[each.key].ce["user_data"]
   aws_instance_type           = var.aws_instance_type_worker
   aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
   aws_interface_slo_id        = module.network_worker_node[each.key].ce["slo"]["id"]
   aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
   ssh_public_key_name         = aws_key_pair.aws_key.key_name
+  f5xc_node_name              = format("%s-worker-%s", var.f5xc_cluster_name, each.key)
+  f5xc_cluster_name           = var.f5xc_cluster_name
+  f5xc_cluster_size           = length(var.f5xc_cluster_nodes.worker)
+  f5xc_instance_config        = module.config_worker_node[each.key].ce["user_data"]
+  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
+  f5xc_registration_retry     = var.f5xc_registration_retry
+  f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
+  f5xc_registration_wait_time = var.f5xc_registration_wait_time
 }
 
-/*resource "volterra_registration_approval" "master" {
-  depends_on   = [volterra_voltstack_site.cluster]
-  count        = var.master_nodes_count
-  cluster_name = volterra_voltstack_site.cluster.name
-  cluster_size = var.master_nodes_count
-  hostname     = split(".", aws_instance.master[count.index].private_dns)[0]
-  wait_time    = var.f5xc_registration_wait_time
-  retry        = var.f5xc_registration_retry
+module "cluster" {
+  source                = "./cluster"
+  f5xc_tenant           = var.f5xc_tenant
+  f5xc_api_url          = var.f5xc_api_url
+  f5xc_api_token        = var.f5xc_api_token
+  f5xc_namespace        = var.f5xc_namespace
+  f5xc_master_nodes     = [for node in module.node_master : split(".", node.ce["name"])[0]]
+  f5xc_worker_nodes     = [for node in module.node_worker : split(".", node.ce["name"])[0]]
+  f5xc_cluster_name     = var.f5xc_cluster_name
+  f5xc_k8s_cluster_name = var.f5xc_cluster_name
 }
 
 module "site_wait_for_online" {
-  depends_on     = [volterra_voltstack_site.cluster]
+  depends_on     = [module.cluster.appstack]
   source         = "../../../status/site"
   f5xc_api_token = var.f5xc_api_token
   f5xc_api_url   = var.f5xc_api_url
@@ -164,12 +178,3 @@ module "site_wait_for_online" {
   is_sensitive   = var.is_sensitive
 }
 
-resource "volterra_registration_approval" "worker" {
-  depends_on   = [module.site_wait_for_online]
-  count        = var.worker_nodes_count
-  cluster_name = volterra_voltstack_site.cluster.name
-  cluster_size = var.master_nodes_count
-  hostname     = split(".", aws_instance.worker[count.index].private_dns)[0]
-  wait_time    = var.f5xc_registration_wait_time
-  retry        = var.f5xc_registration_retry
-}*/

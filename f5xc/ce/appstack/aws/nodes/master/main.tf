@@ -53,3 +53,24 @@ resource "aws_lb_target_group_attachment" "volterra_ce_attachment" {
   target_id        = aws_instance.instance.id
   port             = 6443
 }
+
+resource "volterra_registration_approval" "nodes" {
+  depends_on   = [aws_instance.instance]
+  retry        = var.f5xc_registration_retry
+  hostname     = split(".", aws_instance.instance.private_dns)[0] #regex("[0-9A-Za-z_-]+", aws_instance.instance.private_dns)
+  latitude     = var.f5xc_cluster_latitude
+  longitude    = var.f5xc_cluster_longitude
+  wait_time    = var.f5xc_registration_wait_time
+  tunnel_type  = lookup(var.f5xc_ce_to_re_tunnel_types, var.f5xc_ce_to_re_tunnel_type)
+  cluster_name = var.f5xc_cluster_name
+  cluster_size = var.f5xc_cluster_size
+}
+
+resource "volterra_site_state" "decommission_when_delete" {
+  depends_on = [volterra_registration_approval.nodes]
+  name       = var.f5xc_node_name
+  when       = "delete"
+  state      = "DECOMMISSIONING"
+  wait_time  = var.f5xc_registration_wait_time
+  retry      = var.f5xc_registration_retry
+}

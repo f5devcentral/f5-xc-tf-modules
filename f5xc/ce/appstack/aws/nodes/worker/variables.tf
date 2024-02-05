@@ -15,6 +15,50 @@ variable "f5xc_instance_config" {
   type = string
 }
 
+variable "f5xc_registration_wait_time" {
+  type = number
+}
+
+variable "f5xc_registration_retry" {
+  type = number
+}
+
+variable "f5xc_cluster_latitude" {
+  type = number
+}
+
+variable "f5xc_cluster_longitude" {
+  type = number
+}
+
+variable "f5xc_ce_to_re_tunnel_types" {
+  type = object({
+    ssl   = string
+    ipsec = string
+  })
+  default = {
+    ssl   = "SITE_TO_SITE_TUNNEL_SSL"
+    ipsec = "SITE_TO_SITE_TUNNEL_IPSEC_OR_SSL"
+  }
+}
+
+variable "f5xc_ce_to_re_tunnel_type" {
+  type = string
+}
+
+variable "f5xc_cluster_name" {
+  description = "F5XC Site / Cluster name"
+  type        = string
+}
+
+variable "f5xc_cluster_size" {
+  type = number
+  validation {
+    condition     = var.f5xc_cluster_size == 1 || var.f5xc_cluster_size == 3
+    error_message = format("Valid values for f5xc_cluster_size: 1 or 3")
+  }
+}
+
 variable "aws_instance_image" {
   type = string
 }
