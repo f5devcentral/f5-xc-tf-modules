@@ -48,5 +48,5 @@ write_files:
       rtcsync
 bootcmd:
   - sed -i '/vip/d' /etc/hosts
-  - for h in `host ${nlb}|awk '{print $4}'`; do ping -c1 -W1 $h; grep $h /proc/net/arp|cut -d' ' -f1|xargs -r printf -- "%s vip\n" >>/etc/hosts; done
+  - for h in `host ${nlb_dns_name}|awk '{print $4}'`; do ping -c1 -W1 $h; grep $h /proc/net/arp|cut -d' ' -f1|xargs -r printf -- "%s vip\n" >>/etc/hosts; done
 

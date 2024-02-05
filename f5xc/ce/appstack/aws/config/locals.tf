@@ -1,5 +1,5 @@
 locals {
-  hosts_context_node = templatefile("${path.module}/${var.templates_dir}/hosts",
+  hosts_context_node = templatefile(abspath("../../modules/f5xc/ce/appstack/aws/config/${var.templates_dir}/hosts"),
     {
       public_address = "127.0.1.1"
       public_name    = var.f5xc_ce_hosts_public_name
@@ -26,20 +26,20 @@ locals {
     }
   })
 
-  master_cloud_cfg = templatefile("${path.module}/${var.templates_dir}/cloud_init.yaml", {
+  cloud_cfg_master = var.node_type == var.node_type_master ? templatefile("../../modules/f5xc/ce/appstack/aws/config/${var.templates_dir}/cloud_init.yaml", {
     ntp_servers       = var.ntp_servers
     hosts_context     = base64encode(local.hosts_context_node)
     ssh_public_key    = var.ssh_public_key
     reboot_strategy   = var.reboot_strategy_node
     vp_manager_config = base64encode(local.vpm_config)
-  })
+  }) : null
 
-  worker_cloud_cfg = templatefile("${path.module}/${var.templates_dir}/cloud_init_worker.yaml", {
+  cloud_cfg_worker = var.node_type == var.node_type_worker ? templatefile("../../modules/f5xc/ce/appstack/aws/config/${var.templates_dir}/cloud_init_worker.yaml", {
     ntp_servers       = var.ntp_servers
+    nlb_dns_name      = var.aws_nlb_dns_name
     hosts_context     = base64encode(local.hosts_context_node)
     ssh_public_key    = var.ssh_public_key
     reboot_strategy   = var.reboot_strategy_node
     vp_manager_config = base64encode(local.vpm_config)
-    nlb               = var.aws_nlb_dns_name
-  })
+  }) : null
 }

@@ -28,37 +28,6 @@ variable "f5xc_cluster_size" {
   }
 }
 
-variable "f5xc_registration_wait_time" {
-  type = number
-}
-
-variable "f5xc_registration_retry" {
-  type = number
-}
-
-variable "f5xc_cluster_latitude" {
-  type = number
-}
-
-variable "f5xc_cluster_longitude" {
-  type = number
-}
-
-variable "f5xc_ce_to_re_tunnel_types" {
-  type = object({
-    ssl   = string
-    ipsec = string
-  })
-  default = {
-    ssl   = "SITE_TO_SITE_TUNNEL_SSL"
-    ipsec = "SITE_TO_SITE_TUNNEL_IPSEC_OR_SSL"
-  }
-}
-
-variable "f5xc_ce_to_re_tunnel_type" {
-  type = string
-}
-
 variable "aws_instance_type" {
   type = string
 }

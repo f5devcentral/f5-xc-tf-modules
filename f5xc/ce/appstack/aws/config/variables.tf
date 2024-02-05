@@ -1,3 +1,21 @@
+variable "node_type" {
+  type = string
+  validation {
+    condition     = contains(["master", "worker"], var.node_type)
+    error_message = format("Valid values for node_type: master or worker")
+  }
+}
+
+variable "node_type_master" {
+  type    = string
+  default = "master"
+}
+
+variable "node_type_worker" {
+  type    = string
+  default = "worker"
+}
+
 variable "f5xc_site_token" {
   type = string
 }
@@ -12,10 +30,6 @@ variable "f5xc_certified_hardware_endpoint" {
 }
 
 variable "f5xc_ce_hosts_public_name" {
-  type = string
-}
-
-variable "f5xc_ce_hosts_public_address" {
   type = string
 }
 
@@ -55,7 +69,8 @@ variable "reboot_strategy_node" {
 }
 
 variable "aws_nlb_dns_name" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "templates_dir" {
