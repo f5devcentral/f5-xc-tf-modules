@@ -16,14 +16,6 @@ resource "aws_instance" "instance" {
     device_index         = "0"
   }
 
-  dynamic "network_interface" {
-    for_each = var.is_multi_nic ? [1] : []
-    content {
-      network_interface_id = var.aws_interface_sli_id
-      device_index         = "1"
-    }
-  }
-
   timeouts {
     create = var.aws_instance_create_timeout
     update = var.aws_instance_update_timeout
@@ -60,25 +52,4 @@ resource "aws_lb_target_group_attachment" "volterra_ce_attachment" {
   target_group_arn = var.aws_lb_target_group_arn
   target_id        = aws_instance.instance.id
   port             = 6443
-}
-
-resource "volterra_registration_approval" "nodes" {
-  depends_on   = [aws_instance.instance]
-  retry        = var.f5xc_registration_retry
-  hostname     = regex("[0-9A-Za-z_-]+", aws_instance.instance.private_dns)
-  latitude     = var.f5xc_cluster_latitude
-  longitude    = var.f5xc_cluster_longitude
-  wait_time    = var.f5xc_registration_wait_time
-  tunnel_type  = lookup(var.f5xc_ce_to_re_tunnel_types, var.f5xc_ce_to_re_tunnel_type)
-  cluster_name = var.f5xc_cluster_name
-  cluster_size = var.f5xc_cluster_size
-}
-
-resource "volterra_site_state" "decommission_when_delete" {
-  depends_on = [volterra_registration_approval.nodes]
-  name       = var.f5xc_node_name
-  when       = "delete"
-  state      = "DECOMMISSIONING"
-  wait_time  = var.f5xc_registration_wait_time
-  retry      = var.f5xc_registration_retry
 }

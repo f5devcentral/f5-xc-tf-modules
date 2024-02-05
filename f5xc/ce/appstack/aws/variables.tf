@@ -63,11 +63,6 @@ variable "f5xc_namespace" {
   type        = string
 }
 
-variable "f5xc_ce_gateway_type_voltstack" {
-  type    = string
-  default = "voltstack"
-}
-
 variable "f5xc_aws_region" {
   description = "AWS region"
   type        = string
@@ -84,8 +79,8 @@ variable "f5xc_aws_vpc_az_nodes" {
 variable "f5xc_ce_gateway_type" {
   type = string
   validation {
-    condition     = contains(["voltstack"], var.f5xc_ce_gateway_type)
-    error_message = format("Valid values for gateway_type: voltstack")
+    condition     = contains(["voltstack_gateway"], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: voltstack_gateway")
   }
 }
 
@@ -311,6 +306,39 @@ variable "f5xc_ce_machine_image" {
       us-west-2      = "ami-04b388d0bc88442db"
     }
   }
+}
+
+variable "f5xc_site_type_is_secure_mesh_site" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_registration_wait_time" {
+  type    = number
+  default = 60
+}
+
+variable "f5xc_registration_retry" {
+  type    = number
+  default = 20
+}
+
+variable "f5xc_ce_to_re_tunnel_type" {
+  description = "CE to RE tunnel type"
+  type        = string
+  validation {
+    condition     = contains(["ssl", "ipsec"], var.f5xc_ce_to_re_tunnel_type)
+    error_message = format("Valid values for tunnel_type: ssl, ipsec")
+  }
+  default = "ipsec"
+}
+
+variable "aws_instance_type_master" {
+  type = string
+}
+
+variable "aws_instance_type_worker" {
+  type = string
 }
 
 variable "has_public_ip" {

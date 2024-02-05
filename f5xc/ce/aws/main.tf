@@ -129,16 +129,10 @@ module "node" {
   for_each                    = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
   owner_tag                   = var.owner_tag
   common_tags                 = local.common_tags
-  is_sensitive                = var.is_sensitive
   is_multi_nic                = local.is_multi_nic
-  f5xc_tenant                 = var.f5xc_tenant
-  f5xc_api_url                = var.f5xc_api_url
-  f5xc_api_token              = var.f5xc_api_token
-  f5xc_namespace              = var.f5xc_namespace
   f5xc_node_name              = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name           = var.f5xc_cluster_name
   f5xc_cluster_size           = length(var.f5xc_aws_vpc_az_nodes)
-  f5xc_cluster_labels         = {} # var.f5xc_cluster_labels
   f5xc_instance_config        = module.config[each.key].ce["user_data"]
   f5xc_cluster_latitude       = var.f5xc_cluster_latitude
   f5xc_cluster_longitude      = var.f5xc_cluster_longitude
@@ -147,8 +141,6 @@ module "node" {
   f5xc_registration_wait_time = var.f5xc_registration_wait_time
   aws_instance_type           = var.instance_type
   aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
-  aws_subnet_slo_id           = module.network_node[each.key].ce["slo_subnet"]["id"]
-  aws_subnet_sli_id           = local.is_multi_nic ? module.network_node[each.key].ce["sli_subnet"]["id"] : null
   aws_interface_slo_id        = module.network_node[each.key].ce["slo"]["id"]
   aws_interface_sli_id        = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
   aws_lb_target_group_arn     = length(var.f5xc_aws_vpc_az_nodes) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null

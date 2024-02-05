@@ -45,6 +45,7 @@ variable "f5xc_site_type_certified_hw" {
   type    = map(string)
   default = {
     ingress_gateway        = "aws-byol-voltmesh"
+    voltstack_gateway      = "aws-byol-voltstack-combo"
     ingress_egress_gateway = "aws-byol-multi-nic-voltmesh"
   }
 }
@@ -52,7 +53,9 @@ variable "f5xc_site_type_certified_hw" {
 variable "f5xc_ce_gateway_type" {
   type = string
   validation {
-    condition     = contains(["ingress_egress_gateway", "ingress_gateway",], var.f5xc_ce_gateway_type)
-    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway")
+    condition = contains([
+      "ingress_egress_gateway", "ingress_gateway", "voltstack_gateway"
+    ], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack_gateway")
   }
 }

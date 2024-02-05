@@ -40,6 +40,15 @@ module "network_node" {
   aws_existing_slo_subnet_id = contains(keys(var.f5xc_aws_vpc_az_nodes[each.key]), "aws_existing_slo_subnet_id") ? var.f5xc_aws_vpc_az_nodes[each.key]["aws_existing_slo_subnet_id"] : null
 }
 
+module "network_nlb" {
+  source            = "./network/nlb"
+  count             = length(var.f5xc_aws_vpc_az_nodes) == 3 ? 1 : 0
+  common_tags       = local.common_tags
+  f5xc_cluster_name = var.f5xc_cluster_name
+  aws_vpc_id        = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
+  aws_nlb_subnets   = [for node in module.network_node : node["ce"]["slo_subnet"]["id"]]
+}
+
 module "config" {
   source                       = "./config"
   for_each                     = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
@@ -51,10 +60,75 @@ module "config" {
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
   f5xc_ce_hosts_public_name    = var.f5xc_ce_hosts_public_name
   f5xc_ce_hosts_public_address = "" #module.network_node[each.key].ce["slo"]["public_dns"][0]
+  aws_nlb_dns_name             = module.network_nlb.nlb["dns_name"]
   maurice_endpoint             = module.maurice.endpoints.maurice
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
-  aws_nlb_dns_name             = ""
 }
+
+module "secure_mesh_site" {
+  count                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  source                 = "../../../secure-mesh-site"
+  f5xc_nodes             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]
+  f5xc_tenant            = var.f5xc_tenant
+  f5xc_api_url           = var.f5xc_api_url
+  f5xc_namespace         = var.f5xc_namespace
+  f5xc_api_token         = var.f5xc_api_token
+  f5xc_cluster_name      = var.f5xc_cluster_name
+  f5xc_cluster_labels    = {} # var.f5xc_cluster_labels
+  f5xc_ce_gateway_type   = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude  = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude = var.f5xc_cluster_longitude
+}
+
+module "node_master" {
+  depends_on                  = [module.secure_mesh_site]
+  source                      = "./nodes"
+  for_each                    = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  owner_tag                   = var.owner_tag
+  common_tags                 = local.common_tags
+  f5xc_node_name              = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_cluster_name           = var.f5xc_cluster_name
+  f5xc_cluster_size           = length(var.f5xc_aws_vpc_az_nodes)
+  f5xc_instance_config        = module.config[each.key].ce["user_data_master"]
+  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
+  f5xc_registration_retry     = var.f5xc_registration_retry
+  f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
+  f5xc_registration_wait_time = var.f5xc_registration_wait_time
+  aws_instance_type           = var.aws_instance_type_master
+  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
+  aws_interface_slo_id        = module.network_node[each.key].ce["slo"]["id"]
+  aws_lb_target_group_arn     = length(var.f5xc_aws_vpc_az_nodes) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null
+  aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
+  ssh_public_key_name         = aws_key_pair.aws_key.key_name
+}
+
+module "node_worker" {
+  depends_on                  = [module.secure_mesh_site]
+  source                      = "./nodes"
+  for_each                    = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  owner_tag                   = var.owner_tag
+  common_tags                 = local.common_tags
+  f5xc_node_name              = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_cluster_name           = var.f5xc_cluster_name
+  f5xc_cluster_size           = length(var.f5xc_aws_vpc_az_nodes)
+  f5xc_instance_config        = module.config[each.key].ce["user_data_master"]
+  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
+  f5xc_registration_retry     = var.f5xc_registration_retry
+  f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
+  f5xc_registration_wait_time = var.f5xc_registration_wait_time
+  aws_instance_type           = var.aws_instance_type_master
+  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
+  aws_interface_slo_id        = module.network_node[each.key].ce["slo"]["id"]
+  aws_lb_target_group_arn     = length(var.f5xc_aws_vpc_az_nodes) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null
+  aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
+  ssh_public_key_name         = aws_key_pair.aws_key.key_name
+}
+
+#aws_lb.nlb.dns_name
+#count                  = var.master_nodes_count
+#var.f5xc_ce_machine_image["voltstack"][var.f5xc_aws_region]
 
 /*resource "volterra_registration_approval" "master" {
   depends_on   = [volterra_voltstack_site.cluster]

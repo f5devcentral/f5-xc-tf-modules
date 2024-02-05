@@ -40,6 +40,6 @@ locals {
     ssh_public_key    = var.ssh_public_key
     reboot_strategy   = var.reboot_strategy_node
     vp_manager_config = base64encode(local.vpm_config)
-    nlb               = var.aws_nlb_dns_name #aws_lb.nlb.dns_name
+    nlb               = var.aws_nlb_dns_name
   })
 }
