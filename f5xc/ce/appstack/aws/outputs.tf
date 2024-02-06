@@ -37,6 +37,6 @@ output "appstack" {
         }
       }
     }
-    secure_mesh_site = module.secure_mesh_site.0.secure_mesh_site
+    # secure_mesh_site = module.secure_mesh_site.0.secure_mesh_site
   }
 }

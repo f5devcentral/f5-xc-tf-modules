@@ -18,7 +18,7 @@ resource "volterra_k8s_cluster" "cluster" {
 resource "volterra_voltstack_site" "cluster" {
   name                    = var.f5xc_cluster_name
   namespace               = var.f5xc_namespace
-  master_nodes            = var.f5xc_master_nodes
+  # master_nodes            = var.f5xc_master_nodes
   worker_nodes            = var.f5xc_worker_nodes
   deny_all_usb            = true
   disable_gpu             = true

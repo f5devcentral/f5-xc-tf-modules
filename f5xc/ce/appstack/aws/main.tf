@@ -95,7 +95,7 @@ module "config_worker_node" {
   maurice_mtls_endpoint     = module.maurice.endpoints.maurice_mtls
 }
 
-module "secure_mesh_site" {
+/*module "secure_mesh_site" {
   count                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
   source                 = "../../../secure-mesh-site"
   f5xc_nodes             = [for k in keys(var.f5xc_cluster_nodes.master) : { name = k }]
@@ -108,10 +108,22 @@ module "secure_mesh_site" {
   f5xc_ce_gateway_type   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude = var.f5xc_cluster_longitude
+}*/
+
+module "cluster" {
+  source                = "./cluster"
+  f5xc_tenant           = var.f5xc_tenant
+  f5xc_api_url          = var.f5xc_api_url
+  f5xc_api_token        = var.f5xc_api_token
+  f5xc_namespace        = var.f5xc_namespace
+  f5xc_master_nodes     = [for node in keys(var.f5xc_cluster_nodes.master) : node]
+  f5xc_worker_nodes     = [for node in keys(var.f5xc_cluster_nodes.worker) : node]
+  f5xc_cluster_name     = var.f5xc_cluster_name
+  f5xc_k8s_cluster_name = var.f5xc_cluster_name
 }
 
 module "node_master" {
-  depends_on                  = [module.secure_mesh_site]
+  depends_on                  = [module.cluster]
   source                      = "./nodes/master"
   for_each                    = {for k, v in var.f5xc_cluster_nodes.master : k=>v}
   owner_tag                   = var.owner_tag
@@ -133,8 +145,19 @@ module "node_master" {
   ssh_public_key_name         = aws_key_pair.aws_key.key_name
 }
 
+module "site_wait_for_online_master" {
+  depends_on     = [module.node_master]
+  source         = "../../../status/site"
+  f5xc_api_token = var.f5xc_api_token
+  f5xc_api_url   = var.f5xc_api_url
+  f5xc_namespace = var.f5xc_namespace
+  f5xc_site_name = var.f5xc_cluster_name
+  f5xc_tenant    = var.f5xc_tenant
+  is_sensitive   = var.is_sensitive
+}
+
 module "node_worker" {
-  depends_on                  = [module.node_master]
+  depends_on                  = [module.site_wait_for_online_master]
   source                      = "./nodes/worker"
   for_each                    = {for k, v in var.f5xc_cluster_nodes.worker : k=>v}
   owner_tag                   = var.owner_tag
@@ -155,20 +178,8 @@ module "node_worker" {
   f5xc_registration_wait_time = var.f5xc_registration_wait_time
 }
 
-module "cluster" {
-  source                = "./cluster"
-  f5xc_tenant           = var.f5xc_tenant
-  f5xc_api_url          = var.f5xc_api_url
-  f5xc_api_token        = var.f5xc_api_token
-  f5xc_namespace        = var.f5xc_namespace
-  f5xc_master_nodes     = [for node in module.node_master : split(".", node.ce["name"])[0]]
-  f5xc_worker_nodes     = [for node in module.node_worker : split(".", node.ce["name"])[0]]
-  f5xc_cluster_name     = var.f5xc_cluster_name
-  f5xc_k8s_cluster_name = var.f5xc_cluster_name
-}
-
-module "site_wait_for_online" {
-  depends_on     = [module.cluster.appstack]
+module "site_wait_for_online_worker" {
+  depends_on     = [module.node_worker]
   source         = "../../../status/site"
   f5xc_api_token = var.f5xc_api_token
   f5xc_api_url   = var.f5xc_api_url
