@@ -23,6 +23,10 @@ variable "create_new_aws_vpc" {
   type = bool
 }
 
+variable "create_new_aws_igw" {
+  type = bool
+}
+
 variable "aws_existing_vpc_id" {
   type = string
 }

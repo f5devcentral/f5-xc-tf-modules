@@ -62,6 +62,7 @@ module "aws_security_group_sli_secure_ce" {
 }
 
 resource "aws_internet_gateway" "igw" {
+  count  = var.create_new_aws_igw ? 1 : 0
   tags   = merge({ Name : format("%s-igw", var.f5xc_cluster_name) }, var.common_tags)
   vpc_id = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : aws_vpc.vpc[0].id
 }
@@ -72,12 +73,12 @@ resource "aws_route_table" "slo_subnet_rt" {
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
+    gateway_id = aws_internet_gateway.igw.0.id
   }
 
   route {
     ipv6_cidr_block = "::/0"
-    gateway_id      = aws_internet_gateway.igw.id
+    gateway_id      = aws_internet_gateway.igw.0.id
   }
 }
 

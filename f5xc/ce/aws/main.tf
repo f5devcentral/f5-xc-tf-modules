@@ -19,6 +19,7 @@ module "network_common" {
   common_tags                                            = local.common_tags
   is_multi_nic                                           = local.is_multi_nic
   create_new_aws_vpc                                     = var.create_new_aws_vpc
+  create_new_aws_igw                                     = var.create_new_aws_igw
   f5xc_cluster_name                                      = var.f5xc_cluster_name
   f5xc_is_secure_cloud_ce                                = var.f5xc_is_secure_cloud_ce
   f5xc_ce_slo_enable_secure_sg                           = var.f5xc_ce_slo_enable_secure_sg
@@ -57,9 +58,11 @@ module "network_node" {
 }
 
 module "secure_ce" {
-  source                = "./network/secure"
-  common_tags           = local.common_tags
-  for_each              = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v} : {}
+  source      = "./network/secure"
+  common_tags = local.common_tags
+  for_each    = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {
+    for k, v in var.f5xc_aws_vpc_az_nodes : k=>v
+  } : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
@@ -71,7 +74,9 @@ module "secure_ce" {
 module "private_ce" {
   source                = "./network/private"
   common_tags           = local.common_tags
-  for_each              = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v} : {}
+  for_each              = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {
+    for k, v in var.f5xc_aws_vpc_az_nodes : k=>v
+  } : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
