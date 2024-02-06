@@ -46,7 +46,7 @@ module "kubeconfig" {
   depends_on            = [volterra_voltstack_site.cluster]
   source                = "../../../../../../modules/utils/kubeconfig"
   f5xc_api_url          = var.f5xc_api_url
-  f5xc_api_token        = var.f5xc_api_url
+  f5xc_api_token        = var.f5xc_api_token
   f5xc_k8s_config_type  = "global"
   f5xc_k8s_cluster_name = var.f5xc_k8s_cluster_name
 }
