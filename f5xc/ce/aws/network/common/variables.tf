@@ -27,6 +27,14 @@ variable "create_new_aws_igw" {
   type = bool
 }
 
+variable "create_new_aws_slo_rt" {
+  type = bool
+}
+
+variable "create_new_aws_sli_rt" {
+  type = bool
+}
+
 variable "aws_existing_vpc_id" {
   type = string
 }
@@ -126,5 +134,5 @@ variable "f5xc_is_secure_cloud_ce" {
 }
 
 variable "f5xc_ce_slo_enable_secure_sg" {
-  type    = bool
+  type = bool
 }

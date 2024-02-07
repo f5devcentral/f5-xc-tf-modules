@@ -33,6 +33,18 @@ variable "create_new_aws_igw" {
   default     = true
 }
 
+variable "create_new_aws_slo_rt" {
+  description = "create new slo subnet route table"
+  type        = bool
+  default     = true
+}
+
+variable "create_new_aws_sli_rt" {
+  description = "create new sli subnet route table"
+  type        = bool
+  default     = true
+}
+
 variable "f5xc_ce_hosts_public_name" {
   type    = string
   default = "vip"
