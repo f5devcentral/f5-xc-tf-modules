@@ -1,7 +1,7 @@
 output "common" {
   value = {
     vpc                       = var.aws_existing_vpc_id != "" ? data.aws_vpc.vpc.0 : aws_vpc.vpc.0
-    igw                       = aws_internet_gateway.igw.0
+    igw                       = var.create_new_aws_igw ? aws_internet_gateway.igw.0 : null
     sg_slo                    = length(module.aws_security_group_slo) > 0 ? module.aws_security_group_slo.0.aws_security_group : null
     sg_sli                    = var.is_multi_nic ? module.aws_security_group_sli.0.aws_security_group : null
     sg_slo_secure_ce          = var.f5xc_is_secure_cloud_ce || var.f5xc_ce_slo_enable_secure_sg ? module.aws_security_group_slo_secure_ce : null

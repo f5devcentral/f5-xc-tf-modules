@@ -48,6 +48,22 @@ variable "aws_vpc_cidr_block" {
   type = string
 }
 
+variable "aws_slo_rt_custom_ipv4_routes" {
+  type = list(object({
+    cidr_block           = string
+    gateway_id           = optional(string)
+    network_interface_id = optional(string)
+  }))
+}
+
+variable "aws_slo_rt_custom_ipv6_routes" {
+  type = list(object({
+    cidr_block           = string
+    gateway_id           = optional(string)
+    network_interface_id = optional(string)
+  }))
+}
+
 variable "aws_security_group_rules_slo_ingress_secure_ce" {
   type = list(object({
     from_port   = string

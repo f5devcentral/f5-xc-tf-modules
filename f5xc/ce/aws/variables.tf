@@ -45,6 +45,18 @@ variable "create_new_aws_sli_rt" {
   default     = true
 }
 
+variable "create_new_aws_slo_rta" {
+  description = "create new slo aws route table association"
+  type        = bool
+  default     = true
+}
+
+variable "create_new_aws_sli_rta" {
+  description = "create new sli aws route table association"
+  type        = bool
+  default     = true
+}
+
 variable "f5xc_ce_hosts_public_name" {
   type    = string
   default = "vip"
@@ -59,6 +71,26 @@ variable "ssh_public_key" {
   description = "EC2 instance assigned public ssh key"
   type        = string
 
+}
+
+variable "aws_slo_rt_custom_ipv4_routes" {
+  description = "Add custom ipv4 routes to aws slo rt table"
+  type        = list(object({
+    cidr_block           = string
+    gateway_id           = optional(string)
+    network_interface_id = optional(string)
+  }))
+  default = []
+}
+
+variable "aws_slo_rt_custom_ipv6_routes" {
+  description = "Add custom ipv6 routes to aws slo rt table"
+  type        = list(object({
+    cidr_block           = string
+    gateway_id           = optional(string)
+    network_interface_id = optional(string)
+  }))
+  default = []
 }
 
 variable "aws_existing_vpc_id" {

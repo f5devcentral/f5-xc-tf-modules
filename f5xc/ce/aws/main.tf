@@ -27,6 +27,8 @@ module "network_common" {
   f5xc_ce_slo_enable_secure_sg                           = var.f5xc_ce_slo_enable_secure_sg
   aws_vpc_cidr_block                                     = var.aws_vpc_cidr_block
   aws_existing_vpc_id                                    = var.aws_existing_vpc_id
+  aws_slo_rt_custom_ipv4_routes                          = var.aws_slo_rt_custom_ipv4_routes
+  aws_slo_rt_custom_ipv6_routes                          = var.aws_slo_rt_custom_ipv6_routes
   aws_security_group_rules_sli_egress                    = local.is_multi_nic ? (length(var.aws_security_group_rules_sli_egress) > 0 ? var.aws_security_group_rules_sli_egress : var.aws_security_group_rules_sli_egress_default) : []
   aws_security_group_rules_sli_ingress                   = local.is_multi_nic ? (length(var.aws_security_group_rules_sli_ingress) > 0 ? var.aws_security_group_rules_sli_ingress : var.aws_security_group_rules_sli_ingress_default) : []
   aws_security_group_rules_slo_egress                    = length(var.aws_security_group_rules_slo_egress) > 0 ? var.aws_security_group_rules_slo_egress : (local.is_secure_or_private_cloud_ce == false && var.f5xc_ce_slo_enable_secure_sg == false ? var.aws_security_group_rules_slo_egress_default : null)
@@ -46,6 +48,8 @@ module "network_node" {
   common_tags                        = local.common_tags
   is_multi_nic                       = local.is_multi_nic
   has_public_ip                      = var.has_public_ip
+  create_new_aws_sli_rta             = var.create_new_aws_sli_rta
+  create_new_aws_slo_rta             = var.create_new_aws_slo_rta
   aws_vpc_az                         = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_id                         = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_sg_sli_ids                     = local.is_multi_nic ? module.network_common.common["sg_sli_ids"] : []
@@ -110,7 +114,7 @@ module "config" {
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
   f5xc_ce_gateway_type         = var.f5xc_ce_gateway_type
   f5xc_ce_hosts_public_name    = var.f5xc_ce_hosts_public_name
-  f5xc_ce_hosts_public_address = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? module.secure_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? module.private_ce[each.key].ce["eip"][0]["public_dns"] : module.network_node[each.key].ce["slo"]["public_dns"][0]
+  f5xc_ce_hosts_public_address = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? module.secure_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? module.private_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false ? module.network_node[each.key].ce["slo"]["private_dns_name"] : module.network_node[each.key].ce["slo"]["public_dns"][0]
   maurice_endpoint             = module.maurice.endpoints.maurice
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
 }

@@ -42,13 +42,13 @@ module "network_interface_sli" {
 }
 
 resource "aws_route_table_association" "subnet_slo" {
-  count          = var.f5xc_is_secure_or_private_cloud_ce ? 0 : 1
+  count          = var.f5xc_is_secure_or_private_cloud_ce ? 0 : var.create_new_aws_slo_rta ? 1 : 0
   subnet_id      = local.aws_subnet_slo_id
   route_table_id = var.aws_slo_subnet_rt_id
 }
 
 resource "aws_route_table_association" "subnet_sli" {
-  count          = var.is_multi_nic ? 1 : 0
+  count          = var.is_multi_nic && var.create_new_aws_sli_rta? 1 : 0
   subnet_id      = local.aws_subnet_sli_id
   route_table_id = var.aws_sli_subnet_rt_id
 }

@@ -73,7 +73,7 @@ resource "aws_route_table" "slo_subnet_rt" {
   vpc_id = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : aws_vpc.vpc[0].id
 
   dynamic "route" {
-    for_each = var.create_new_aws_igw ? [1] : null
+    for_each = var.create_new_aws_igw ? [1] : []
     content {
       cidr_block = "0.0.0.0/0"
       gateway_id = aws_internet_gateway.igw.0.id
@@ -81,10 +81,28 @@ resource "aws_route_table" "slo_subnet_rt" {
   }
 
   dynamic "route" {
-    for_each = var.create_new_aws_igw ? [1] : null
+    for_each = var.create_new_aws_igw ? [1] : []
     content {
       ipv6_cidr_block = "::/0"
       gateway_id      = aws_internet_gateway.igw.0.id
+    }
+  }
+
+  dynamic "route" {
+    for_each = var.aws_slo_rt_custom_ipv4_routes
+    content {
+      cidr_block           = route.value.cidr_block
+      gateway_id           = route.value.gateway_id
+      network_interface_id = route.value.network_interface_id
+    }
+  }
+
+  dynamic "route" {
+    for_each = var.aws_slo_rt_custom_ipv6_routes
+    content {
+      ipv6_cidr_block      = route.value.cidr_block
+      gateway_id           = route.value.gateway_id
+      network_interface_id = route.value.network_interface_id
     }
   }
 }
