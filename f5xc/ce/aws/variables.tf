@@ -118,6 +118,19 @@ variable "aws_existing_vpc_id" {
   default     = ""
 }
 
+
+variable "aws_existing_sg_slo_ids" {
+  description = "inject list of existing security group ids for SLO"
+  type        = list(string)
+  default     = []
+}
+
+variable "aws_existing_sg_sli_ids" {
+  description = "inject list of existing security group ids for SLI"
+  type        = list(string)
+  default     = []
+}
+
 variable "aws_existing_iam_profile_name" {
   description = "Create new AWS IAM profile for CE with mandatory actions"
   type        = string
