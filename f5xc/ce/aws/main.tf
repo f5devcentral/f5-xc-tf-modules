@@ -4,6 +4,7 @@ resource "volterra_token" "site" {
 }
 
 resource "aws_key_pair" "aws_key" {
+  count      = var.ssh_public_key != null ? 1 : 0
   key_name   = var.f5xc_cluster_name
   public_key = var.ssh_public_key
 }
@@ -29,10 +30,10 @@ module "network_common" {
   aws_existing_vpc_id                                    = var.aws_existing_vpc_id
   aws_slo_rt_custom_ipv4_routes                          = var.aws_slo_rt_custom_ipv4_routes
   aws_slo_rt_custom_ipv6_routes                          = var.aws_slo_rt_custom_ipv6_routes
-  aws_security_group_rules_sli_egress                    = local.is_multi_nic ? (length(var.aws_security_group_rules_sli_egress) > 0 ? var.aws_security_group_rules_sli_egress : var.aws_security_group_rules_sli_egress_default) : []
-  aws_security_group_rules_sli_ingress                   = local.is_multi_nic ? (length(var.aws_security_group_rules_sli_ingress) > 0 ? var.aws_security_group_rules_sli_ingress : var.aws_security_group_rules_sli_ingress_default) : []
-  aws_security_group_rules_slo_egress                    = length(var.aws_security_group_rules_slo_egress) > 0 ? var.aws_security_group_rules_slo_egress : (local.is_secure_or_private_cloud_ce == false && var.f5xc_ce_slo_enable_secure_sg == false ? var.aws_security_group_rules_slo_egress_default : null)
-  aws_security_group_rules_slo_ingress                   = length(var.aws_security_group_rules_slo_ingress) > 0 ? var.aws_security_group_rules_slo_ingress : (local.is_secure_or_private_cloud_ce == false && var.f5xc_ce_slo_enable_secure_sg == false ? var.aws_security_group_rules_slo_ingress_default : null)
+  aws_security_group_rules_sli_egress                    = local.is_multi_nic ? var.create_new_sli_security_group ? (length(var.aws_security_group_rules_sli_egress) > 0 ? var.aws_security_group_rules_sli_egress : var.aws_security_group_rules_sli_egress_default) : [] : []
+  aws_security_group_rules_sli_ingress                   = local.is_multi_nic ? var.create_new_sli_security_group ? (length(var.aws_security_group_rules_sli_ingress) > 0 ? var.aws_security_group_rules_sli_ingress : var.aws_security_group_rules_sli_ingress_default) : [] : []
+  aws_security_group_rules_slo_egress                    = var.create_new_slo_security_group ? length(var.aws_security_group_rules_slo_egress) > 0 ? var.aws_security_group_rules_slo_egress : (local.is_secure_or_private_cloud_ce == false && var.f5xc_ce_slo_enable_secure_sg == false ? var.aws_security_group_rules_slo_egress_default : null) : null
+  aws_security_group_rules_slo_ingress                   = var.create_new_sli_security_group ? length(var.aws_security_group_rules_slo_ingress) > 0 ? var.aws_security_group_rules_slo_ingress : (local.is_secure_or_private_cloud_ce == false && var.f5xc_ce_slo_enable_secure_sg == false ? var.aws_security_group_rules_slo_ingress_default : null) : null
   aws_security_group_rules_sli_egress_secure_ce          = var.f5xc_is_secure_cloud_ce ? local.aws_security_group_rules_sli_egress_secure_ce : []
   aws_security_group_rules_sli_ingress_secure_ce         = var.f5xc_is_secure_cloud_ce ? local.aws_security_group_rules_sli_ingress_secure_ce : []
   aws_security_group_rules_slo_egress_secure_ce          = var.f5xc_is_secure_cloud_ce || var.f5xc_ce_slo_enable_secure_sg ? local.aws_security_group_rules_slo_egress_secure_ce : []
@@ -104,7 +105,7 @@ module "config" {
   source                       = "./config"
   for_each                     = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
   owner_tag                    = var.owner_tag
-  ssh_public_key               = var.ssh_public_key
+  ssh_public_key               = var.ssh_public_key != null ? aws_key_pair.aws_key.0.public_key : data.aws_key_pair.existing_aws_key.0.public_key
   f5xc_site_token              = volterra_token.site.id
   f5xc_cluster_name            = var.f5xc_cluster_name
   f5xc_server_roles            = local.server_roles[each.key]
@@ -155,8 +156,8 @@ module "node" {
   aws_interface_slo_id        = module.network_node[each.key].ce["slo"]["id"]
   aws_interface_sli_id        = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
   aws_lb_target_group_arn     = length(var.f5xc_aws_vpc_az_nodes) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null
-  aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
-  ssh_public_key_name         = aws_key_pair.aws_key.key_name
+  aws_iam_instance_profile_id = var.aws_existing_iam_profile_name != null ? data.aws_iam_instance_profile.existing_iam_profile.0.id : aws_iam_instance_profile.instance_profile.0.id
+  ssh_public_key_name         = var.ssh_public_key != null ? aws_key_pair.aws_key.0.key_name : data.aws_key_pair.existing_aws_key.0.key_name
 }
 
 module "site_wait_for_online" {

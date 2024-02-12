@@ -33,6 +33,13 @@ variable "create_new_aws_igw" {
   default     = true
 }
 
+variable "create_new_aws_iam_profile" {
+  description = "create new AWS IAM profile with mandatory actions"
+  type        = string
+  default     = true
+
+}
+
 variable "create_new_aws_slo_rt" {
   description = "create new slo subnet route table"
   type        = bool
@@ -57,6 +64,18 @@ variable "create_new_aws_sli_rta" {
   default     = true
 }
 
+variable "create_new_slo_security_group" {
+  description = "create new aws F5XC CE SLO security group"
+  type        = bool
+  default     = true
+}
+
+variable "create_new_sli_security_group" {
+  description = "create new aws F5XC CE SLI security group"
+  type        = bool
+  default     = true
+}
+
 variable "f5xc_ce_hosts_public_name" {
   type    = string
   default = "vip"
@@ -68,9 +87,9 @@ variable "cluster_workload" {
 }
 
 variable "ssh_public_key" {
-  description = "EC2 instance assigned public ssh key"
+  description = "New EC2 instance assigned public ssh key"
   type        = string
-
+  default     = null
 }
 
 variable "aws_slo_rt_custom_ipv4_routes" {
@@ -97,6 +116,12 @@ variable "aws_existing_vpc_id" {
   description = "inject existing aws vpc id"
   type        = string
   default     = ""
+}
+
+variable "aws_existing_iam_profile_name" {
+  description = "Create new AWS IAM profile for CE with mandatory actions"
+  type        = string
+  default     = null
 }
 
 variable "aws_security_group_rules_slo_egress_default" {
@@ -211,6 +236,18 @@ variable "aws_security_group_rules_sli_ingress" {
     cidr_blocks = list(string)
   }))
   default = []
+}
+
+variable "aws_key_pair_id" {
+  description = "The ID of existing AWS ssh key pair"
+  type        = string
+  default     = null
+}
+
+variable "aws_iam_policy_id" {
+  description = "THe ID of existing AWS IAM policy"
+  type        = string
+  default     = null
 }
 
 variable "f5xc_cluster_labels" {
