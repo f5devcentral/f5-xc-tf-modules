@@ -5,7 +5,7 @@ variable "is_sensitive" {
 
 variable "status_check_type" {
   type    = string
-  default = "cert"
+  default = "token"
 }
 
 variable "has_public_ip" {
