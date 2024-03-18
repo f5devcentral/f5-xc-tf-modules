@@ -376,6 +376,12 @@ variable "f5xc_cluster_name" {
   type = string
 }
 
+variable "f5xc_api_p12_cert_password" {
+  description = "XC API cert file password used later in status module to retrieve site status"
+  type        = string
+  default     = ""
+}
+
 variable "f5xc_is_secure_cloud_ce" {
   description = "whether CE should be secured by applying security rules on SLO and SLI + NAT GW + SLO private IP"
   type        = bool
