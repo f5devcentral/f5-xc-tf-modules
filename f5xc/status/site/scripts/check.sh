@@ -3,12 +3,14 @@
 counter=0
 sleep_first_step=1
 sleep_second_step=30
-is_verbose=false
+is_verbose=true
 
 url=$1
 tenant=$3
 max_timeout=$4
 check_type=$5
+
+echo "CHECK_TYE: $check_type"
 
 if [[ "${check_type}" == "cert" ]] ; then
   cert_p12_file=$2
@@ -19,8 +21,8 @@ if [[ "${check_type}" == "token" ]] ; then
   api_token=$2
 fi
 
-
 if [[ "${check_type}" == "token" ]] ; then
+  echo "Checking status using token"
   if [[ "$is_verbose" == true ]] ; then
   echo "Status check URL: $url" \
     -H 'accept: application/data' \
@@ -90,6 +92,7 @@ if [[ "${check_type}" == "token" ]] ; then
 fi
 
 if [[ "${check_type}" == "cert" ]] ; then
+  echo "Checking status using certificate"
   if [[ "$is_verbose" == true ]] ; then
   echo "Status check URL: ${url}" \
     -H 'accept: application/data' \

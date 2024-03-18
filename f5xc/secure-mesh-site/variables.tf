@@ -41,6 +41,23 @@ variable "f5xc_annotations" {
   default = {}
 }
 
+variable "f5xc_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
+variable "performance_enhancement_mode" {
+  type = object({
+    enable                = bool
+    perf_mode_l3_enhanced = optional(object({
+      is_jumbo = bool
+    }))
+  })
+  default = {
+    enable = false
+  }
+}
+
 variable "f5xc_site_type_certified_hw" {
   type    = map(string)
   default = {

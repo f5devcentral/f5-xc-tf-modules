@@ -1,7 +1,11 @@
 variable "is_sensitive" {
   description = "mark module output as sensitive"
   type        = bool
+}
 
+variable "status_check_type" {
+  type    = string
+  default = "cert"
 }
 
 variable "has_public_ip" {
@@ -285,7 +289,7 @@ variable "f5xc_api_url" {
   type        = string
 }
 
-variable "f5xc_api_ca_cert" {
+variable "f5xc_api_p12_file" {
   description = "F5 XC api ca cert"
   type        = string
   default     = ""
@@ -294,6 +298,7 @@ variable "f5xc_api_ca_cert" {
 variable "f5xc_api_token" {
   description = "F5 XC api token"
   type        = string
+  default     = ""
 }
 
 variable "f5xc_tenant" {

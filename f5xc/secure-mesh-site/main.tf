@@ -3,3 +3,7 @@ resource "restapi_object" "secure_mesh_site" {
   data         = local.secure_mesh_site_data.json
   id_attribute = "metadata/name"
 }
+
+/*data "http" "secure_mesh_site" {
+  url = ""
+}*/
