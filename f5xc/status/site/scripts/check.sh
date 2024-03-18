@@ -10,8 +10,6 @@ tenant=$3
 max_timeout=$4
 check_type=$5
 
-echo "CHECK_TYE: $check_type"
-
 if [[ "${check_type}" == "cert" ]] ; then
   cert_p12_file=$2
   cert_password=$6
