@@ -1,4 +1,4 @@
-output "ce" {
+/*output "ce" {
   value = {
     vpc = module.network_common.common["vpc"]
     iam = {
@@ -23,4 +23,8 @@ output "ce" {
       }
     }
   }
+}*/
+
+output "secure_mesh" {
+  value = module.secure_mesh_site
 }

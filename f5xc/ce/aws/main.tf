@@ -14,7 +14,7 @@ module "maurice" {
   f5xc_api_url = var.f5xc_api_url
 }
 
-module "network_common" {
+/*module "network_common" {
   source                                                 = "./network/common"
   owner_tag                                              = var.owner_tag
   common_tags                                            = local.common_tags
@@ -118,7 +118,7 @@ module "config" {
   f5xc_ce_hosts_public_address = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? module.secure_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? module.private_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false ? module.network_node[each.key].ce["slo"]["private_dns_name"] : module.network_node[each.key].ce["slo"]["public_dns"][0]
   maurice_endpoint             = module.maurice.endpoints.maurice
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
-}
+}*/
 
 module "secure_mesh_site" {
   count                                = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
@@ -136,7 +136,7 @@ module "secure_mesh_site" {
   f5xc_ce_performance_enhancement_mode = var.f5xc_ce_performance_enhancement_mode
 }
 
-module "node" {
+/*module "node" {
   depends_on                    = [module.secure_mesh_site]
   source                        = "./nodes"
   for_each                      = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
@@ -173,4 +173,4 @@ module "site_wait_for_online" {
   f5xc_api_p12_file          = var.f5xc_api_p12_file
   status_check_type          = var.status_check_type
   f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
-}
+}*/

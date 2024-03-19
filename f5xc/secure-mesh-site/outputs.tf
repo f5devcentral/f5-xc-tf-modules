@@ -1,3 +1,3 @@
 output "secure_mesh_site" {
-  value = data.http.secure_mesh_site.response_body
+  value = volterra_securemesh_site.secure_mesh_site
 }

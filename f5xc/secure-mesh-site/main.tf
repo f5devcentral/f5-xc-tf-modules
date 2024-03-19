@@ -1,8 +1,43 @@
-data "http" "secure_mesh_site" {
-  url             = format("%s/%s", var.f5xc_api_url, var.f5xc_secure_mesh_uri)
-  method          = "POST"
-  request_headers = {
-    Authorization = format("APIToken %s", var.f5xc_api_token)
+resource "volterra_securemesh_site" "secure_mesh_site" {
+  name                     = var.f5xc_cluster_name
+  labels                   = var.f5xc_cluster_labels
+  namespace                = var.f5xc_namespace
+  worker_nodes             = var.f5xc_cluster_worker_nodes
+  no_bond_devices          = var.f5xc_cluster_no_bond_devices ? var.f5xc_cluster_no_bond_devices : null
+  volterra_certified_hw    = var.f5xc_site_type_certified_hw[var.f5xc_ce_gateway_type]
+  default_network_config   = var.f5xc_cluster_default_network_config
+  logs_streaming_disabled  = var.f5xc_cluster_logs_streaming_disabled
+  default_blocked_services = var.f5xc_cluster_default_blocked_services
+
+  /*coordinates {
+    latitude  = var.f5xc_cluster_latitude
+    longitude = var.f5xc_cluster_longitude
+  }*/
+
+  /*dynamic "bond_device_list" {
+  }*/
+
+  offline_survivability_mode {
+    no_offline_survivability_mode     = var.f5xc_enable_offline_survivability_mode == false ? true : null
+    enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode ? var.f5xc_enable_offline_survivability_mode : null
   }
-  request_body = local.secure_mesh_site_data.json
+
+  performance_enhancement_mode {
+    perf_mode_l7_enhanced = var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced ? true : null
+    dynamic "perf_mode_l3_enhanced" {
+      for_each = var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced == false ? [1] : []
+      content {
+        jumbo    = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled ? true : null
+        no_jumbo = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled == false ? true : null
+      }
+    }
+  }
+
+  dynamic "master_node_configuration" {
+    for_each = var.f5xc_nodes
+    content {
+      name      = master_node_configuration.value.name
+      public_ip = master_node_configuration.value.public_ip
+    }
+  }
 }

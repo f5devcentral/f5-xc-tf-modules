@@ -24,7 +24,8 @@ variable "f5xc_cluster_labels" {
 
 variable "f5xc_nodes" {
   type = list(object({
-    name = string
+    name      = string
+    public_ip = optional(string)
   }))
 }
 
@@ -74,7 +75,27 @@ variable "f5xc_ce_gateway_type" {
   }
 }
 
-variable "f5xc_secure_mesh_uri" {
+variable "f5xc_cluster_no_bond_devices" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_default_blocked_services" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_logs_streaming_disabled" {
   type    = string
-  default = "config/namespaces/system/securemesh_sites"
+  default = false
+}
+
+variable "f5xc_cluster_default_network_config" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_worker_nodes" {
+  type    = list(string)
+  default = []
 }
