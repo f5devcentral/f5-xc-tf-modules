@@ -550,6 +550,18 @@ variable "f5xc_ce_machine_image" {
   }
 }
 
+variable "f5xc_ce_performance_enhancement_mode" {
+  type = object({
+    perf_mode_l7_enhanced = bool
+    perf_mode_l3_enhanced = optional(object({
+      jumbo_frame_enabled = bool
+    }))
+  })
+  default = {
+    perf_mode_l7_enhanced = true
+  }
+}
+
 variable "aws_vpc_cidr_block" {
   description = "AWS vpc CIDR block"
   type        = string

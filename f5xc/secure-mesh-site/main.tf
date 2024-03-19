@@ -1,11 +1,5 @@
-/*resource "restapi_object" "secure_mesh_site" {
-  path         = "/config/namespaces/system/securemesh_sites"
-  data         = local.secure_mesh_site_data.json
-  id_attribute = "metadata/name"
-}*/
-
 data "http" "secure_mesh_site" {
-  url             = format("%s/%s", var.f5xc_api_url, "/config/namespaces/system/securemesh_sites")
+  url             = format("%s/%s", var.f5xc_api_url, var.f5xc_secure_mesh_uri)
   method          = "POST"
   request_headers = {
     Authorization = format("APIToken %s", var.f5xc_api_token)

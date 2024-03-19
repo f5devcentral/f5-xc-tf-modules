@@ -46,16 +46,13 @@ variable "f5xc_enable_offline_survivability_mode" {
   default = false
 }
 
-variable "performance_enhancement_mode" {
+variable "f5xc_ce_performance_enhancement_mode" {
   type = object({
-    enable                = bool
+    perf_mode_l7_enhanced = bool
     perf_mode_l3_enhanced = optional(object({
-      is_jumbo = bool
+      jumbo_frame_enabled = bool
     }))
   })
-  default = {
-    enable = false
-  }
 }
 
 variable "f5xc_site_type_certified_hw" {
@@ -75,4 +72,9 @@ variable "f5xc_ce_gateway_type" {
     ], var.f5xc_ce_gateway_type)
     error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack_gateway")
   }
+}
+
+variable "f5xc_secure_mesh_uri" {
+  type    = string
+  default = "config/namespaces/system/securemesh_sites"
 }

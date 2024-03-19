@@ -26,8 +26,21 @@ locals {
           },
           logs_streaming_disabled : {},
           default_blocked_services : {},
-          offline_survivability_mode : {
+          offline_survivability_mode : var.f5xc_enable_offline_survivability_mode ? {
+            enable_offline_survivability_mode : {}
+          } : {
             no_offline_survivability_mode : {}
+          },
+          performance_enhancement_mode : var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced ? {
+            perf_mode_l7_enhanced : {}
+          } : {
+            perf_mode_l3_enhanced : {
+              jumbo : var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled ? {
+                jumbo : {}
+              } : {
+                no_jumbo : {}
+              }
+            }
           }
         }
       }
