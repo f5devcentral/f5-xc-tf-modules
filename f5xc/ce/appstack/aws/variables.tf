@@ -73,10 +73,22 @@ variable "f5xc_aws_region" {
   type        = string
 }
 
+variable "f5xc_api_p12_file" {
+  description = "F5 XC api ca cert"
+  type        = string
+  default     = ""
+}
+
+variable "f5xc_api_p12_cert_password" {
+  description = "XC API cert file password used later in status module to retrieve site status"
+  type        = string
+  default     = ""
+}
+
 variable "f5xc_cluster_nodes" {
   type = map(map(map(string)))
   validation {
-    condition = length(var.f5xc_cluster_nodes.master) == 1 && length(var.f5xc_cluster_nodes.worker) == 0 || length(var.f5xc_cluster_nodes.master) == 3 && length(var.f5xc_cluster_nodes.worker) >= 0 || length(var.f5xc_cluster_nodes.master) == 0
+    condition     = length(var.f5xc_cluster_nodes.master) == 1 && length(var.f5xc_cluster_nodes.worker) == 0 || length(var.f5xc_cluster_nodes.master) == 3 && length(var.f5xc_cluster_nodes.worker) >= 0 || length(var.f5xc_cluster_nodes.master) == 0
     error_message = "Supported master / worker nodes: master 1 and no worker, master 3 and <n> worker"
   }
 }
