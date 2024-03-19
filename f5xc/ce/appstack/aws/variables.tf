@@ -8,6 +8,11 @@ variable "owner_tag" {
   type        = string
 }
 
+variable "status_check_type" {
+  type    = string
+  default = "token"
+}
+
 variable "f5xc_cluster_name" {
   description = "F5XC Site / Cluster name"
   type        = string
