@@ -376,6 +376,11 @@ variable "f5xc_cluster_name" {
   type = string
 }
 
+variable "f5xc_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
 variable "f5xc_api_p12_cert_password" {
   description = "XC API cert file password used later in status module to retrieve site status"
   type        = string
