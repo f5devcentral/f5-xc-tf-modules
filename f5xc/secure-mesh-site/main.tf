@@ -9,26 +9,21 @@ resource "volterra_securemesh_site" "secure_mesh_site" {
   logs_streaming_disabled  = var.f5xc_cluster_logs_streaming_disabled
   default_blocked_services = var.f5xc_cluster_default_blocked_services
 
-  /*coordinates {
-    latitude  = var.f5xc_cluster_latitude
-    longitude = var.f5xc_cluster_longitude
-  }*/
-
   /*dynamic "bond_device_list" {
   }*/
 
   offline_survivability_mode {
-    no_offline_survivability_mode     = var.f5xc_enable_offline_survivability_mode == false ? true : null
-    enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode ? var.f5xc_enable_offline_survivability_mode : null
+    no_offline_survivability_mode     = var.f5xc_enable_offline_survivability_mode == false ? true : false
+    enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode ? true : false
   }
 
   performance_enhancement_mode {
-    perf_mode_l7_enhanced = var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced ? true : null
+    perf_mode_l7_enhanced = var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced ? true : false
     dynamic "perf_mode_l3_enhanced" {
       for_each = var.f5xc_ce_performance_enhancement_mode.perf_mode_l7_enhanced == false ? [1] : []
       content {
-        jumbo    = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled ? true : null
-        no_jumbo = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled == false ? true : null
+        jumbo    = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled ? true : false
+        no_jumbo = var.f5xc_ce_performance_enhancement_mode.perf_mode_l3_enhanced.jumbo_frame_enabled == false ? true : false
       }
     }
   }
