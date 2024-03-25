@@ -96,6 +96,12 @@ variable "ssh_public_key" {
   default     = null
 }
 
+variable "aws_existing_key_pair_id" {
+  description = "existing AWS ssh object id"
+  type        = string
+  default     = null
+}
+
 variable "aws_slo_rt_custom_ipv4_routes" {
   description = "Add custom ipv4 routes to aws slo rt table"
   type        = list(object({
