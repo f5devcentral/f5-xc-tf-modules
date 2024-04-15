@@ -93,8 +93,7 @@ module "nlb_node" {
   azurerm_network_interface_slo_id    = module.network_node[each.key].ce["slo"]["id"]
   azurerm_network_interface_sli_id    = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
   azurerm_backend_address_pool_id_slo = module.nlb_common[0].common["backend_address_pool_slo"]["id"]
-  azurerm_backend_address_pool_id_sli = local.is_multi_nic ?
-    module.nlb_common[0].common["backend_address_pool_sli"]["id"] : null
+  azurerm_backend_address_pool_id_sli = local.is_multi_nic ? module.nlb_common[0].common["backend_address_pool_sli"]["id"] : null
 }
 
 module "config" {
@@ -107,8 +106,7 @@ module "config" {
   f5xc_cluster_longitude      = var.f5xc_cluster_longitude
   f5xc_registration_token     = volterra_token.token.id
   f5xc_ce_hosts_public_name   = var.f5xc_ce_hosts_public_name
-  azurerm_vnet_name           = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name :
-    format("%s-vnet", var.f5xc_cluster_name)
+  azurerm_vnet_name           = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
   azurerm_tenant_id           = var.azurerm_tenant_id
   azurerm_client_id           = var.azurerm_client_id
   azurerm_client_secret       = var.azurerm_client_secret
