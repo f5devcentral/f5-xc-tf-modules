@@ -36,14 +36,8 @@ module "network_common" {
   azurerm_vnet_address_space    = var.azurerm_vnet_address_space
   azurerm_existing_vnet_name    = var.azurerm_existing_vnet_name
   azurerm_resource_group_name   = local.f5xc_azure_resource_group
-  azurerm_security_group_sli_id = local.is_multi_nic ? (var.f5xc_is_secure_cloud_ce ?
-    concat(var.azure_security_group_rules_sli, module.secure_ce_security_rules[0].sgr["security_group_rules_sli"]) :
-    ((var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_sli) > 0 ?
-      var.azure_security_group_rules_sli : module.ce_default_security_rules.sgr["security_group_rules_sli"]))) : []
-  azurerm_security_group_slo_id = var.f5xc_is_secure_cloud_ce ?
-    concat(module.secure_ce_security_rules[0].sgr["security_group_rules_slo"], var.azure_security_group_rules_slo) :
-    (var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_slo) > 0 ?
-      var.azure_security_group_rules_slo : module.ce_default_security_rules.sgr["security_group_rules_slo"])
+  azurerm_security_group_sli_id = local.is_multi_nic ? (var.f5xc_is_secure_cloud_ce ? concat(var.azure_security_group_rules_sli, module.secure_ce_security_rules[0].sgr["security_group_rules_sli"]) : ((var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_sli) > 0 ? var.azure_security_group_rules_sli : module.ce_default_security_rules.sgr["security_group_rules_sli"]))) : []
+  azurerm_security_group_slo_id = var.f5xc_is_secure_cloud_ce ? concat(module.secure_ce_security_rules[0].sgr["security_group_rules_slo"], var.azure_security_group_rules_slo) : (var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_slo) > 0 ? var.azure_security_group_rules_slo : module.ce_default_security_rules.sgr["security_group_rules_slo"])
 }
 
 module "network_node" {
