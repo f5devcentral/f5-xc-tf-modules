@@ -14,6 +14,11 @@ variable "owner_tag" {
   type = string
 }
 
+variable "status_check_type" {
+  type    = string
+  default = "token"
+}
+
 variable "azurerm_availability_set_id" {
   type    = string
   default = ""

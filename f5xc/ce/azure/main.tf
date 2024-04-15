@@ -36,8 +36,14 @@ module "network_common" {
   azurerm_vnet_address_space    = var.azurerm_vnet_address_space
   azurerm_existing_vnet_name    = var.azurerm_existing_vnet_name
   azurerm_resource_group_name   = local.f5xc_azure_resource_group
-  azurerm_security_group_sli_id = local.is_multi_nic ? (var.f5xc_is_secure_cloud_ce ? concat(var.azure_security_group_rules_sli, module.secure_ce_security_rules[0].sgr["security_group_rules_sli"]) : ((var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_sli) > 0 ? var.azure_security_group_rules_sli : module.ce_default_security_rules.sgr["security_group_rules_sli"]))) : []
-  azurerm_security_group_slo_id = var.f5xc_is_secure_cloud_ce ? concat(module.secure_ce_security_rules[0].sgr["security_group_rules_slo"], var.azure_security_group_rules_slo) : (var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_slo) > 0 ? var.azure_security_group_rules_slo : module.ce_default_security_rules.sgr["security_group_rules_slo"])
+  azurerm_security_group_sli_id = local.is_multi_nic ? (var.f5xc_is_secure_cloud_ce ?
+    concat(var.azure_security_group_rules_sli, module.secure_ce_security_rules[0].sgr["security_group_rules_sli"]) :
+    ((var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_sli) > 0 ?
+      var.azure_security_group_rules_sli : module.ce_default_security_rules.sgr["security_group_rules_sli"]))) : []
+  azurerm_security_group_slo_id = var.f5xc_is_secure_cloud_ce ?
+    concat(module.secure_ce_security_rules[0].sgr["security_group_rules_slo"], var.azure_security_group_rules_slo) :
+    (var.f5xc_is_secure_cloud_ce == false && length(var.azure_security_group_rules_slo) > 0 ?
+      var.azure_security_group_rules_slo : module.ce_default_security_rules.sgr["security_group_rules_slo"])
 }
 
 module "network_node" {
@@ -87,18 +93,19 @@ module "nlb_common" {
 
 module "nlb_node" {
   source                              = "./network/nlb/node"
-  for_each                            = local.is_multi_node ? {for k, v in var.f5xc_azure_az_nodes : k=>v} : {}
+  for_each                            = local.is_multi_node ? {for k, v in var.f5xc_azure_az_nodes : k => v} : {}
   is_multi_nic                        = local.is_multi_nic
   f5xc_node_name                      = format("%s-%s", var.f5xc_cluster_name, each.key)
   azurerm_network_interface_slo_id    = module.network_node[each.key].ce["slo"]["id"]
   azurerm_network_interface_sli_id    = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
   azurerm_backend_address_pool_id_slo = module.nlb_common[0].common["backend_address_pool_slo"]["id"]
-  azurerm_backend_address_pool_id_sli = local.is_multi_nic ?  module.nlb_common[0].common["backend_address_pool_sli"]["id"] : null
+  azurerm_backend_address_pool_id_sli = local.is_multi_nic ?
+    module.nlb_common[0].common["backend_address_pool_sli"]["id"] : null
 }
 
 module "config" {
   source                      = "./config"
-  for_each                    = {for k, v in var.f5xc_azure_az_nodes : k=>v}
+  for_each                    = {for k, v in var.f5xc_azure_az_nodes : k => v}
   f5xc_azure_region           = var.f5xc_azure_region
   f5xc_cluster_name           = var.f5xc_cluster_name
   f5xc_cluster_labels         = var.f5xc_cluster_labels
@@ -106,7 +113,8 @@ module "config" {
   f5xc_cluster_longitude      = var.f5xc_cluster_longitude
   f5xc_registration_token     = volterra_token.token.id
   f5xc_ce_hosts_public_name   = var.f5xc_ce_hosts_public_name
-  azurerm_vnet_name           = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
+  azurerm_vnet_name           = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name :
+    format("%s-vnet", var.f5xc_cluster_name)
   azurerm_tenant_id           = var.azurerm_tenant_id
   azurerm_client_id           = var.azurerm_client_id
   azurerm_client_secret       = var.azurerm_client_secret
@@ -123,7 +131,7 @@ module "config" {
 
 module "node" {
   source                                 = "./nodes"
-  for_each                               = {for k, v in var.f5xc_azure_az_nodes : k=>v}
+  for_each                               = {for k, v in var.f5xc_azure_az_nodes : k => v}
   azurerm_marketplace_plan               = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size               = var.azurerm_instance_vm_size
   azurerm_marketplace_offer              = var.f5xc_azure_marketplace_agreement_offers[var.f5xc_ce_gateway_type]
@@ -152,12 +160,15 @@ module "node" {
 }
 
 module "site_wait_for_online" {
-  depends_on     = [module.node]
-  source         = "../../status/site"
-  f5xc_api_token = var.f5xc_api_token
-  f5xc_api_url   = var.f5xc_api_url
-  f5xc_namespace = var.f5xc_namespace
-  f5xc_site_name = var.f5xc_cluster_name
-  f5xc_tenant    = var.f5xc_tenant
-  is_sensitive   = var.is_sensitive
+  depends_on                 = [module.node]
+  source                     = "../../status/site"
+  is_sensitive               = var.is_sensitive
+  f5xc_api_token             = var.f5xc_api_token
+  f5xc_tenant                = var.f5xc_tenant
+  f5xc_api_url               = var.f5xc_api_url
+  f5xc_site_name             = var.f5xc_cluster_name
+  f5xc_namespace             = var.f5xc_namespace
+  f5xc_api_p12_file          = var.f5xc_api_p12_file
+  status_check_type          = var.status_check_type
+  f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
 }
