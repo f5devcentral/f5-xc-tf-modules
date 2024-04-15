@@ -24,7 +24,8 @@ variable "f5xc_cluster_labels" {
 
 variable "f5xc_nodes" {
   type = list(object({
-    name = string
+    name      = string
+    public_ip = optional(string)
   }))
 }
 
@@ -39,6 +40,20 @@ variable "f5xc_cluster_longitude" {
 variable "f5xc_annotations" {
   type    = map(string)
   default = {}
+}
+
+variable "f5xc_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_ce_performance_enhancement_mode" {
+  type = object({
+    perf_mode_l7_enhanced = bool
+    perf_mode_l3_enhanced = optional(object({
+      jumbo_frame_enabled = bool
+    }))
+  })
 }
 
 variable "f5xc_site_type_certified_hw" {
@@ -58,4 +73,29 @@ variable "f5xc_ce_gateway_type" {
     ], var.f5xc_ce_gateway_type)
     error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack_gateway")
   }
+}
+
+variable "f5xc_cluster_no_bond_devices" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_default_blocked_services" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_logs_streaming_disabled" {
+  type    = string
+  default = false
+}
+
+variable "f5xc_cluster_default_network_config" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_cluster_worker_nodes" {
+  type    = list(string)
+  default = []
 }

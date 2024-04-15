@@ -53,7 +53,7 @@ module "network_node" {
   create_new_aws_slo_rta             = var.create_new_aws_slo_rta
   aws_vpc_az                         = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_id                         = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
-  aws_sg_sli_ids                     = local.is_multi_nic ? length(var.aws_existing_sg_sli_ids > 0) ? var.aws_existing_sg_sli_ids : module.network_common.common["sg_sli_ids"] : []
+  aws_sg_sli_ids                     = local.is_multi_nic ? length(var.aws_existing_sg_sli_ids) > 0 ? var.aws_existing_sg_sli_ids : module.network_common.common["sg_sli_ids"] : []
   aws_sg_slo_ids                     = length(var.aws_existing_sg_slo_ids) > 0 ? var.aws_existing_sg_slo_ids : module.network_common.common["sg_slo_ids"]
   aws_subnet_slo_cidr                = contains(keys(var.f5xc_aws_vpc_az_nodes[each.key]), "f5xc_aws_vpc_slo_subnet") ? var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_slo_subnet"] : null
   aws_subnet_sli_cidr                = local.is_multi_nic && contains(keys(var.f5xc_aws_vpc_az_nodes[each.key]), "f5xc_aws_vpc_sli_subnet") ? var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_sli_subnet"] : null
@@ -121,18 +121,20 @@ module "config" {
 }
 
 module "secure_mesh_site" {
-  count                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
-  source                 = "../../secure-mesh-site"
-  f5xc_nodes             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]
-  f5xc_tenant            = var.f5xc_tenant
-  f5xc_api_url           = var.f5xc_api_url
-  f5xc_namespace         = var.f5xc_namespace
-  f5xc_api_token         = var.f5xc_api_token
-  f5xc_cluster_name      = var.f5xc_cluster_name
-  f5xc_cluster_labels    = {} # var.f5xc_cluster_labels
-  f5xc_ce_gateway_type   = var.f5xc_ce_gateway_type
-  f5xc_cluster_latitude  = var.f5xc_cluster_latitude
-  f5xc_cluster_longitude = var.f5xc_cluster_longitude
+  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  source                                 = "../../secure-mesh-site"
+  f5xc_nodes                             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]
+  f5xc_tenant                            = var.f5xc_tenant
+  f5xc_api_url                           = var.f5xc_api_url
+  f5xc_namespace                         = var.f5xc_namespace
+  f5xc_api_token                         = var.f5xc_api_token
+  f5xc_cluster_name                      = var.f5xc_cluster_name
+  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
+  f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
+  f5xc_ce_performance_enhancement_mode   = var.f5xc_ce_performance_enhancement_mode
+  f5xc_enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode
 }
 
 module "node" {
@@ -161,12 +163,15 @@ module "node" {
 }
 
 module "site_wait_for_online" {
-  depends_on     = [module.node]
-  source         = "../../status/site"
-  f5xc_api_token = var.f5xc_api_token
-  f5xc_api_url   = var.f5xc_api_url
-  f5xc_namespace = var.f5xc_namespace
-  f5xc_site_name = var.f5xc_cluster_name
-  f5xc_tenant    = var.f5xc_tenant
-  is_sensitive   = var.is_sensitive
+  depends_on                 = [module.node]
+  source                     = "../../status/site"
+  is_sensitive               = var.is_sensitive
+  f5xc_api_token             = var.f5xc_api_token
+  f5xc_tenant                = var.f5xc_tenant
+  f5xc_api_url               = var.f5xc_api_url
+  f5xc_site_name             = var.f5xc_cluster_name
+  f5xc_namespace             = var.f5xc_namespace
+  f5xc_api_p12_file          = var.f5xc_api_p12_file
+  status_check_type          = var.status_check_type
+  f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
 }

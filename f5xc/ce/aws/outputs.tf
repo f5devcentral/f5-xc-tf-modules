@@ -24,3 +24,7 @@ output "ce" {
     }
   }
 }
+
+output "secure_mesh" {
+  value = module.secure_mesh_site
+}
