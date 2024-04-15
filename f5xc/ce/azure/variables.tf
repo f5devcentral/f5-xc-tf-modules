@@ -208,11 +208,15 @@ variable "f5xc_cluster_labels" {
 }
 
 variable "f5xc_cluster_latitude" {
-  type = number
+  description = "geo latitude"
+  type        = number
+  default     = -73.935242
 }
 
 variable "f5xc_cluster_longitude" {
-  type = number
+  description = "geo longitude"
+  type        = number
+  default     = 40.730610
 }
 
 variable "f5xc_api_url" {
