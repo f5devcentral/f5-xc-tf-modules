@@ -43,7 +43,7 @@ module "network_common" {
 
 module "network_node" {
   source                             = "./network/node"
-  for_each                           = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  for_each                           = {for k, v in var.f5xc_aws_vpc_az_nodes : k => v}
   owner_tag                          = var.owner_tag
   node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
   common_tags                        = local.common_tags
@@ -67,9 +67,7 @@ module "network_node" {
 module "secure_ce" {
   source      = "./network/secure"
   common_tags = local.common_tags
-  for_each    = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {
-    for k, v in var.f5xc_aws_vpc_az_nodes : k=>v
-  } : {}
+  for_each    = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
@@ -81,9 +79,7 @@ module "secure_ce" {
 module "private_ce" {
   source      = "./network/private"
   common_tags = local.common_tags
-  for_each    = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {
-    for k, v in var.f5xc_aws_vpc_az_nodes : k=>v
-  } : {}
+  for_each    = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
@@ -103,7 +99,7 @@ module "network_nlb" {
 
 module "config" {
   source                       = "./config"
-  for_each                     = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  for_each                     = {for k, v in var.f5xc_aws_vpc_az_nodes : k => v}
   owner_tag                    = var.owner_tag
   ssh_public_key               = var.ssh_public_key != null ? aws_key_pair.aws_key.0.public_key : data.aws_key_pair.existing_aws_key.0.public_key
   f5xc_site_token              = volterra_token.site.id
@@ -123,6 +119,7 @@ module "config" {
 module "secure_mesh_site" {
   count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
   source                                 = "../../secure-mesh-site"
+  csp_provider                           = "aws"
   f5xc_nodes                             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]
   f5xc_tenant                            = var.f5xc_tenant
   f5xc_api_url                           = var.f5xc_api_url
@@ -140,7 +137,7 @@ module "secure_mesh_site" {
 module "node" {
   depends_on                    = [module.secure_mesh_site]
   source                        = "./nodes"
-  for_each                      = {for k, v in var.f5xc_aws_vpc_az_nodes : k=>v}
+  for_each                      = {for k, v in var.f5xc_aws_vpc_az_nodes : k => v}
   owner_tag                     = var.owner_tag
   common_tags                   = local.common_tags
   is_multi_nic                  = local.is_multi_nic

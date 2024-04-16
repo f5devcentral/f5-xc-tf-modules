@@ -4,7 +4,7 @@ resource "volterra_securemesh_site" "secure_mesh_site" {
   namespace                = var.f5xc_namespace
   worker_nodes             = var.f5xc_cluster_worker_nodes
   no_bond_devices          = var.f5xc_cluster_no_bond_devices ? var.f5xc_cluster_no_bond_devices : null
-  volterra_certified_hw    = var.f5xc_site_type_certified_hw[var.f5xc_ce_gateway_type]
+  volterra_certified_hw    = var.f5xc_site_type_certified_hw[var.csp_provider][var.f5xc_ce_gateway_type]
   default_network_config   = var.f5xc_cluster_default_network_config
   logs_streaming_disabled  = var.f5xc_cluster_logs_streaming_disabled
   default_blocked_services = var.f5xc_cluster_default_blocked_services

@@ -39,11 +39,11 @@ resource "azurerm_linux_virtual_machine" "instance" {
 
 resource "volterra_registration_approval" "nodes" {
   depends_on   = [azurerm_linux_virtual_machine.instance]
-  cluster_name = var.f5xc_cluster_name
-  cluster_size = var.f5xc_cluster_size
+  retry        = var.f5xc_registration_retry
   hostname     = azurerm_linux_virtual_machine.instance.name
   wait_time    = var.f5xc_registration_wait_time
-  retry        = var.f5xc_registration_retry
+  cluster_name = var.f5xc_cluster_name
+  cluster_size = var.f5xc_cluster_size
 }
 
 resource "volterra_site_state" "decommission_when_delete" {
@@ -51,6 +51,6 @@ resource "volterra_site_state" "decommission_when_delete" {
   name       = var.f5xc_node_name
   when       = "delete"
   state      = "DECOMMISSIONING"
-  wait_time  = var.f5xc_registration_wait_time
   retry      = var.f5xc_registration_retry
+  wait_time  = var.f5xc_registration_wait_time
 }
