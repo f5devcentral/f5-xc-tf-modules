@@ -1,18 +1,15 @@
 resource "azurerm_linux_virtual_machine" "instance" {
-  tags                             = var.common_tags
-  name                             = var.f5xc_node_name
-  size                             = var.azurerm_instance_vm_size
-  location                         = var.f5xc_azure_region
-  custom_data                      = var.f5xc_instance_config
-  computer_name                    = var.f5xc_node_name
-  admin_username                   = var.azurerm_instance_admin_username
-  availability_set_id              = var.azurerm_availability_set_id != "" ? var.azurerm_availability_set_id : null
-  resource_group_name              = var.azurerm_resource_group_name
-  network_interface_ids            = var.azurerm_instance_network_interface_ids
-  # primary_network_interface_id     = var.azurerm_primary_network_interface_id
-  # delete_os_disk_on_termination    = var.azurerm_instance_delete_os_disk_on_termination
-  # delete_data_disks_on_termination = var.azurerm_instance_delete_data_disks_on_termination
-  disable_password_authentication  = var.azurerm_instance_admin_username != "" ? false : true
+  tags                            = var.common_tags
+  name                            = var.f5xc_node_name
+  size                            = var.azurerm_instance_vm_size
+  location                        = var.f5xc_azure_region
+  custom_data                     = base64encode(var.f5xc_instance_config)
+  computer_name                   = var.f5xc_node_name
+  admin_username                  = var.azurerm_instance_admin_username
+  availability_set_id             = var.azurerm_availability_set_id != "" ? var.azurerm_availability_set_id : null
+  resource_group_name             = var.azurerm_resource_group_name
+  network_interface_ids           = var.azurerm_instance_network_interface_ids
+  disable_password_authentication = var.azurerm_instance_admin_username != "" ? false : true
 
   admin_ssh_key {
     username   = var.azurerm_instance_admin_username
@@ -22,7 +19,7 @@ resource "azurerm_linux_virtual_machine" "instance" {
   os_disk {
     caching              = "ReadWrite"
     disk_size_gb         = var.azurerm_instance_disk_size
-    storage_account_type = "Standard_LRS"
+    storage_account_type = var.azurerm_os_disk_storage_account_type
   }
 
   source_image_reference {

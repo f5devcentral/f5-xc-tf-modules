@@ -18,16 +18,6 @@ variable "azurerm_primary_network_interface_id" {
   type = string
 }
 
-variable "azurerm_instance_delete_os_disk_on_termination" {
-  type    = bool
-  default = true
-}
-
-variable "azurerm_instance_delete_data_disks_on_termination" {
-  type    = bool
-  default = true
-}
-
 variable "azurerm_disable_password_authentication" {
   type = bool
 }
