@@ -130,7 +130,7 @@ module "secure_mesh_site" {
   f5xc_namespace                         = var.f5xc_namespace
   f5xc_api_token                         = var.f5xc_api_token
   f5xc_cluster_name                      = var.f5xc_cluster_name
-  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
   f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
@@ -139,33 +139,35 @@ module "secure_mesh_site" {
 }
 
 module "node" {
-  source                                 = "./nodes"
-  for_each                               = {for k, v in var.f5xc_azure_az_nodes : k => v}
-  azurerm_marketplace_plan               = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
-  azurerm_instance_vm_size               = var.azurerm_instance_vm_size
-  azurerm_marketplace_offer              = var.f5xc_azure_marketplace_agreement_offers[var.f5xc_ce_gateway_type]
-  azurerm_instance_disk_size             = var.azurerm_instance_disk_size
-  azurerm_resource_group_name            = local.f5xc_azure_resource_group
-  azurerm_availability_set_id            = var.azurerm_availability_set_id
-  azurerm_marketplace_version            = var.azurerm_marketplace_version
-  azurerm_marketplace_publisher          = var.f5xc_azure_marketplace_agreement_publisher
-  azurerm_instance_admin_username        = var.azurerm_instance_admin_username
-  azurerm_primary_network_interface_id   = module.network_node[each.key].ce["slo"]["id"]
-  azurerm_instance_network_interface_ids = module.network_node[each.key].ce["interface_ids"]
-  f5xc_tenant                            = var.f5xc_tenant
-  f5xc_api_url                           = var.f5xc_api_url
-  f5xc_namespace                         = var.f5xc_namespace
-  f5xc_api_token                         = var.f5xc_api_token
-  f5xc_node_name                         = format("%s-%s", var.f5xc_cluster_name, each.key)
-  f5xc_azure_region                      = var.f5xc_azure_region
-  f5xc_cluster_name                      = var.f5xc_cluster_name
-  f5xc_cluster_size                      = length(var.f5xc_azure_az_nodes)
-  f5xc_instance_config                   = module.config[each.key].ce["user_data"]
-  f5xc_registration_retry                = var.f5xc_registration_retry
-  f5xc_registration_wait_time            = var.f5xc_registration_wait_time
-  owner_tag                              = var.owner_tag
-  common_tags                            = local.common_tags
-  ssh_public_key                         = var.ssh_public_key
+  source                                  = "./nodes"
+  for_each                                = {for k, v in var.f5xc_azure_az_nodes : k => v}
+  owner_tag                               = var.owner_tag
+  common_tags                             = local.common_tags
+  ssh_public_key                          = var.ssh_public_key
+  azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
+  azurerm_instance_vm_size                = var.azurerm_instance_vm_size
+  azurerm_marketplace_offer               = var.f5xc_azure_marketplace_agreement_offers[var.f5xc_ce_gateway_type]
+  azurerm_instance_disk_size              = var.azurerm_instance_disk_size
+  azurerm_resource_group_name             = local.f5xc_azure_resource_group
+  azurerm_availability_set_id             = var.azurerm_availability_set_id
+  azurerm_marketplace_version             = var.azurerm_marketplace_version
+  azurerm_marketplace_publisher           = var.f5xc_azure_marketplace_agreement_publisher
+  azurerm_instance_admin_username         = var.azurerm_instance_admin_username
+  azurerm_os_disk_storage_account_type    = var.azurerm_os_disk_storage_account_type
+  azurerm_primary_network_interface_id    = module.network_node[each.key].ce["slo"]["id"]
+  azurerm_instance_network_interface_ids  = module.network_node[each.key].ce["interface_ids"]
+  azurerm_disable_password_authentication = var.azurerm_disable_password_authentication
+  f5xc_tenant                             = var.f5xc_tenant
+  f5xc_api_url                            = var.f5xc_api_url
+  f5xc_namespace                          = var.f5xc_namespace
+  f5xc_api_token                          = var.f5xc_api_token
+  f5xc_node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_azure_region                       = var.f5xc_azure_region
+  f5xc_cluster_name                       = var.f5xc_cluster_name
+  f5xc_cluster_size                       = length(var.f5xc_azure_az_nodes)
+  f5xc_instance_config                    = module.config[each.key].ce["user_data"]
+  f5xc_registration_retry                 = var.f5xc_registration_retry
+  f5xc_registration_wait_time             = var.f5xc_registration_wait_time
 }
 
 module "site_wait_for_online" {

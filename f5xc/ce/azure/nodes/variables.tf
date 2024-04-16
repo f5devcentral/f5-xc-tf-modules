@@ -28,6 +28,14 @@ variable "azurerm_instance_delete_data_disks_on_termination" {
   default = true
 }
 
+variable "azurerm_disable_password_authentication" {
+  type = bool
+}
+
+variable "azurerm_os_disk_storage_account_type" {
+  type    = string
+}
+
 variable "azurerm_availability_set_id" {
   type = string
 }

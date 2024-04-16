@@ -207,6 +207,16 @@ variable "azurerm_existing_vnet_name" {
   default = ""
 }
 
+variable "azurerm_disable_password_authentication" {
+  type    = bool
+  default = true
+}
+
+variable "azurerm_os_disk_storage_account_type" {
+  type    = string
+  default = "Standard_LRS"
+}
+
 variable "f5xc_azure_marketplace_agreement_publisher" {
   type    = string
   default = "volterraedgeservices"

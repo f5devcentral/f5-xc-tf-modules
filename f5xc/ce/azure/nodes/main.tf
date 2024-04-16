@@ -1,20 +1,35 @@
-resource "azurerm_virtual_machine" "instance" {
+resource "azurerm_linux_virtual_machine" "instance" {
   tags                             = var.common_tags
   name                             = var.f5xc_node_name
-  vm_size                          = var.azurerm_instance_vm_size
+  size                             = var.azurerm_instance_vm_size
   location                         = var.f5xc_azure_region
+  custom_data                      = var.f5xc_instance_config
+  computer_name                    = var.f5xc_node_name
+  admin_username                   = var.azurerm_instance_admin_username
   availability_set_id              = var.azurerm_availability_set_id != "" ? var.azurerm_availability_set_id : null
   resource_group_name              = var.azurerm_resource_group_name
   network_interface_ids            = var.azurerm_instance_network_interface_ids
-  primary_network_interface_id     = var.azurerm_primary_network_interface_id
-  delete_os_disk_on_termination    = var.azurerm_instance_delete_os_disk_on_termination
-  delete_data_disks_on_termination = var.azurerm_instance_delete_data_disks_on_termination
+  # primary_network_interface_id     = var.azurerm_primary_network_interface_id
+  # delete_os_disk_on_termination    = var.azurerm_instance_delete_os_disk_on_termination
+  # delete_data_disks_on_termination = var.azurerm_instance_delete_data_disks_on_termination
+  disable_password_authentication  = var.azurerm_instance_admin_username != "" ? false : true
 
-  storage_image_reference {
-    sku       = var.azurerm_marketplace_plan
-    offer     = var.azurerm_marketplace_offer
-    version   = var.azurerm_marketplace_version
+  admin_ssh_key {
+    username   = var.azurerm_instance_admin_username
+    public_key = var.ssh_public_key
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    disk_size_gb         = var.azurerm_instance_disk_size
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
     publisher = var.azurerm_marketplace_publisher
+    offer     = var.azurerm_marketplace_offer
+    sku       = var.azurerm_marketplace_plan
+    version   = var.azurerm_marketplace_version
   }
 
   plan {
@@ -22,35 +37,13 @@ resource "azurerm_virtual_machine" "instance" {
     product   = var.azurerm_marketplace_offer
     publisher = var.azurerm_marketplace_publisher
   }
-
-  storage_os_disk {
-    name          = "${var.f5xc_node_name}-system"
-    os_type       = "Linux"
-    create_option = "FromImage"
-    disk_size_gb  = var.azurerm_instance_disk_size
-  }
-
-  os_profile {
-    custom_data    = var.f5xc_instance_config
-    computer_name  = var.f5xc_node_name
-    admin_username = var.azurerm_instance_admin_username
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-
-    ssh_keys {
-      path     = "/home/${var.azurerm_instance_admin_username}/.ssh/authorized_keys"
-      key_data = var.ssh_public_key
-    }
-  }
 }
 
 resource "volterra_registration_approval" "nodes" {
-  depends_on   = [azurerm_virtual_machine.instance]
+  depends_on   = [azurerm_linux_virtual_machine.instance]
   cluster_name = var.f5xc_cluster_name
   cluster_size = var.f5xc_cluster_size
-  hostname     = azurerm_virtual_machine.instance.name
+  hostname     = azurerm_linux_virtual_machine.instance.name
   wait_time    = var.f5xc_registration_wait_time
   retry        = var.f5xc_registration_retry
 }

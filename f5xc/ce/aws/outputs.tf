@@ -22,9 +22,6 @@ output "ce" {
         secure_ce = var.f5xc_is_secure_cloud_ce ? module.secure_ce[node].ce : null
       }
     }
+    secure_mesh_site = module.secure_mesh_site
   }
-}
-
-output "secure_mesh" {
-  value = module.secure_mesh_site
 }
