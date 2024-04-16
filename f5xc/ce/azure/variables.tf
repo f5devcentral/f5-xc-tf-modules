@@ -42,6 +42,11 @@ variable "azurerm_instance_admin_username" {
   type = string
 }
 
+variable "azurerm_instance_admin_password" {
+  type    = string
+  default = ""
+}
+
 variable "azurerm_route_table_next_hop_type" {
   type    = string
   default = "VirtualAppliance"

@@ -23,7 +23,7 @@ variable "azurerm_disable_password_authentication" {
 }
 
 variable "azurerm_os_disk_storage_account_type" {
-  type    = string
+  type = string
 }
 
 variable "azurerm_availability_set_id" {
@@ -56,6 +56,10 @@ variable "azurerm_instance_disk_size" {
 }
 
 variable "azurerm_instance_admin_username" {
+  type = string
+}
+
+variable "azurerm_instance_admin_password" {
   type = string
 }
 

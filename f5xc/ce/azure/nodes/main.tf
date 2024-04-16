@@ -6,10 +6,11 @@ resource "azurerm_linux_virtual_machine" "instance" {
   custom_data                     = base64encode(var.f5xc_instance_config)
   computer_name                   = var.f5xc_node_name
   admin_username                  = var.azurerm_instance_admin_username
+  admin_password                  = var.azurerm_instance_admin_password != "" ? var.azurerm_instance_admin_password : null
   availability_set_id             = var.azurerm_availability_set_id != "" ? var.azurerm_availability_set_id : null
   resource_group_name             = var.azurerm_resource_group_name
   network_interface_ids           = var.azurerm_instance_network_interface_ids
-  disable_password_authentication = var.azurerm_instance_admin_username != "" ? false : true
+  disable_password_authentication = var.azurerm_instance_admin_password != "" ? false : true
 
   admin_ssh_key {
     username   = var.azurerm_instance_admin_username

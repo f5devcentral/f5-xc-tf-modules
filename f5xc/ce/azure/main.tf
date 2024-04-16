@@ -153,6 +153,7 @@ module "node" {
   azurerm_marketplace_version             = var.azurerm_marketplace_version
   azurerm_marketplace_publisher           = var.f5xc_azure_marketplace_agreement_publisher
   azurerm_instance_admin_username         = var.azurerm_instance_admin_username
+  azurerm_instance_admin_password         = var.azurerm_instance_admin_password
   azurerm_os_disk_storage_account_type    = var.azurerm_os_disk_storage_account_type
   azurerm_primary_network_interface_id    = module.network_node[each.key].ce["slo"]["id"]
   azurerm_instance_network_interface_ids  = module.network_node[each.key].ce["interface_ids"]
