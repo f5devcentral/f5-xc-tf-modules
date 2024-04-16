@@ -121,6 +121,23 @@ module "config" {
   maurice_mtls_endpoint       = module.maurice.endpoints.maurice_mtls
 }
 
+module "secure_mesh_site" {
+  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  source                                 = "../../secure-mesh-site"
+  f5xc_nodes                             = [for k in keys(var.f5xc_azure_az_nodes) : { name = k }]
+  f5xc_tenant                            = var.f5xc_tenant
+  f5xc_api_url                           = var.f5xc_api_url
+  f5xc_namespace                         = var.f5xc_namespace
+  f5xc_api_token                         = var.f5xc_api_token
+  f5xc_cluster_name                      = var.f5xc_cluster_name
+  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
+  f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
+  f5xc_ce_performance_enhancement_mode   = var.f5xc_ce_performance_enhancement_mode
+  f5xc_enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode
+}
+
 module "node" {
   source                                 = "./nodes"
   for_each                               = {for k, v in var.f5xc_azure_az_nodes : k => v}
