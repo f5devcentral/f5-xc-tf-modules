@@ -49,6 +49,24 @@ module "config" {
   maurice_mtls_endpoint      = module.maurice.endpoints.maurice_mtls
 }
 
+module "secure_mesh_site" {
+  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  source                                 = "../../secure-mesh-site"
+  csp_provider                           = "gcp"
+  f5xc_nodes                             = [for k in keys(var.f5xc_ce_nodes) : { name = k }]
+  f5xc_tenant                            = var.f5xc_tenant
+  f5xc_api_url                           = var.f5xc_api_url
+  f5xc_namespace                         = var.f5xc_namespace
+  f5xc_api_token                         = var.f5xc_api_token
+  f5xc_cluster_name                      = var.f5xc_cluster_name
+  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
+  f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
+  f5xc_ce_performance_enhancement_mode   = var.f5xc_ce_performance_enhancement_mode
+  f5xc_enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode
+}
+
 module "node" {
   source                                           = "./nodes"
   gcp_region                                       = var.gcp_region
@@ -59,6 +77,7 @@ module "node" {
   ssh_public_key                                   = var.ssh_public_key
   slo_subnetwork                                   = local.create_network ? module.network_common[0].common["slo_subnetwork"]["name"] : var.existing_network_outside.subnets_ids[0]
   sli_subnetwork                                   = local.create_network && local.is_multi_nic ? module.network_common[0].common["sli_subnetwork"]["name"] : local.is_multi_nic ? var.existing_network_inside.subnets_ids[0] : ""
+  status_check_type                                = var.status_check_type
   serial_port_enable                               = var.serial_port_enable
   access_config_nat_ip                             = var.access_config_nat_ip
   gcp_service_account_email                        = var.gcp_service_account_email
@@ -86,12 +105,3 @@ module "node" {
   f5xc_is_secure_cloud_ce                          = var.f5xc_is_secure_cloud_ce
   f5xc_registration_wait_time                      = var.f5xc_registration_wait_time
 }
-
-/*
-resource "volterra_set_cloud_site_info" "site_info" {
-  name        = ""
-  site_type   = "gcp_vpc_site"
-  public_ips  = []
-  private_ips = []
-}
-*/

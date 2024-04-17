@@ -82,11 +82,11 @@ resource "google_compute_region_instance_group_manager" "instance_group_manager"
 
 resource "volterra_registration_approval" "nodes" {
   count        = length(local.node_names)
-  cluster_name = var.f5xc_cluster_name
-  cluster_size = var.f5xc_cluster_size
+  retry        = var.f5xc_registration_retry
   hostname     = local.node_names[count.index]
   wait_time    = var.f5xc_registration_wait_time
-  retry        = var.f5xc_registration_retry
+  cluster_name = var.f5xc_cluster_name
+  cluster_size = var.f5xc_cluster_size
 }
 
 resource "volterra_site_state" "decommission_when_delete" {
@@ -94,17 +94,18 @@ resource "volterra_site_state" "decommission_when_delete" {
   name       = var.f5xc_cluster_name
   when       = "delete"
   state      = "DECOMMISSIONING"
-  wait_time  = var.f5xc_registration_wait_time
   retry      = var.f5xc_registration_retry
+  wait_time  = var.f5xc_registration_wait_time
 }
 
 module "site_wait_for_online" {
-  depends_on     = [volterra_registration_approval.nodes]
-  source         = "../../../status/site"
-  f5xc_api_token = var.f5xc_api_token
-  f5xc_api_url   = var.f5xc_api_url
-  f5xc_namespace = var.f5xc_namespace
-  f5xc_site_name = var.f5xc_cluster_name
-  f5xc_tenant    = var.f5xc_tenant
-  is_sensitive   = var.is_sensitive
+  depends_on        = [volterra_registration_approval.nodes]
+  source            = "../../../status/site"
+  is_sensitive      = var.is_sensitive
+  status_check_type = var.status_check_type
+  f5xc_tenant       = var.f5xc_tenant
+  f5xc_api_url      = var.f5xc_api_url
+  f5xc_api_token    = var.f5xc_api_token
+  f5xc_namespace    = var.f5xc_namespace
+  f5xc_site_name    = var.f5xc_cluster_name
 }

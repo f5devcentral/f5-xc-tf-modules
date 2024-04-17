@@ -6,6 +6,11 @@ variable "gcp_region" {
   type = string
 }
 
+variable "status_check_type" {
+  type    = string
+  default = "token"
+}
+
 variable "existing_network_inside" {
   default = null
 }
@@ -112,6 +117,11 @@ variable "is_sensitive" {
   type        = bool
   default     = false
   description = "Whether to mask sensitive data in output or not"
+}
+
+variable "f5xc_site_type_is_secure_mesh_site" {
+  type    = bool
+  default = true
 }
 
 variable "f5xc_ce_slo_firewall" {
@@ -268,6 +278,23 @@ variable "f5xc_is_secure_cloud_ce" {
 variable "f5xc_ce_slo_enable_secure_sg" {
   type    = bool
   default = false
+}
+
+variable "f5xc_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_ce_performance_enhancement_mode" {
+  type = object({
+    perf_mode_l7_enhanced = bool
+    perf_mode_l3_enhanced = optional(object({
+      jumbo_frame_enabled = bool
+    }))
+  })
+  default = {
+    perf_mode_l7_enhanced = true
+  }
 }
 
 variable "serial_port_enable" {

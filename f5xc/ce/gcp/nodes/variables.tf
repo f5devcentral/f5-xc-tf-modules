@@ -144,3 +144,7 @@ variable "f5xc_is_secure_cloud_ce" {
 variable "serial_port_enable" {
   type = bool
 }
+
+variable "status_check_type" {
+  type    = string
+}
