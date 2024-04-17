@@ -6,74 +6,90 @@ variable "gcp_region" {
   type = string
 }
 
+variable "gcp_existing_network_slo" {
+  description = "existing gcp compute network name slo"
+  type        = string
+  default     = null
+}
+
+variable "gcp_existing_network_sli" {
+  description = "existing gcp compute network name sli"
+  type        = string
+  default     = null
+}
+
+variable "gcp_existing_subnet_network_slo" {
+  description = "existing gcp subnet network name slo"
+  type        = string
+  default     = null
+}
+
+variable "gcp_existing_subnet_network_sli" {
+  description = "existing gcp subnet network name sli"
+  type        = string
+  default     = null
+}
+
 variable "status_check_type" {
   type    = string
   default = "token"
 }
 
-variable "existing_network_inside" {
-  default = null
-}
-
-variable "existing_network_outside" {
-  default = null
-}
-
-variable "instance_type" {
+variable "gcp_instance_type" {
   type    = string
   default = "n2-standard-8"
 }
 
-variable "instance_image" {
+variable "gcp_instance_image" {
   type = string
 }
 
-variable "instance_disk_size" {
+variable "gcp_instance_disk_size" {
   type    = string
   default = "40"
 }
 
-variable "instance_template_description" {
+variable "gcp_instance_template_description" {
   type    = string
   default = "F5XC Cloud CE default template"
 }
 
-variable "instance_group_manager_description" {
+variable "gcp_instance_group_manager_description" {
   type    = string
   default = "F5XC Cloud CE default instance group manager"
 }
 
-variable "instance_group_manager_wait_for_instances" {
+variable "gcp_instance_group_manager_wait_for_instances" {
   type    = bool
   default = true
 }
 
-variable "instance_group_manager_base_instance_name" {
+variable "gcp_instance_group_manager_base_instance_name" {
   type    = string
   default = "node"
 }
 
-variable "host_localhost_public_name" {
+variable "f5xc_host_localhost_public_name" {
   type    = string
   default = "vip"
 }
 
-variable "allow_stopping_for_update" {
+variable "gcp_allow_stopping_for_update" {
   type    = bool
   default = true
 }
 
-variable "instance_tags" {
+variable "gcp_instance_tags" {
   type    = list(string)
   default = []
 }
 
-variable "instance_template_create_timeout" {
+variable "gcp_instance_template_create_timeout" {
   type    = string
   default = "15m"
 }
 
-variable "instance_template_delete_timeout" {
+variable "gcp_instance_template_delete_timeout" {
   type    = string
   default = "15m"
 }
@@ -88,12 +104,12 @@ variable "gcp_service_account_scopes" {
   default = ["cloud-platform"]
 }
 
-variable "auto_create_subnetworks" {
+variable "gcp_auto_create_subnetworks" {
   type    = bool
   default = false
 }
 
-variable "access_config_nat_ip" {
+variable "gcp_access_config_nat_ip" {
   type    = string
   default = ""
 }
@@ -110,7 +126,7 @@ variable "ssh_public_key" {
 
 variable "ssh_username" {
   type    = string
-  default = "centos"
+  default = "cloud-user"
 }
 
 variable "is_sensitive" {
@@ -225,7 +241,7 @@ variable "f5xc_cluster_longitude" {
 }
 
 variable "f5xc_cluster_labels" {
-  type    = map(string)
+  type = map(string)
   default = {}
 }
 
@@ -322,7 +338,7 @@ variable "f5xc_ce_performance_enhancement_mode" {
   }
 }
 
-variable "serial_port_enable" {
+variable "gcp_instance_serial_port_enable" {
   type    = bool
   default = false
 }
