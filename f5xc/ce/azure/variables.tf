@@ -192,18 +192,18 @@ variable "f5xc_ce_performance_enhancement_mode" {
 variable "f5xc_azure_marketplace_agreement_offers" {
   type = map(string)
   default = {
-    ingress_egress_gateway = "entcloud_voltmesh_voltstack_node"
-    ingress_gateway        = "volterra-node"
     app_stack              = "entcloud_voltmesh_voltstack_node"
+    ingress_gateway        = "volterra-node"
+    ingress_egress_gateway = "entcloud_voltmesh_voltstack_node"
   }
 }
 
 variable "f5xc_azure_marketplace_agreement_plans" {
   type = map(string)
   default = {
-    ingress_egress_gateway = "freeplan_entcloud_voltmesh_voltstack_node_multinic"
-    ingress_gateway        = "volterra-node"
     app_stack              = "freeplan_entcloud_voltmesh_voltstack_node"
+    ingress_gateway        = "volterra-node"
+    ingress_egress_gateway = "freeplan_entcloud_voltmesh_voltstack_node_multinic"
   }
 }
 

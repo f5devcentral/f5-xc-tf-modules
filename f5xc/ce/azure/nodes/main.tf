@@ -10,7 +10,7 @@ resource "azurerm_linux_virtual_machine" "instance" {
   availability_set_id             = var.azurerm_availability_set_id != "" ? var.azurerm_availability_set_id : null
   resource_group_name             = var.azurerm_resource_group_name
   network_interface_ids           = var.azurerm_instance_network_interface_ids
-  disable_password_authentication = var.azurerm_instance_admin_password != "" ? false : true
+  disable_password_authentication = var.azurerm_disable_password_authentication
 
   admin_ssh_key {
     username   = var.azurerm_instance_admin_username
@@ -24,10 +24,10 @@ resource "azurerm_linux_virtual_machine" "instance" {
   }
 
   source_image_reference {
-    publisher = var.azurerm_marketplace_publisher
-    offer     = var.azurerm_marketplace_offer
     sku       = var.azurerm_marketplace_plan
+    offer     = var.azurerm_marketplace_offer
     version   = var.azurerm_marketplace_version
+    publisher = var.azurerm_marketplace_publisher
   }
 
   plan {
