@@ -254,30 +254,55 @@ variable "f5xc_api_url" {
   type = string
 }
 
+variable "f5xc_api_p12_file" {
+  description = "F5 XC api ca cert"
+  type        = string
+  default     = ""
+}
+
 variable "f5xc_api_token" {
-  type = string
+  description = "F5 XC api token"
+  type        = string
+  default     = ""
 }
 
 variable "f5xc_tenant" {
-  type = string
+  description = "F5 XC tenant"
+  type        = string
 }
 
 variable "f5xc_token_name" {
-  type = string
+  description = "F5 XC api token name"
+  type        = string
 }
 
 variable "f5xc_namespace" {
-  type = string
+  description = "F5 XC namespace"
+  type        = string
+}
+
+variable "f5xc_api_p12_cert_password" {
+  description = "XC API cert file password used later in status module to retrieve site status"
+  type        = string
+  default     = ""
 }
 
 variable "f5xc_is_secure_cloud_ce" {
-  type    = bool
-  default = false
+  description = "whether CE should be secured by applying security rules on SLO and SLI + NAT GW + SLO private IP"
+  type        = bool
+  default     = false
+}
+
+variable "f5xc_is_private_cloud_ce" {
+  description = "whether CE should be private with SLO has private IP and NAT GW in front"
+  type        = bool
+  default     = false
 }
 
 variable "f5xc_ce_slo_enable_secure_sg" {
-  type    = bool
-  default = false
+  description = "whether CE should be secured by applying security rules on SLO"
+  type        = bool
+  default     = false
 }
 
 variable "f5xc_enable_offline_survivability_mode" {

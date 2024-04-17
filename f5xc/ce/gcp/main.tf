@@ -77,7 +77,6 @@ module "node" {
   ssh_public_key                                   = var.ssh_public_key
   slo_subnetwork                                   = local.create_network ? module.network_common[0].common["slo_subnetwork"]["name"] : var.existing_network_outside.subnets_ids[0]
   sli_subnetwork                                   = local.create_network && local.is_multi_nic ? module.network_common[0].common["sli_subnetwork"]["name"] : local.is_multi_nic ? var.existing_network_inside.subnets_ids[0] : ""
-  status_check_type                                = var.status_check_type
   serial_port_enable                               = var.serial_port_enable
   access_config_nat_ip                             = var.access_config_nat_ip
   gcp_service_account_email                        = var.gcp_service_account_email
@@ -104,4 +103,18 @@ module "node" {
   f5xc_registration_retry                          = var.f5xc_registration_retry
   f5xc_is_secure_cloud_ce                          = var.f5xc_is_secure_cloud_ce
   f5xc_registration_wait_time                      = var.f5xc_registration_wait_time
+}
+
+module "site_wait_for_online" {
+  depends_on                 = [module.node]
+  source                     = "../../status/site"
+  is_sensitive               = var.is_sensitive
+  f5xc_api_token             = var.f5xc_api_token
+  f5xc_tenant                = var.f5xc_tenant
+  f5xc_api_url               = var.f5xc_api_url
+  f5xc_site_name             = var.f5xc_cluster_name
+  f5xc_namespace             = var.f5xc_namespace
+  f5xc_api_p12_file          = var.f5xc_api_p12_file
+  status_check_type          = var.status_check_type
+  f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
 }
