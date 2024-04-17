@@ -33,7 +33,7 @@ resource "google_compute_instance_template" "instance_template" {
     ssh-keys           = "${var.ssh_username}:${var.ssh_public_key}"
     user-data          = var.f5xc_ce_user_data
     VmDnsSetting       = "ZonalPreferred"
-    serial-port-enable = true
+    serial-port-enable = var.serial_port_enable
   }
 
   service_account {
