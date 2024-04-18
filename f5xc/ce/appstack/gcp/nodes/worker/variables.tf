@@ -37,10 +37,6 @@ variable "f5xc_cluster_labels" {
   default = {}
 }
 
-variable "f5xc_is_secure_cloud_ce" {
-  type = bool
-}
-
 variable "gcp_instance_type" {
   type = string
 }
@@ -124,8 +120,3 @@ variable "is_sensitive" {
 variable "gcp_subnetwork_slo" {
   type = string
 }
-
-variable "gcp_subnetwork_sli" {
-  type = string
-}
-

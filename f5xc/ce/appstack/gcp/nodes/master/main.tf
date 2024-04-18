@@ -22,13 +22,6 @@ resource "google_compute_instance_template" "instance_template" {
     }
   }
 
-  dynamic "network_interface" {
-    for_each = var.f5xc_ce_gateway_type == var.f5xc_ce_gateway_type_ingress_egress ? [1] : []
-    content {
-      subnetwork = var.gcp_subnetwork_sli
-    }
-  }
-
   metadata = {
     ssh-keys           = "${var.ssh_username}:${var.ssh_public_key}"
     user-data          = var.f5xc_ce_user_data

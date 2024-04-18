@@ -28,7 +28,22 @@ module "config_master_node" {
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
   f5xc_cluster_name         = var.f5xc_cluster_name
-  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels       = {}
+  f5xc_cluster_latitude     = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude    = var.f5xc_cluster_longitude
+  f5xc_ce_hosts_public_name = var.f5xc_ce_hosts_public_name
+  maurice_endpoint          = module.maurice.endpoints.maurice
+  maurice_mtls_endpoint     = module.maurice.endpoints.maurice_mtls
+}
+
+module "config_worker_node" {
+  source                    = "./config"
+  for_each                  = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
+  node_type                 = "worker"
+  ssh_public_key            = var.ssh_public_key
+  f5xc_site_token           = volterra_token.site.id
+  f5xc_cluster_name         = var.f5xc_cluster_name
+  f5xc_cluster_labels       = {}
   f5xc_cluster_latitude     = var.f5xc_cluster_latitude
   f5xc_cluster_longitude    = var.f5xc_cluster_longitude
   f5xc_ce_hosts_public_name = var.f5xc_ce_hosts_public_name
@@ -97,35 +112,33 @@ module "site_wait_for_online_master" {
 module "node_worker" {
   depends_on                                           = [module.site_wait_for_online_master]
   source                                               = "./nodes/worker"
-  f5xc_ce_gateway_type                                 = ""
-  f5xc_ce_user_data                                    = ""
-  f5xc_cluster_name                                    = ""
-  f5xc_cluster_size                                    = 0
-  f5xc_is_secure_cloud_ce                              = false
-  f5xc_registration_retry                              = 0
-  f5xc_registration_wait_time                          = 0
-  gcp_access_config_nat_ip                             = ""
-  gcp_instance_disk_size                               = ""
-  gcp_instance_group_manager_base_instance_name        = ""
-  gcp_instance_group_manager_description               = ""
-  gcp_instance_group_manager_distribution_policy_zones = []
-  gcp_instance_group_manager_wait_for_instances        = false
-  gcp_instance_image                                   = ""
-  gcp_instance_serial_port_enable                      = false
-  gcp_instance_tags                                    = []
-  gcp_instance_template_create_timeout                 = ""
-  gcp_instance_template_delete_timeout                 = ""
-  gcp_instance_template_description                    = ""
-  gcp_instance_type                                    = ""
-  gcp_region                                           = ""
-  gcp_service_account_email                            = ""
-  gcp_service_account_scopes                           = []
-  gcp_subnetwork_sli                                   = ""
-  gcp_subnetwork_slo                                   = ""
-  has_public_ip                                        = false
+  has_public_ip                                        = var.has_public_ip
   is_sensitive                                         = false
-  ssh_public_key                                       = ""
-  ssh_username                                         = ""
+  ssh_public_key                                       = var.ssh_public_key
+  ssh_username                                         = var.ssh_username
+  f5xc_ce_user_data                                    = module.config_worker_node.ce["user_data"]
+  f5xc_cluster_name                                    = var.f5xc_cluster_name
+  f5xc_cluster_size                                    = length(keys(var.f5xc_ce_nodes))
+  f5xc_ce_gateway_type                                 = var.f5xc_ce_gateway_type
+  f5xc_registration_retry                              = var.f5xc_registration_retry
+  f5xc_registration_wait_time                          = var.f5xc_registration_wait_time
+  gcp_region                                           = var.gcp_region
+  gcp_instance_type                                    = var.gcp_instance_type
+  gcp_instance_tags                                    = var.gcp_instance_tags
+  gcp_instance_image                                   = var.gcp_instance_image
+  gcp_subnetwork_slo                                   = module.network_common.common["slo_subnetwork"]["name"]
+  gcp_instance_disk_size                               = var.gcp_instance_disk_size
+  gcp_access_config_nat_ip                             = var.gcp_access_config_nat_ip
+  gcp_service_account_email                            = var.gcp_service_account_email
+  gcp_service_account_scopes                           = var.gcp_service_account_scopes
+  gcp_instance_serial_port_enable                      = var.gcp_instance_serial_port_enable
+  gcp_instance_template_description                    = var.gcp_instance_template_description
+  gcp_instance_template_create_timeout                 = var.gcp_instance_template_create_timeout
+  gcp_instance_template_delete_timeout                 = var.gcp_instance_template_delete_timeout
+  gcp_instance_group_manager_description               = var.gcp_instance_group_manager_description
+  gcp_instance_group_manager_wait_for_instances        = var.gcp_instance_group_manager_wait_for_instances
+  gcp_instance_group_manager_base_instance_name        = var.gcp_instance_group_manager_base_instance_name
+  gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_node_azs
 }
 
 module "site_wait_for_online_worker" {
