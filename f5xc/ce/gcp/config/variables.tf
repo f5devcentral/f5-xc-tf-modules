@@ -23,6 +23,10 @@ variable "f5xc_cluster_longitude" {
   type = string
 }
 
+variable "f5xc_host_localhost_public_name" {
+  type = string
+}
+
 variable "slo_nic" {
   type    = string
   default = "eth0"
@@ -30,10 +34,6 @@ variable "slo_nic" {
 
 variable "private_network_name" {
   default = ""
-}
-
-variable "host_localhost_public_name" {
-  type = string
 }
 
 variable "host_localhost_public_address" {
@@ -50,7 +50,7 @@ variable "cluster_name" {
   type = string
 }
 
-variable "volterra_token" {
+variable "cluster_token" {
   type = string
 }
 
