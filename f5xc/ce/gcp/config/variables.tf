@@ -23,8 +23,8 @@ variable "f5xc_cluster_longitude" {
   type = string
 }
 
-variable "f5xc_host_localhost_public_name" {
-  type = string
+variable "f5xc_ce_hosts_public_name" {
+  type    = string
 }
 
 variable "slo_nic" {
@@ -36,9 +36,8 @@ variable "private_network_name" {
   default = ""
 }
 
-variable "host_localhost_public_address" {
+variable "f5xc_ce_hosts_public_address" {
   type    = string
-  default = "127.0.1.1"
 }
 
 variable "certified_hardware_endpoint" {

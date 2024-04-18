@@ -111,7 +111,7 @@ module "config" {
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
   f5xc_ce_gateway_type         = var.f5xc_ce_gateway_type
   f5xc_ce_hosts_public_name    = var.f5xc_ce_hosts_public_name
-  f5xc_ce_hosts_public_address = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? module.secure_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? module.private_ce[each.key].ce["eip"][0]["public_dns"] : var.has_public_ip == false ? module.network_node[each.key].ce["slo"]["private_dns_name"] : module.network_node[each.key].ce["slo"]["public_dns"][0]
+  f5xc_ce_hosts_public_address = !var.has_public_ip && var.f5xc_is_secure_cloud_ce ? module.secure_ce[each.key].ce["eip"][0]["public_dns"] : !var.has_public_ip && var.f5xc_is_private_cloud_ce ? module.private_ce[each.key].ce["eip"][0]["public_dns"] : !var.has_public_ip ? module.network_node[each.key].ce["slo"]["private_dns_name"] : module.network_node[each.key].ce["slo"]["public_dns"][0]
   maurice_endpoint             = module.maurice.endpoints.maurice
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
 }

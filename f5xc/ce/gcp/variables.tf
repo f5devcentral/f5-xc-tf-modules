@@ -2,8 +2,56 @@ variable "owner" {
   type = string
 }
 
+variable "status_check_type" {
+  type    = string
+  default = "token"
+}
+
+variable "has_public_ip" {
+  type        = bool
+  default     = true
+  description = "Whether to include the access_config{} into the instance, adding a public Internet IP address, otherwise use NAT."
+}
+
+variable "ssh_public_key" {
+  type = string
+}
+
+variable "ssh_username" {
+  type    = string
+  default = "cloud-user"
+}
+
+variable "is_sensitive" {
+  type        = bool
+  default     = false
+  description = "Whether to mask sensitive data in output or not"
+}
+
+variable "private_ce_gcp_nat_name" {
+  type        = string
+  default     = null
+  description = "private ce creates gcp nat object. this object needs a name"
+}
+
+variable "private_ce_gcp_nat_router_name" {
+  type        = string
+  default     = null
+  description = "private ce module creates gcp router object. this object needs a name"
+}
+
 variable "gcp_region" {
   type = string
+}
+
+variable "gcp_project_id" {
+  description = "GCP account project id"
+  type        = string
+}
+
+variable "gcp_instance_serial_port_enable" {
+  type    = bool
+  default = false
 }
 
 variable "gcp_existing_network_slo" {
@@ -28,11 +76,6 @@ variable "gcp_existing_subnet_network_sli" {
   description = "existing gcp subnet network name sli"
   type        = string
   default     = null
-}
-
-variable "status_check_type" {
-  type    = string
-  default = "token"
 }
 
 variable "gcp_instance_type" {
@@ -69,9 +112,14 @@ variable "gcp_instance_group_manager_base_instance_name" {
   default = "node"
 }
 
-variable "f5xc_host_localhost_public_name" {
+variable "f5xc_ce_hosts_public_name" {
   type    = string
   default = "vip"
+}
+
+variable "f5xc_ce_hosts_public_address" {
+  type    = string
+  default = "127.0.1.1"
 }
 
 variable "gcp_allow_stopping_for_update" {
@@ -112,27 +160,6 @@ variable "gcp_auto_create_subnetworks" {
 variable "gcp_access_config_nat_ip" {
   type    = string
   default = ""
-}
-
-variable "has_public_ip" {
-  type        = bool
-  default     = true
-  description = "Whether to include the access_config{} into the instance, adding a public Internet IP address, otherwise use NAT."
-}
-
-variable "ssh_public_key" {
-  type = string
-}
-
-variable "ssh_username" {
-  type    = string
-  default = "cloud-user"
-}
-
-variable "is_sensitive" {
-  type        = bool
-  default     = false
-  description = "Whether to mask sensitive data in output or not"
 }
 
 variable "f5xc_site_type_is_secure_mesh_site" {
@@ -232,12 +259,12 @@ variable "f5xc_ce_gateway_type" {
 
 variable "f5xc_cluster_latitude" {
   type    = string
-  default = 37.773972
+  default = 0.0
 }
 
 variable "f5xc_cluster_longitude" {
   type    = string
-  default = -122.431297
+  default = 0.0
 }
 
 variable "f5xc_cluster_labels" {
@@ -337,11 +364,6 @@ variable "f5xc_ce_performance_enhancement_mode" {
   default = {
     perf_mode_l7_enhanced = true
   }
-}
-
-variable "gcp_instance_serial_port_enable" {
-  type    = bool
-  default = false
 }
 
 variable "f5xc_ip_ranges_Americas_TCP" {

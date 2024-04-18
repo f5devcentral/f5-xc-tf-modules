@@ -27,6 +27,16 @@ module "network_common" {
   gcp_existing_subnet_network_sli = local.create_subnetwork ? null : var.gcp_existing_subnet_network_sli
 }
 
+module "private_ce" {
+  source              = "./network/private"
+  count               = !var.has_public_ip && var.f5xc_is_private_cloud_ce ? 1 : 0
+  gcp_region          = var.gcp_region
+  gcp_nat_name        = var.private_ce_gcp_nat_name
+  gcp_project_id      = var.gcp_project_id
+  gcp_network_slo     = module.network_common.common["slo_network"]["name"]
+  gcp_nat_router_name = var.private_ce_gcp_nat_router_name
+}
+
 module "firewall" {
   source               = "./firewall"
   is_multi_nic         = local.is_multi_nic
@@ -40,17 +50,18 @@ module "firewall" {
 }
 
 module "config" {
-  source                          = "./config"
-  cluster_name                    = var.f5xc_cluster_name
-  cluster_token                   = volterra_token.site.id
-  cluster_labels                  = var.f5xc_cluster_labels
-  ssh_public_key                  = var.ssh_public_key
-  maurice_endpoint                = module.maurice.endpoints.maurice
-  maurice_mtls_endpoint           = module.maurice.endpoints.maurice_mtls
-  f5xc_ce_gateway_type            = var.f5xc_ce_gateway_type
-  f5xc_cluster_latitude           = var.f5xc_cluster_latitude
-  f5xc_cluster_longitude          = var.f5xc_cluster_longitude
-  f5xc_host_localhost_public_name = var.f5xc_host_localhost_public_name
+  source                       = "./config"
+  cluster_name                 = var.f5xc_cluster_name
+  cluster_token                = volterra_token.site.id
+  cluster_labels               = var.f5xc_cluster_labels
+  ssh_public_key               = var.ssh_public_key
+  maurice_endpoint             = module.maurice.endpoints.maurice
+  maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
+  f5xc_ce_gateway_type         = var.f5xc_ce_gateway_type
+  f5xc_cluster_latitude        = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude       = var.f5xc_cluster_longitude
+  f5xc_ce_hosts_public_name    = var.f5xc_ce_hosts_public_name
+  f5xc_ce_hosts_public_address = var.f5xc_ce_hosts_public_address
 }
 
 module "secure_mesh_site" {
@@ -103,6 +114,13 @@ module "node" {
   f5xc_registration_retry                              = var.f5xc_registration_retry
   f5xc_is_secure_cloud_ce                              = var.f5xc_is_secure_cloud_ce
   f5xc_registration_wait_time                          = var.f5xc_registration_wait_time
+}
+
+resource "volterra_set_cloud_site_info" "site_info" {
+  name        = var.f5xc_cluster_name
+  site_type   = "gcp_vpc_site"
+  public_ips  = var.f5xc_is_private_cloud_ce ? [module.private_ce.0.ce.nat.address] : [for node in module.node.ce : node.network_interface[0].access_config[0].nat_ip]
+  private_ips = [for node in module.node.ce : node.network_interface[0].network_ip]
 }
 
 module "site_wait_for_online" {
