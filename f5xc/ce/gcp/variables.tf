@@ -259,12 +259,12 @@ variable "f5xc_ce_gateway_type" {
 
 variable "f5xc_cluster_latitude" {
   type    = string
-  default = 0.0
+  default = -73.935242
 }
 
 variable "f5xc_cluster_longitude" {
   type    = string
-  default = 0.0
+  default = 40.730610
 }
 
 variable "f5xc_cluster_labels" {
