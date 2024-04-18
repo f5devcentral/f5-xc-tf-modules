@@ -258,7 +258,8 @@ variable "f5xc_ce_nodes" {
 }
 
 variable "f5xc_ce_slo_subnet" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "f5xc_ce_sli_subnet" {
