@@ -31,10 +31,10 @@ module "private_ce" {
   source              = "./network/private"
   count               = !var.has_public_ip && var.f5xc_is_private_cloud_ce ? 1 : 0
   gcp_region          = var.gcp_region
-  gcp_nat_name        = var.private_ce_gcp_nat_name
+  gcp_nat_name        = var.f5xc_private_ce_nat_name
   gcp_project_id      = var.gcp_project_id
   gcp_network_slo     = module.network_common.common["slo_network"]["name"]
-  gcp_nat_router_name = var.private_ce_gcp_nat_router_name
+  gcp_nat_router_name = var.f5xc_private_ce_nat_router_name
 }
 
 module "firewall" {
@@ -119,7 +119,7 @@ module "node" {
 resource "volterra_set_cloud_site_info" "site_info" {
   name        = var.f5xc_cluster_name
   site_type   = "gcp_vpc_site"
-  public_ips  = var.f5xc_is_private_cloud_ce ? [module.private_ce.0.ce.nat.address] : [for node in module.node.ce : node.network_interface[0].access_config[0].nat_ip]
+  public_ips  = var.f5xc_is_private_cloud_ce ? [module.private_ce.0.ce.nat.address] : var.has_public_ip ? [for node in module.node.ce : node.network_interface[0].access_config[0].nat_ip] : []
   private_ips = [for node in module.node.ce : node.network_interface[0].network_ip]
 }
 

@@ -28,18 +28,6 @@ variable "is_sensitive" {
   description = "Whether to mask sensitive data in output or not"
 }
 
-variable "private_ce_gcp_nat_name" {
-  type        = string
-  default     = null
-  description = "private ce creates gcp nat object. this object needs a name"
-}
-
-variable "private_ce_gcp_nat_router_name" {
-  type        = string
-  default     = null
-  description = "private ce module creates gcp router object. this object needs a name"
-}
-
 variable "gcp_region" {
   type = string
 }
@@ -165,6 +153,18 @@ variable "gcp_access_config_nat_ip" {
 variable "f5xc_site_type_is_secure_mesh_site" {
   type    = bool
   default = true
+}
+
+variable "f5xc_private_ce_nat_name" {
+  type        = string
+  default     = null
+  description = "private ce creates gcp nat object. this object needs a name"
+}
+
+variable "f5xc_private_ce_nat_router_name" {
+  type        = string
+  default     = null
+  description = "private ce module creates gcp router object. this object needs a name"
 }
 
 variable "f5xc_ce_slo_firewall" {
