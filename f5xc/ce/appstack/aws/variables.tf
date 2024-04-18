@@ -18,7 +18,6 @@ variable "f5xc_cluster_name" {
   type        = string
 }
 
-
 variable "f5xc_cluster_labels" {
   description = "F5 XC CE Cluster labels"
   type        = map(string)

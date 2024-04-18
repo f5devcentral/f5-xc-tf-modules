@@ -15,7 +15,7 @@ resource "google_compute_instance_template" "instance_template" {
   network_interface {
     subnetwork = var.gcp_subnetwork_slo
     dynamic "access_config" {
-      for_each = var.f5xc_is_secure_cloud_ce ? [] : var.has_public_ip ? [1] : []
+      for_each = var.has_public_ip ? [1] : []
       content {
         nat_ip = var.gcp_access_config_nat_ip != "" ? var.gcp_access_config_nat_ip : null
       }

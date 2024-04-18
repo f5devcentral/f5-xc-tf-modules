@@ -47,8 +47,8 @@ resource "google_compute_instance_template" "instance_template" {
   }
 
   timeouts {
-    create = var.gcp_instance_template_create_timeout
-    delete = var.gcp_instance_template_delete_timeout
+    create = "15m"
+    delete = "15m"
   }
 }
 

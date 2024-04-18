@@ -179,4 +179,3 @@ module "site_wait_for_online_worker" {
   status_check_type          = var.status_check_type
   f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
 }
-
