@@ -65,9 +65,9 @@ module "network_node" {
 }
 
 module "secure_ce" {
-  source      = "./network/secure"
-  common_tags = local.common_tags
-  for_each    = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
+  source                = "./network/secure"
+  common_tags           = local.common_tags
+  for_each              = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
@@ -77,9 +77,9 @@ module "secure_ce" {
 }
 
 module "private_ce" {
-  source      = "./network/private"
-  common_tags = local.common_tags
-  for_each    = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
+  source                = "./network/private"
+  common_tags           = local.common_tags
+  for_each              = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_az_name"]
   aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
@@ -105,7 +105,7 @@ module "config" {
   f5xc_site_token              = volterra_token.site.id
   f5xc_cluster_name            = var.f5xc_cluster_name
   f5xc_server_roles            = local.server_roles[each.key]
-  f5xc_cluster_labels          = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
   f5xc_cluster_workload        = var.cluster_workload
   f5xc_cluster_latitude        = var.f5xc_cluster_latitude
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
@@ -126,7 +126,7 @@ module "secure_mesh_site" {
   f5xc_namespace                         = var.f5xc_namespace
   f5xc_api_token                         = var.f5xc_api_token
   f5xc_cluster_name                      = var.f5xc_cluster_name
-  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
   f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
