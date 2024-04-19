@@ -80,6 +80,12 @@ resource "volterra_registration_approval" "nodes" {
   wait_time    = var.f5xc_registration_wait_time
   cluster_name = var.f5xc_cluster_name
   cluster_size = var.f5xc_cluster_size
+
+  lifecycle {
+    ignore_changes = [
+      hostname
+    ]
+  }
 }
 
 resource "volterra_site_state" "decommission_when_delete" {
