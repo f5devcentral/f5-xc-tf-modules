@@ -1,5 +1,5 @@
 locals {
-  azurerm_zones             = [for z in var.f5xc_azure_az_nodes : z["az"]]
+  azurerm_zones             = [for z in var.f5xc_azure_az_nodes : z["az"] if contains(keys(z), "az")]
   is_multi_nic              = var.f5xc_ce_gateway_type == var.f5xc_ce_gateway_type_ingress_egress ? true : false
   is_multi_node             = length(var.f5xc_azure_az_nodes) == 3 ? true : false
   f5xc_ip_ranges_americas   = setunion(var.f5xc_ip_ranges_Americas_TCP, var.f5xc_ip_ranges_Americas_UDP)

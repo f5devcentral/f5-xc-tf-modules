@@ -148,7 +148,7 @@ module "node" {
   owner_tag                               = var.owner_tag
   common_tags                             = local.common_tags
   ssh_public_key                          = var.ssh_public_key
-  azurerm_az                              = var.azurerm_availability_set_id == "" ? var.f5xc_azure_az_nodes[each.key]["az"] : null
+  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_azure_az_nodes[each.key]), "az") ? var.f5xc_azure_az_nodes[each.key]["az"] : null : null
   azurerm_region                          = var.azurerm_region
   azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size                = var.azurerm_instance_vm_size
