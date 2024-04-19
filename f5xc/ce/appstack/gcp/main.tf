@@ -29,7 +29,6 @@ module "firewall" {
 
 module "config_master_node" {
   source = "./config"
-  # for_each                  = {for k, v in var.f5xc_cluster_nodes.master : k => v}
   node_type                 = "master"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
@@ -44,7 +43,6 @@ module "config_master_node" {
 
 module "config_worker_node" {
   source = "./config"
-  # for_each                  = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
   node_type                 = "worker"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id

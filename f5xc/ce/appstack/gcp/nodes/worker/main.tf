@@ -7,7 +7,7 @@ resource "google_compute_instance_template" "instance_template" {
 
   disk {
     auto_delete  = true
-    device_name  = var.f5xc_cluster_name
+    device_name  = format("%s-worker", var.f5xc_cluster_name)
     disk_size_gb = var.gcp_instance_disk_size
     source_image = var.gcp_instance_image
   }
@@ -46,11 +46,11 @@ resource "google_compute_instance_template" "instance_template" {
 }
 
 resource "google_compute_region_instance_group_manager" "instance_group_manager" {
-  name                      = var.f5xc_cluster_name
+  name                      = format("%s-worker", var.f5xc_cluster_name)
   region                    = var.gcp_region
   description               = var.gcp_instance_group_manager_description
   target_size               = var.f5xc_cluster_size
-  base_instance_name        = var.f5xc_cluster_name
+  base_instance_name        = format("%s-worker", var.f5xc_cluster_name)
   wait_for_instances        = var.gcp_instance_group_manager_wait_for_instances
   wait_for_instances_status = "STABLE"
   distribution_policy_zones = var.gcp_instance_group_manager_distribution_policy_zones
@@ -60,7 +60,7 @@ resource "google_compute_region_instance_group_manager" "instance_group_manager"
   }
 
   stateful_disk {
-    device_name = var.f5xc_cluster_name
+    device_name = format("%s-worker", var.f5xc_cluster_name)
     delete_rule = "ON_PERMANENT_INSTANCE_DELETION"
   }
 
