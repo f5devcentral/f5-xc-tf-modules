@@ -21,14 +21,20 @@ module "network_common" {
   gcp_existing_subnet_network_slo = local.create_subnetwork ? null : var.gcp_existing_subnet_network_slo
 }
 
+module "firewall" {
+  source               = "./firewall"
+  gcp_network_slo      = module.network_common.common["slo_network"]["name"]
+  f5xc_ce_slo_firewall = local.f5xc_ce_slo_firewall_default
+}
+
 module "config_master_node" {
-  source                    = "./config"
-  for_each                  = {for k, v in var.f5xc_cluster_nodes.master : k => v}
+  source = "./config"
+  # for_each                  = {for k, v in var.f5xc_cluster_nodes.master : k => v}
   node_type                 = "master"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
   f5xc_cluster_name         = var.f5xc_cluster_name
-  f5xc_cluster_labels       = {}
+  f5xc_cluster_labels = {}
   f5xc_cluster_latitude     = var.f5xc_cluster_latitude
   f5xc_cluster_longitude    = var.f5xc_cluster_longitude
   f5xc_ce_hosts_public_name = var.f5xc_ce_hosts_public_name
@@ -37,13 +43,13 @@ module "config_master_node" {
 }
 
 module "config_worker_node" {
-  source                    = "./config"
-  for_each                  = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
+  source = "./config"
+  # for_each                  = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
   node_type                 = "worker"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
   f5xc_cluster_name         = var.f5xc_cluster_name
-  f5xc_cluster_labels       = {}
+  f5xc_cluster_labels = {}
   f5xc_cluster_latitude     = var.f5xc_cluster_latitude
   f5xc_cluster_longitude    = var.f5xc_cluster_longitude
   f5xc_ce_hosts_public_name = var.f5xc_ce_hosts_public_name
@@ -72,7 +78,7 @@ module "node_master" {
   ssh_username                                         = var.ssh_username
   f5xc_ce_user_data                                    = module.config_master_node.ce["user_data"]
   f5xc_cluster_name                                    = var.f5xc_cluster_name
-  f5xc_cluster_size                                    = length(keys(var.f5xc_ce_nodes))
+  f5xc_cluster_size                                    = length(keys(var.f5xc_cluster_nodes.master))
   f5xc_ce_gateway_type                                 = var.f5xc_ce_gateway_type
   f5xc_registration_retry                              = var.f5xc_registration_retry
   f5xc_registration_wait_time                          = var.f5xc_registration_wait_time
@@ -92,7 +98,7 @@ module "node_master" {
   gcp_instance_group_manager_description               = var.gcp_instance_group_manager_description
   gcp_instance_group_manager_wait_for_instances        = var.gcp_instance_group_manager_wait_for_instances
   gcp_instance_group_manager_base_instance_name        = var.gcp_instance_group_manager_base_instance_name
-  gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_node_azs
+  gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_master_node_azs
 }
 
 module "site_wait_for_online_master" {
@@ -118,7 +124,7 @@ module "node_worker" {
   ssh_username                                         = var.ssh_username
   f5xc_ce_user_data                                    = module.config_worker_node.ce["user_data"]
   f5xc_cluster_name                                    = var.f5xc_cluster_name
-  f5xc_cluster_size                                    = length(keys(var.f5xc_ce_nodes))
+  f5xc_cluster_size                                    = length(keys(var.f5xc_cluster_nodes.worker))
   f5xc_ce_gateway_type                                 = var.f5xc_ce_gateway_type
   f5xc_registration_retry                              = var.f5xc_registration_retry
   f5xc_registration_wait_time                          = var.f5xc_registration_wait_time
@@ -138,7 +144,7 @@ module "node_worker" {
   gcp_instance_group_manager_description               = var.gcp_instance_group_manager_description
   gcp_instance_group_manager_wait_for_instances        = var.gcp_instance_group_manager_wait_for_instances
   gcp_instance_group_manager_base_instance_name        = var.gcp_instance_group_manager_base_instance_name
-  gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_node_azs
+  gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_worker_node_azs
 }
 
 module "site_wait_for_online_worker" {

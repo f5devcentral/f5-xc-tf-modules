@@ -81,14 +81,6 @@ variable "f5xc_registration_retry" {
   default = 20
 }
 
-variable "f5xc_ce_nodes" {
-  type = map(map(string))
-  validation {
-    condition     = length(var.f5xc_ce_nodes) == 1 || length(var.f5xc_ce_nodes) == 3 || length(var.f5xc_ce_nodes) == 0
-    error_message = "f5xc_ce_nodes must be 0,1 or 3"
-  }
-}
-
 variable "f5xc_cluster_nodes" {
   type = map(map(map(string)))
   validation {

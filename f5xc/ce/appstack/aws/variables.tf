@@ -324,11 +324,6 @@ variable "f5xc_ce_machine_image" {
   }
 }
 
-variable "f5xc_site_type_is_secure_mesh_site" {
-  type    = bool
-  default = true
-}
-
 variable "f5xc_registration_wait_time" {
   type    = number
   default = 60

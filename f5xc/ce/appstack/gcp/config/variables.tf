@@ -26,7 +26,7 @@ variable "f5xc_cluster_name" {
 
 variable "f5xc_certified_hardware_endpoint" {
   type    = string
-  default = "https://vesio.blob.core.windows.net/releases/certified-hardware/aws.yml"
+  default = "https://vesio.blob.core.windows.net/releases/certified-hardware/gcp.yml"
 }
 
 variable "f5xc_ce_hosts_public_name" {
@@ -66,11 +66,6 @@ variable "ntp_servers" {
 variable "reboot_strategy_node" {
   type    = string
   default = "off"
-}
-
-variable "aws_nlb_dns_name" {
-  type    = string
-  default = ""
 }
 
 variable "templates_dir" {
