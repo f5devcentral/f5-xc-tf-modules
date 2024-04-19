@@ -13,7 +13,7 @@ locals {
     "aadClientId" : var.azurerm_client_id,
     "aadClientSecret" : var.azurerm_client_secret,
     "resourceGroup" : var.azurerm_resource_group,
-    "location" : var.f5xc_azure_region,
+    "location" : var.azurerm_region,
     "vmType" : var.azurerm_vm_type,
     "subnetName" : var.azurerm_vnet_subnet_name,
     "securityGroupName" : var.azurerm_vnet_security_group,

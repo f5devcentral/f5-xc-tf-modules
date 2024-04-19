@@ -107,7 +107,7 @@ variable "f5xc_instance_config" {
   type = string
 }
 
-variable "f5xc_azure_region" {
+variable "azurerm_region" {
   type = string
 }
 

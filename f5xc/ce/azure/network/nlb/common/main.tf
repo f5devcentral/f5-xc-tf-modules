@@ -1,6 +1,6 @@
 resource "azurerm_lb" "lb" {
   name                = format("%s-lb", var.f5xc_cluster_name)
-  location            = var.f5xc_azure_region
+  location            = var.azurerm_region
   resource_group_name = var.azurerm_resource_group_name
 
   dynamic "frontend_ip_configuration" {

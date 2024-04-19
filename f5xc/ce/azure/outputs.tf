@@ -1,7 +1,6 @@
 output "ce" {
   value = {
-    vnet             = module.network_common.common["existing_vnet"] == null ? module.network_common.common["vnet"] : null
-    existing_vnet    = module.network_common.common["existing_vnet"] != null ? module.network_common.common["existing_vnet"] : null
+    vnet             = module.network_common.common["vnet"]
     resource_group   = local.f5xc_azure_resource_group
     secure_mesh_site = module.secure_mesh_site
     nodes            = {

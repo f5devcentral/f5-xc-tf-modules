@@ -49,7 +49,7 @@ variable "f5xc_ce_hosts_public_name" {
   type = string
 }
 
-variable "f5xc_azure_region" {
+variable "azurerm_region" {
   type = string
 }
 

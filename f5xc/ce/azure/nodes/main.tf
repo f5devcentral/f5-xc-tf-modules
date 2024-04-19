@@ -2,7 +2,7 @@ resource "azurerm_linux_virtual_machine" "instance" {
   tags                            = var.common_tags
   name                            = var.f5xc_node_name
   size                            = var.azurerm_instance_vm_size
-  location                        = var.f5xc_azure_region
+  location                        = var.azurerm_region
   custom_data                     = base64encode(var.f5xc_instance_config)
   computer_name                   = var.f5xc_node_name
   admin_username                  = var.azurerm_instance_admin_username

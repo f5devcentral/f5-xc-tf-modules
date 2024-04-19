@@ -25,7 +25,8 @@ variable "azurerm_availability_set_id" {
 }
 
 variable "azurerm_vnet_address_space" {
-  type = list(string)
+  type    = list(string)
+  default = []
 }
 
 variable "azurerm_instance_vm_size" {
@@ -208,8 +209,15 @@ variable "f5xc_azure_marketplace_agreement_plans" {
 }
 
 variable "azurerm_existing_vnet_name" {
-  type    = string
-  default = ""
+  description = "Azure existing vnet name"
+  type        = string
+  default     = ""
+}
+
+variable "azurerm_existing_resource_group_name" {
+  description = "Azure existing resource group name"
+  type        = string
+  default     = ""
 }
 
 variable "azurerm_disable_password_authentication" {
@@ -340,13 +348,8 @@ variable "f5xc_cluster_name" {
   type = string
 }
 
-variable "f5xc_azure_region" {
+variable "azurerm_region" {
   type = string
-}
-
-variable "f5xc_existing_azure_resource_group" {
-  type    = string
-  default = ""
 }
 
 variable "f5xc_api_p12_cert_password" {

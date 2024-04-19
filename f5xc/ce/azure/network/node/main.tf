@@ -1,12 +1,13 @@
 resource "azurerm_public_ip" "ip" {
   count               = var.has_public_ip ? 1 : 0
   name                = "${var.f5xc_node_name}-slo-public-ip"
-  location            = var.f5xc_azure_region
+  location            = var.azurerm_region
   resource_group_name = var.azurerm_resource_group_name
   allocation_method   = var.azurerm_public_ip_allocation_method
 }
 
 resource "azurerm_subnet" "slo" {
+  count                = var.azurerm_subnet_slo_address_prefix != "" ? 1 : 0
   name                 = format("%s-subnet-slo", var.f5xc_node_name)
   address_prefixes     = [var.azurerm_subnet_slo_address_prefix]
   resource_group_name  = var.azurerm_resource_group_name
@@ -14,7 +15,7 @@ resource "azurerm_subnet" "slo" {
 }
 
 resource "azurerm_subnet" "sli" {
-  count                = var.is_multi_nic ? 1 : 0
+  count                = var.is_multi_nic && var.azurerm_subnet_sli_address_prefix != "" ? 1 : 0
   name                 = format("%s-subnet-sli", var.f5xc_node_name)
   address_prefixes     = [var.azurerm_subnet_sli_address_prefix]
   resource_group_name  = var.azurerm_resource_group_name
@@ -29,7 +30,7 @@ resource "azurerm_subnet" "sli" {
 
 resource "azurerm_network_interface" "slo" {
   name                          = "${var.f5xc_node_name}-slo"
-  location                      = var.f5xc_azure_region
+  location                      = var.azurerm_region
   resource_group_name           = var.azurerm_resource_group_name
   enable_ip_forwarding          = var.enable_ip_forwarding
   enable_accelerated_networking = var.enable_accelerated_networking
@@ -45,7 +46,7 @@ resource "azurerm_network_interface" "slo" {
 resource "azurerm_network_interface" "sli" {
   count                         = var.is_multi_nic ? 1 : 0
   name                          = "${var.f5xc_node_name}-sli"
-  location                      = var.f5xc_azure_region
+  location                      = var.azurerm_region
   resource_group_name           = var.azurerm_resource_group_name
   enable_ip_forwarding          = var.enable_ip_forwarding
   enable_accelerated_networking = var.enable_accelerated_networking
@@ -60,7 +61,7 @@ resource "azurerm_network_interface" "sli" {
 resource "azurerm_route_table" "sli" {
   count               = var.is_multi_nic ? 1 : 0
   name                = format("%s-sli-rt", var.f5xc_node_name)
-  location            = var.f5xc_azure_region
+  location            = var.azurerm_region
   resource_group_name = var.azurerm_resource_group_name
 
   route {
