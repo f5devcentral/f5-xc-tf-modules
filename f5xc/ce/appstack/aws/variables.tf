@@ -18,7 +18,6 @@ variable "f5xc_cluster_name" {
   type        = string
 }
 
-
 variable "f5xc_cluster_labels" {
   description = "F5 XC CE Cluster labels"
   type        = map(string)
@@ -323,11 +322,6 @@ variable "f5xc_ce_machine_image" {
       us-west-2      = "ami-04b388d0bc88442db"
     }
   }
-}
-
-variable "f5xc_site_type_is_secure_mesh_site" {
-  type    = bool
-  default = true
 }
 
 variable "f5xc_registration_wait_time" {

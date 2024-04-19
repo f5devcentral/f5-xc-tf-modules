@@ -6,7 +6,3 @@ output "ce" {
     secure_mesh = module.secure_mesh_site
   }
 }
-
-output "create_network" {
-  value = local.create_network
-}
