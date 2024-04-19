@@ -1,6 +1,7 @@
 resource "azurerm_public_ip" "ip" {
   count               = var.has_public_ip ? 1 : 0
   name                = "${var.f5xc_node_name}-slo-public-ip"
+  zones               = var.azurerm_zones
   location            = var.azurerm_region
   resource_group_name = var.azurerm_resource_group_name
   allocation_method   = var.azurerm_public_ip_allocation_method

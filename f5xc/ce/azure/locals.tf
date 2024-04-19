@@ -1,4 +1,5 @@
 locals {
+  azurerm_zones             = [for z in var.f5xc_azure_az_nodes : z["az"]]
   is_multi_nic              = var.f5xc_ce_gateway_type == var.f5xc_ce_gateway_type_ingress_egress ? true : false
   is_multi_node             = length(var.f5xc_azure_az_nodes) == 3 ? true : false
   f5xc_ip_ranges_americas   = setunion(var.f5xc_ip_ranges_Americas_TCP, var.f5xc_ip_ranges_Americas_UDP)
@@ -6,7 +7,7 @@ locals {
   f5xc_ip_ranges_asia       = setunion(var.f5xc_ip_ranges_Asia_TCP, var.f5xc_ip_ranges_Asia_UDP)
   f5xc_ip_ranges_all        = setunion(var.f5xc_ip_ranges_Americas_TCP, var.f5xc_ip_ranges_Americas_UDP, var.f5xc_ip_ranges_Europe_TCP, var.f5xc_ip_ranges_Europe_UDP, var.f5xc_ip_ranges_Asia_TCP, var.f5xc_ip_ranges_Asia_UDP)
   f5xc_azure_resource_group = var.azurerm_existing_resource_group_name != "" ? var.azurerm_existing_resource_group_name : azurerm_resource_group.rg[0].name
-  common_tags               = {
+  common_tags = {
     # "kubernetes.io/cluster/${var.f5xc_cluster_name}" = "owned"
     "Owner" = var.owner_tag
   }
