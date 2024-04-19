@@ -28,7 +28,7 @@ module "firewall" {
 }
 
 module "config_master_node" {
-  source = "./config"
+  source                    = "./config"
   node_type                 = "master"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
@@ -42,7 +42,7 @@ module "config_master_node" {
 }
 
 module "config_worker_node" {
-  source = "./config"
+  source                    = "./config"
   node_type                 = "worker"
   ssh_public_key            = var.ssh_public_key
   f5xc_site_token           = volterra_token.site.id
@@ -116,6 +116,7 @@ module "site_wait_for_online_master" {
 module "node_worker" {
   depends_on                                           = [module.site_wait_for_online_master]
   source                                               = "./nodes/worker"
+  count                                                = length(keys(var.f5xc_cluster_nodes.worker)) > 0 ? 1 : 0
   has_public_ip                                        = var.has_public_ip
   is_sensitive                                         = false
   ssh_public_key                                       = var.ssh_public_key
