@@ -18,6 +18,16 @@ variable "azurerm_resource_group_name" {
   type = string
 }
 
+variable "azurerm_existing_subnet_name_slo" {
+  type    = string
+  default = ""
+}
+
+variable "azurerm_existing_subnet_name_sli" {
+  type    = string
+  default = ""
+}
+
 variable "azurerm_vnet_name" {
   type = string
 }

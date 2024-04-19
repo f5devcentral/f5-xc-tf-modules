@@ -19,7 +19,7 @@ variable "azurerm_primary_network_interface_id" {
 }
 
 variable "azurerm_disable_password_authentication" {
-  type    = bool
+  type = bool
 }
 
 variable "azurerm_os_disk_storage_account_type" {
@@ -27,7 +27,11 @@ variable "azurerm_os_disk_storage_account_type" {
 }
 
 variable "azurerm_availability_set_id" {
-  type = string
+  type    = string
+}
+
+variable "azurerm_az" {
+  type    = string
 }
 
 variable "azurerm_instance_vm_size" {

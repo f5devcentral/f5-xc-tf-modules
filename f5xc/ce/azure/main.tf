@@ -51,6 +51,8 @@ module "network_node" {
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
   azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
   azurerm_security_group_sli_id     = local.is_multi_nic ? module.network_common.common["sg_sli"]["id"] : ""
+  azurerm_existing_subnet_name_slo  = contains(keys(each.value), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_existing_subnet_name_sli  = contains(keys(each.value), "existing_subnet_name_sli") ? each.value["existing_subnet_name_sli"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
   azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "f5xc_azure_vnet_sli_subnet") ? each.value["f5xc_azure_vnet_sli_subnet"] : ""
@@ -145,6 +147,7 @@ module "node" {
   owner_tag                               = var.owner_tag
   common_tags                             = local.common_tags
   ssh_public_key                          = var.ssh_public_key
+  azurerm_az                              = var.azurerm_availability_set_id == "" ? var.f5xc_azure_az_nodes[each.key]["az"] : null
   azurerm_region                          = var.azurerm_region
   azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size                = var.azurerm_instance_vm_size
