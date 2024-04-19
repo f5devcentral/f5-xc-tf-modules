@@ -62,6 +62,10 @@ variable "azurerm_subnet_sli_address_prefix" {
   type = string
 }
 
+variable "azurerm_zones" {
+  type = list(string)
+}
+
 variable "enable_ip_forwarding" {
   type    = bool
   default = true
