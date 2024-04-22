@@ -20,12 +20,10 @@ variable "azurerm_resource_group_name" {
 
 variable "azurerm_existing_subnet_name_slo" {
   type    = string
-  default = ""
 }
 
 variable "azurerm_existing_subnet_name_sli" {
   type    = string
-  default = ""
 }
 
 variable "azurerm_vnet_name" {

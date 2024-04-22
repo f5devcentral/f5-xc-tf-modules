@@ -8,7 +8,7 @@ resource "azurerm_public_ip" "ip" {
 }
 
 resource "azurerm_subnet" "slo" {
-  count                = var.azurerm_subnet_slo_address_prefix != "" ? 1 : 0
+  count                = var.azurerm_existing_subnet_name_slo == null && var.azurerm_subnet_slo_address_prefix != null ? 1 : 0
   name                 = format("%s-subnet-slo", var.f5xc_node_name)
   address_prefixes     = [var.azurerm_subnet_slo_address_prefix]
   resource_group_name  = var.azurerm_resource_group_name
@@ -16,7 +16,7 @@ resource "azurerm_subnet" "slo" {
 }
 
 resource "azurerm_subnet" "sli" {
-  count                = var.is_multi_nic && var.azurerm_subnet_sli_address_prefix != "" ? 1 : 0
+  count                = var.is_multi_nic && var.azurerm_existing_subnet_name_sli == null && var.azurerm_subnet_sli_address_prefix != null ? 1 : 0
   name                 = format("%s-subnet-sli", var.f5xc_node_name)
   address_prefixes     = [var.azurerm_subnet_sli_address_prefix]
   resource_group_name  = var.azurerm_resource_group_name
@@ -38,7 +38,7 @@ resource "azurerm_network_interface" "slo" {
 
   ip_configuration {
     name                          = "slo"
-    subnet_id                     = var.azurerm_subnet_slo_address_prefix != "" ? azurerm_subnet.slo.0.id : data.azurerm_subnet.slo.0.id
+    subnet_id                     = var.azurerm_existing_subnet_name_slo == null ? azurerm_subnet.slo.0.id : data.azurerm_subnet.slo.0.id
     private_ip_address_allocation = var.azurerm_private_ip_address_allocation_method
     public_ip_address_id          = var.has_public_ip ? azurerm_public_ip.ip.0.id : null
   }
@@ -54,7 +54,7 @@ resource "azurerm_network_interface" "sli" {
 
   ip_configuration {
     name                          = "sli"
-    subnet_id                     = var.azurerm_subnet_sli_address_prefix ? azurerm_subnet.sli.0.id : data.azurerm_subnet.sli.0.id
+    subnet_id                     = var.azurerm_existing_subnet_name_sli == null ? azurerm_subnet.sli.0.id : data.azurerm_subnet.sli.0.id
     private_ip_address_allocation = var.azurerm_private_ip_address_allocation_method
   }
 }

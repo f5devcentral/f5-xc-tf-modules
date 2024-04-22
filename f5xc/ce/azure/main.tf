@@ -56,7 +56,7 @@ module "network_node" {
   azurerm_existing_subnet_name_sli  = contains(keys(each.value), "existing_subnet_name_sli") ? each.value["existing_subnet_name_sli"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
-  azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "f5xc_azure_vnet_sli_subnet") ? each.value["f5xc_azure_vnet_sli_subnet"] : ""
+  azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "subnet_sli") ? each.value["subnet_sli"] : ""
 }
 
 module "secure_ce_node" {
