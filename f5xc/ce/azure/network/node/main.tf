@@ -65,16 +65,19 @@ resource "azurerm_route_table" "sli" {
   location            = var.azurerm_region
   resource_group_name = var.azurerm_resource_group_name
 
-  route {
-    name                   = format("%s-sli-default-route", var.f5xc_node_name)
-    address_prefix         = "0.0.0.0/0"
-    next_hop_type          = var.azurerm_route_table_next_hop_type
-    next_hop_in_ip_address = cidrhost(azurerm_subnet.sli.0.address_prefixes[0], 1)
+  dynamic "route" {
+    for_each = var.azurerm_existing_subnet_name_sli == null ? [1]: []
+    content {
+      name                   = format("%s-sli-default-route", var.f5xc_node_name)
+      address_prefix         = "0.0.0.0/0"
+      next_hop_type          = var.azurerm_route_table_next_hop_type
+      next_hop_in_ip_address = cidrhost(azurerm_subnet.sli.0.address_prefixes[0], 1)
+    }
   }
 }
 
 resource "azurerm_subnet_route_table_association" "sli" {
-  count          = var.is_multi_nic ? 1 : 0
+  count          = var.is_multi_nic && var.azurerm_existing_subnet_name_sli == null ? 1 : 0
   subnet_id      = azurerm_subnet.sli.0.id
   route_table_id = azurerm_route_table.sli.0.id
 }
