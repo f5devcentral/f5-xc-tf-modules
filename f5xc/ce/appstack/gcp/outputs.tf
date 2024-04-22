@@ -16,7 +16,7 @@ output "appstack" {
         }
       }
       worker = length(keys(var.f5xc_cluster_nodes.worker)) > 0 ? {
-        nodes = module.node_worker.ce
+        nodes = module.node_worker.0.ce
         config = {
           vpm                = module.config_worker_node.ce["vpm"]
           user_data          = module.config_worker_node.ce["user_data"]
