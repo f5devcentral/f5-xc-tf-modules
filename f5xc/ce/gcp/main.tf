@@ -116,12 +116,12 @@ module "node" {
   f5xc_registration_wait_time                          = var.f5xc_registration_wait_time
 }
 
-resource "volterra_set_cloud_site_info" "site_info" {
+/*resource "volterra_set_cloud_site_info" "site_info" {
   name        = var.f5xc_cluster_name
   site_type   = "gcp_vpc_site"
   public_ips  = var.f5xc_is_private_cloud_ce ? [module.private_ce.0.ce.nat.address] : var.has_public_ip ? [for node in module.node.ce : node.network_interface[0].access_config[0].nat_ip] : []
   private_ips = [for node in module.node.ce : node.network_interface[0].network_ip]
-}
+}*/
 
 module "site_wait_for_online" {
   depends_on                 = [module.node]
