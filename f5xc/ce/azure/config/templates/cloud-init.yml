@@ -1,24 +1,30 @@
 #cloud-config
-ssh_authorized_keys:
-  - "${user_pubkey}"
+users:
+  - default
+  - name: ${admin_username}
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - "${user_pubkey}"
 write_files:
   - path: /etc/kubernetes/azure.json
     content: ${azure_config}
-    permissions: 0644
+    permissions: "0644"
     owner: root
     encoding: b64
   - path: /etc/vpm/config.yaml
-    permissions: 0644
+    permissions: "0644"
     owner: root
     encoding: b64
     content: ${vp_manager_config}
   - path: /etc/hosts
     content: ${hosts_context}
-    permissions: 0644
+    permissions: "0644"
     owner: root
     encoding: b64
   - path: /etc/systemd/chronyd.conf
-    permissions: 0420
+    permissions: "0420"
     owner: root
     content: |
       pool ${ntp_servers} iburst
@@ -26,4 +32,4 @@ write_files:
       makestep 0.1 3
       rtcsync
 cloud_final_modules:
-  - [ scripts-user, always ]
+  - [scripts-user]

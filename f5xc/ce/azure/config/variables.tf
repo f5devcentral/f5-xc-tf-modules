@@ -100,6 +100,10 @@ variable "azurerm_primary_availability_set" {
   default = "primaryAvailabilitySetName"
 }
 
+variable "azurerm_instance_admin_username" {
+  type = string
+}
+
 variable "azurerm_cloud_name" {
   type    = string
   default = "AzurePublicCloud"

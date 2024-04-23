@@ -49,6 +49,7 @@ locals {
       user_pubkey       = var.ssh_public_key
       azure_config      = base64encode(local.azure_config)
       hosts_context     = base64encode(local.hosts_context_node)
+      admin_username    = var.azurerm_instance_admin_username
       reboot_strategy   = var.reboot_strategy_node
       vp_manager_config = base64encode(local.vpm_config)
     })

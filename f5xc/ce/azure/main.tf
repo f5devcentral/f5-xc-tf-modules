@@ -100,28 +100,29 @@ module "nlb_node" {
 }
 
 module "config" {
-  source                      = "./config"
-  for_each                    = {for k, v in var.f5xc_azure_az_nodes : k => v}
-  owner_tag                   = var.owner_tag
-  is_multi_nic                = local.is_multi_nic
-  ssh_public_key              = var.ssh_public_key
-  maurice_endpoint            = module.maurice.endpoints.maurice
-  maurice_mtls_endpoint       = module.maurice.endpoints.maurice_mtls
-  f5xc_cluster_name           = var.f5xc_cluster_name
-  f5xc_cluster_labels         = var.f5xc_cluster_labels
-  f5xc_cluster_latitude       = var.f5xc_cluster_latitude
-  f5xc_cluster_longitude      = var.f5xc_cluster_longitude
-  f5xc_registration_token     = volterra_token.token.id
-  f5xc_ce_hosts_public_name   = var.f5xc_ce_hosts_public_name
-  azurerm_region              = var.azurerm_region
-  azurerm_vnet_name           = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
-  azurerm_tenant_id           = var.azurerm_tenant_id
-  azurerm_client_id           = var.azurerm_client_id
-  azurerm_client_secret       = var.azurerm_client_secret
-  azurerm_resource_group      = local.f5xc_azure_resource_group
-  azurerm_subscription_id     = var.azurerm_subscription_id
-  azurerm_vnet_subnet_name    = module.network_node[each.key].ce["slo_subnet"]["name"]
-  azurerm_vnet_resource_group = local.f5xc_azure_resource_group
+  source                          = "./config"
+  for_each                        = {for k, v in var.f5xc_azure_az_nodes : k => v}
+  owner_tag                       = var.owner_tag
+  is_multi_nic                    = local.is_multi_nic
+  ssh_public_key                  = var.ssh_public_key
+  maurice_endpoint                = module.maurice.endpoints.maurice
+  maurice_mtls_endpoint           = module.maurice.endpoints.maurice_mtls
+  f5xc_cluster_name               = var.f5xc_cluster_name
+  f5xc_cluster_labels             = var.f5xc_cluster_labels
+  f5xc_cluster_latitude           = var.f5xc_cluster_latitude
+  f5xc_cluster_longitude          = var.f5xc_cluster_longitude
+  f5xc_registration_token         = volterra_token.token.id
+  f5xc_ce_hosts_public_name       = var.f5xc_ce_hosts_public_name
+  azurerm_region                  = var.azurerm_region
+  azurerm_vnet_name               = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
+  azurerm_tenant_id               = var.azurerm_tenant_id
+  azurerm_client_id               = var.azurerm_client_id
+  azurerm_client_secret           = var.azurerm_client_secret
+  azurerm_resource_group          = local.f5xc_azure_resource_group
+  azurerm_subscription_id         = var.azurerm_subscription_id
+  azurerm_vnet_subnet_name        = module.network_node[each.key].ce["slo_subnet"]["name"]
+  azurerm_vnet_resource_group     = local.f5xc_azure_resource_group
+  azurerm_instance_admin_username = var.azurerm_instance_admin_username
 }
 
 module "secure_mesh_site" {
