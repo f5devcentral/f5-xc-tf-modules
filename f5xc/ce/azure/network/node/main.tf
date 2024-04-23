@@ -2,7 +2,7 @@ resource "azurerm_public_ip" "ip" {
   count               = var.has_public_ip ? 1 : 0
   sku                 = "Standard"
   name                = "${var.f5xc_node_name}-slo-public-ip"
-  zones               = [var.azurerm_zone]
+  zones               = var.azurerm_zone != "" ? [var.azurerm_zone] : null
   location            = var.azurerm_region
   allocation_method   = var.azurerm_public_ip_allocation_method
   resource_group_name = var.azurerm_resource_group_name
