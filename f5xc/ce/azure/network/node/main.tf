@@ -1,10 +1,15 @@
 resource "azurerm_public_ip" "ip" {
   count               = var.has_public_ip ? 1 : 0
+  sku                 = "Standard"
   name                = "${var.f5xc_node_name}-slo-public-ip"
-  zones               = var.azurerm_zones
+  zones               = [var.azurerm_zone]
   location            = var.azurerm_region
-  resource_group_name = var.azurerm_resource_group_name
   allocation_method   = var.azurerm_public_ip_allocation_method
+  resource_group_name = var.azurerm_resource_group_name
+
+  lifecycle {
+    ignore_changes = all
+  }
 }
 
 resource "azurerm_subnet" "slo" {
@@ -39,8 +44,8 @@ resource "azurerm_network_interface" "slo" {
   ip_configuration {
     name                          = "slo"
     subnet_id                     = var.azurerm_existing_subnet_name_slo == null ? azurerm_subnet.slo.0.id : data.azurerm_subnet.slo.0.id
-    private_ip_address_allocation = var.azurerm_private_ip_address_allocation_method
     public_ip_address_id          = var.has_public_ip ? azurerm_public_ip.ip.0.id : null
+    private_ip_address_allocation = var.azurerm_private_ip_address_allocation_method
   }
 }
 
@@ -66,7 +71,7 @@ resource "azurerm_route_table" "sli" {
   resource_group_name = var.azurerm_resource_group_name
 
   dynamic "route" {
-    for_each = var.azurerm_existing_subnet_name_sli == null ? [1]: []
+    for_each = var.azurerm_existing_subnet_name_sli == null ? [1] : []
     content {
       name                   = format("%s-sli-default-route", var.f5xc_node_name)
       address_prefix         = "0.0.0.0/0"

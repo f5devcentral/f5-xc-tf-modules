@@ -46,7 +46,7 @@ module "network_node" {
   is_multi_nic                      = local.is_multi_nic
   has_public_ip                     = var.has_public_ip
   f5xc_node_name                    = format("%s-%s", var.f5xc_cluster_name, each.key)
-  azurerm_zones                     = local.azurerm_zones
+  azurerm_zone                      = var.azurerm_availability_set_id == "" ? each.value["az"] : ""
   azurerm_region                    = var.azurerm_region
   azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
@@ -57,6 +57,7 @@ module "network_node" {
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
   azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "subnet_sli") ? each.value["subnet_sli"] : ""
+
 }
 
 module "secure_ce_node" {

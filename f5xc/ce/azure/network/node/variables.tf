@@ -19,11 +19,11 @@ variable "azurerm_resource_group_name" {
 }
 
 variable "azurerm_existing_subnet_name_slo" {
-  type    = string
+  type = string
 }
 
 variable "azurerm_existing_subnet_name_sli" {
-  type    = string
+  type = string
 }
 
 variable "azurerm_vnet_name" {
@@ -60,8 +60,8 @@ variable "azurerm_subnet_sli_address_prefix" {
   type = string
 }
 
-variable "azurerm_zones" {
-  type = list(string)
+variable "azurerm_zone" {
+  type = string
 }
 
 variable "enable_ip_forwarding" {
