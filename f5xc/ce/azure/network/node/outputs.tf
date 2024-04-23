@@ -5,7 +5,7 @@ output "ce" {
     rt_sli        = var.is_multi_nic ? azurerm_route_table.sli.0 : null
     public_ip     = azurerm_public_ip.ip.0
     slo_subnet    = var.azurerm_existing_subnet_name_slo == null ? azurerm_subnet.slo.0 : data.azurerm_subnet.slo.0
-    # sli_subnet    = var.is_multi_nic && var.azurerm_existing_subnet_name_sli == null ? azurerm_subnet.sli.0 : data.azurerm_subnet.sli.0
+    sli_subnet    = var.is_multi_nic ? var.azurerm_existing_subnet_name_sli == null ? azurerm_subnet.sli.0 : data.azurerm_subnet.sli.0 : null
     interface_ids = local.interface_ids
   }
 }
