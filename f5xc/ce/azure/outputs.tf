@@ -14,5 +14,6 @@ output "ce" {
         }
       }
     }
+    maurice = module.maurice.endpoints
   }
 }
