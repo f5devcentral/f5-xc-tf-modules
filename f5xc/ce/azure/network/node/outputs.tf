@@ -1,5 +1,6 @@
 output "ce" {
   value = {
+    name          = var.f5xc_node_name
     slo           = azurerm_network_interface.slo
     sli           = var.is_multi_nic ? azurerm_network_interface.sli.0 : null
     rt_sli        = var.is_multi_nic ? azurerm_route_table.sli.0 : null

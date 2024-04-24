@@ -71,17 +71,18 @@ module "secure_ce_node" {
 }
 
 module "nlb_common" {
-  source                               = "./network/nlb/common"
-  count                                = local.is_multi_node ? 1 : 0
-  is_multi_nic                         = local.is_multi_nic
-  azurerm_resource_group_name          = local.f5xc_azure_resource_group
-  azurerm_lb_frontend_ip_configuration = [
-    for node in module.network_node :
-    {
+  source                      = "./network/nlb/common"
+  count                       = local.is_multi_node ? 1 : 0
+  is_multi_nic                = local.is_multi_nic
+  azurerm_availability_set_id = var.azurerm_availability_set_id
+  azurerm_resource_group_name = local.f5xc_azure_resource_group
+  azurerm_lb_frontend_ip_configuration = concat(local.slo_snet_ids, local.slo_snet_ids)
+  /*[
+    for node in module.network_node : {
       name      = "slo"
-      subnet_id = node.ce["slo_subnet"]["id"]
+      subnet_id = node.ce.slo_subnet["id"]
     }
-  ]
+  ]*/
   azurerm_region                   = var.azurerm_region
   f5xc_cluster_name                = var.f5xc_cluster_name
   f5xc_azure_az_nodes              = var.f5xc_azure_az_nodes
