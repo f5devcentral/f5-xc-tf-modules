@@ -71,33 +71,31 @@ module "secure_ce_node" {
 }
 
 module "nlb_common" {
-  source                      = "./network/nlb/common"
-  count                       = local.is_multi_node ? 1 : 0
-  is_multi_nic                = local.is_multi_nic
-  azurerm_availability_set_id = var.azurerm_availability_set_id
-  azurerm_resource_group_name = local.f5xc_azure_resource_group
-  azurerm_lb_frontend_ip_configuration = concat(local.slo_snet_ids, local.slo_snet_ids)
-  /*[
-    for node in module.network_node : {
-      name      = "slo"
-      subnet_id = node.ce.slo_subnet["id"]
-    }
-  ]*/
-  azurerm_region                   = var.azurerm_region
-  f5xc_cluster_name                = var.f5xc_cluster_name
-  f5xc_azure_az_nodes              = var.f5xc_azure_az_nodes
-  f5xc_site_set_vip_info_namespace = var.f5xc_namespace
+  source                               = "./network/nlb/common"
+  count                                = local.is_multi_node ? 1 : 0
+  is_multi_nic                         = local.is_multi_nic
+  azurerm_region                       = var.azurerm_region
+  azurerm_availability_set_id          = var.azurerm_availability_set_id
+  azurerm_resource_group_name          = local.f5xc_azure_resource_group
+  azurerm_lb_frontend_ip_configuration = [local.slo_snet_ids[0], local.sli_snet_ids[0]]
+  f5xc_cluster_name                    = var.f5xc_cluster_name
+  f5xc_azure_az_nodes                  = var.f5xc_azure_az_nodes
+  f5xc_site_set_vip_info_namespace     = var.f5xc_namespace
 }
 
 module "nlb_node" {
   source                              = "./network/nlb/node"
   for_each                            = local.is_multi_node ? {for k, v in var.f5xc_azure_az_nodes : k => v} : {}
   is_multi_nic                        = local.is_multi_nic
+  f5xc_cluster_name                   = var.f5xc_cluster_name
   f5xc_node_name                      = format("%s-%s", var.f5xc_cluster_name, each.key)
+  #azurerm_lb_id                       = module.nlb_common.0.common.lb.id
+  #azurerm_lb_probe_id_slo             = module.nlb_common.0.common.probe_slo.id
+  #azurerm_lb_probe_id_sli             = module.nlb_common.0.common.probe_sli.id
   azurerm_network_interface_slo_id    = module.network_node[each.key].ce["slo"]["id"]
   azurerm_network_interface_sli_id    = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
-  azurerm_backend_address_pool_id_slo = module.nlb_common[0].common["backend_address_pool_slo"]["id"]
-  azurerm_backend_address_pool_id_sli = local.is_multi_nic ? module.nlb_common[0].common["backend_address_pool_sli"]["id"] : null
+  azurerm_backend_address_pool_id_slo = module.nlb_common.0.common["backend_address_pool_slo"]["id"]
+  azurerm_backend_address_pool_id_sli = local.is_multi_nic ? module.nlb_common.0.common["backend_address_pool_sli"]["id"] : null
 }
 
 module "config" {

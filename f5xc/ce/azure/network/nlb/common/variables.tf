@@ -6,10 +6,6 @@ variable "azurerm_resource_group_name" {
   type = string
 }
 
-variable "f5xc_cluster_name" {
-  type = string
-}
-
 variable "azurerm_region" {
   type = string
 }
@@ -33,6 +29,10 @@ variable "azurerm_lb_frontend_ip_configuration" {
 
 variable "azurerm_availability_set_id" {
   type    = string
+}
+
+variable "f5xc_cluster_name" {
+  type = string
 }
 
 variable "f5xc_site_set_vip_info_namespace" {

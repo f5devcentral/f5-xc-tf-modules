@@ -7,7 +7,7 @@ resource "azurerm_lb" "lb" {
   dynamic "frontend_ip_configuration" {
     for_each = var.azurerm_lb_frontend_ip_configuration
     content {
-      name      = format("frontend-%s-ip", frontend_ip_configuration.value.name)
+      name      = frontend_ip_configuration.value.name
       subnet_id = frontend_ip_configuration.value.subnet_id
     }
   }
@@ -47,7 +47,7 @@ resource "azurerm_lb_rule" "slo" {
   frontend_port                  = 0
   loadbalancer_id                = azurerm_lb.lb.id
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.slo.id]
-  frontend_ip_configuration_name = "frontend-slo-ip"
+  frontend_ip_configuration_name = format("%s-slo", var.f5xc_cluster_name)
 }
 
 resource "azurerm_lb_rule" "sli" {
@@ -58,21 +58,21 @@ resource "azurerm_lb_rule" "sli" {
   backend_port                   = 0
   frontend_port                  = 0
   loadbalancer_id                = azurerm_lb.lb.id
-  backend_address_pool_ids       = [join("", azurerm_lb_backend_address_pool.sli.*.id)]
-  frontend_ip_configuration_name = "frontend-sli-ip"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.sli.0.id]
+  frontend_ip_configuration_name = format("%s-sli", var.f5xc_cluster_name)
 }
 
-resource "volterra_site_set_vip_info" "site" {
+/*resource "volterra_site_set_vip_info" "site" {
   name      = var.f5xc_cluster_name
   namespace = var.f5xc_site_set_vip_info_namespace
   site_type = var.f5xc_site_set_vip_info_site_type
 
   dynamic "vip_params_per_az" {
-    for_each = local.f5xc_site_set_vip_info_vip_params_per_az
+    for_each = local.vip_info_vip_params_per_az
     content {
       az_name     = var.azurerm_availability_set_id != "" ? vip_params_per_az.value.az : "AzureAlternateRegion"
       inside_vip  = var.is_multi_nic ? [vip_params_per_az.value.sli_vip] : null
       outside_vip = [vip_params_per_az.value.slo_vip]
     }
   }
-}
+}*/
