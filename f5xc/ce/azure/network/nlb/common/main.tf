@@ -7,7 +7,7 @@ resource "azurerm_lb" "lb" {
   dynamic "frontend_ip_configuration" {
     for_each = var.azurerm_lb_frontend_ip_configuration
     content {
-      name      = format("frontend-%s-ip", frontend_ip_configuration.key)
+      name      = format("frontend-%s-ip", frontend_ip_configuration.value.name)
       subnet_id = frontend_ip_configuration.value.subnet_id
     }
   }
