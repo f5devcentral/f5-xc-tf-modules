@@ -59,15 +59,24 @@ module "network_node" {
   azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "subnet_sli") ? each.value["subnet_sli"] : ""
 }
 
-module "secure_ce_node" {
-  source                        = "./network/secure/node"
-  for_each                      = var.f5xc_is_secure_cloud_ce ? var.f5xc_azure_az_nodes : {}
-  is_multi_nic                  = local.is_multi_nic
-  azurerm_region                = var.azurerm_region
-  f5xc_cluster_name             = var.f5xc_cluster_name
-  f5xc_secure_ce_zones          = var.f5xc_secure_cloud_ce_zones
-  azurerm_resource_group_name   = local.f5xc_azure_resource_group
-  azurerm_nat_gateway_subnet_id = module.network_node[each.key].ce["slo_subnet"]["id"]
+module "secure_ce" {
+  source                         = "./network/secure"
+  for_each                       = var.f5xc_is_secure_cloud_ce ? var.f5xc_azure_az_nodes : {}
+  f5xc_cluster_name              = var.f5xc_cluster_name
+  azurerm_zones                  = local.azurerm_zones
+  azurerm_region                 = var.azurerm_region
+  azurerm_resource_group_name    = local.f5xc_azure_resource_group
+  azurerm_nat_gateway_subnet_ids = [for node in module.network_node : node.ce.slo_subnet["id"]]
+}
+
+module "private_ce" {
+  source                         = "./network/private"
+  for_each                       = var.f5xc_is_private_cloud_ce ? var.f5xc_azure_az_nodes : {}
+  f5xc_cluster_name              = var.f5xc_cluster_name
+  azurerm_zones                  = local.azurerm_zones
+  azurerm_region                 = var.azurerm_region
+  azurerm_resource_group_name    = local.f5xc_azure_resource_group
+  azurerm_nat_gateway_subnet_ids = [for node in module.network_node : node.ce.slo_subnet["id"]]
 }
 
 module "nlb_common" {

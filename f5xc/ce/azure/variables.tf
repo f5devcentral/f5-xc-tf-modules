@@ -163,9 +163,9 @@ variable "f5xc_is_secure_cloud_ce" {
   default = false
 }
 
-variable "f5xc_secure_cloud_ce_zones" {
-  type    = list(string)
-  default = ["1"]
+variable "f5xc_is_private_cloud_ce" {
+  type    = bool
+  default = false
 }
 
 variable "f5xc_site_type_is_secure_mesh_site" {
