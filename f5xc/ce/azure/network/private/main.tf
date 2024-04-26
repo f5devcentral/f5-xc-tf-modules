@@ -18,11 +18,6 @@ resource "azurerm_nat_gateway" "gw" {
   idle_timeout_in_minutes = var.azurerm_nat_gateway_idle_timeout_in_minutes
 }
 
-resource "azurerm_nat_gateway_public_ip_association" "gw_to_pip" {
-  nat_gateway_id       = azurerm_nat_gateway.gw.id
-  public_ip_address_id = azurerm_public_ip_prefix.pipp.id
-}
-
 resource "azurerm_nat_gateway_public_ip_prefix_association" "nat_gw_to_pipp" {
   nat_gateway_id      = azurerm_nat_gateway.gw.id
   public_ip_prefix_id = azurerm_public_ip_prefix.pipp.id
