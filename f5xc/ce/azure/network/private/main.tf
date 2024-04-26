@@ -2,6 +2,7 @@ resource "azurerm_public_ip_prefix" "pipp" {
   name                = format("%s-private-ce-pipp", var.f5xc_cluster_name)
   sku                 = "Standard"
   tags                = var.tags
+  zones               = var.azurerm_zones
   location            = var.azurerm_region
   ip_version          = "IPv4"
   prefix_length       = var.azurerm_public_ip_prefix_prefix_length
