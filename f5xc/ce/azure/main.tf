@@ -71,7 +71,7 @@ module "secure_ce" {
 
 module "private_ce" {
   source                         = "./network/private"
-  for_each                       = var.f5xc_is_private_cloud_ce ? var.f5xc_azure_az_nodes : {}
+  for_each                       = !var.has_public_ip && var.f5xc_is_private_cloud_ce ? var.f5xc_azure_az_nodes : {}
   f5xc_cluster_name              = var.f5xc_cluster_name
   azurerm_zones                  = local.azurerm_zones
   azurerm_region                 = var.azurerm_region

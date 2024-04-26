@@ -1,3 +1,8 @@
+variable "tags" {
+  type    = map(string)
+  default = {}
+}
+
 variable "f5xc_cluster_name" {
   type = string
 }
@@ -17,11 +22,6 @@ variable "azurerm_resource_group_name" {
 variable "azurerm_nat_gateway_idle_timeout_in_minutes" {
   type    = number
   default = 10
-}
-
-variable "azurerm_public_ip_allocation_method" {
-  type    = string
-  default = "Static"
 }
 
 variable "azurerm_public_ip_prefix_prefix_length" {
