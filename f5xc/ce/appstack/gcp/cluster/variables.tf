@@ -9,7 +9,7 @@ variable "f5xc_cluster_name" {
 
 variable "f5xc_certified_hardware" {
   type    = string
-  default = "gcp-byol-voltstack-combo"
+  default = "gcp-byol-voltmesh"
 }
 
 variable "f5xc_master_nodes" {
