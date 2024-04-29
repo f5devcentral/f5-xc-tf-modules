@@ -86,7 +86,7 @@ module "nlb_common" {
   azurerm_region                       = var.azurerm_region
   azurerm_availability_set_id          = var.azurerm_availability_set_id
   azurerm_resource_group_name          = local.f5xc_azure_resource_group
-  azurerm_lb_frontend_ip_configuration = [local.slo_snet_ids[0], local.sli_snet_ids[0]]
+  azurerm_lb_frontend_ip_configuration = local.is_multi_nic ? tolist([local.slo_snet_ids[0], local.is_multi_nic[0]]) : tolist([local.slo_snet_ids[0]])
   f5xc_cluster_name                    = var.f5xc_cluster_name
   f5xc_azure_az_nodes                  = var.f5xc_azure_az_nodes
   f5xc_site_set_vip_info_namespace     = var.f5xc_namespace

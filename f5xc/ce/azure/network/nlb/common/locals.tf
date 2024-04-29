@@ -4,7 +4,7 @@ locals {
     {
       az      = node["az"]
       slo_vip = azurerm_lb.lb.frontend_ip_configuration[0].private_ip_address
-      sli_vip = azurerm_lb.lb.frontend_ip_configuration[1].private_ip_address
+      sli_vip = var.is_multi_nic ? azurerm_lb.lb.frontend_ip_configuration[1].private_ip_address : null
     }
   ]
 }
