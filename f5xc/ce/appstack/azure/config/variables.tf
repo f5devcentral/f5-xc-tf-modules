@@ -16,7 +16,7 @@ variable "node_type_worker" {
   default = "worker"
 }
 
-variable "f5xc_site_token" {
+variable "f5xc_registration_token" {
   type = string
 }
 

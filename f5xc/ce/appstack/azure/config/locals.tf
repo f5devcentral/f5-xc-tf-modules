@@ -9,7 +9,7 @@ locals {
   vpm_config = yamlencode({
     Vpm = {
       Labels                    = var.f5xc_cluster_labels,
-      Token                     = var.f5xc_site_token,
+      Token                     = var.f5xc_registration_token,
       Labels                    = var.f5xc_cluster_labels,
       Latitude                  = var.f5xc_cluster_latitude,
       Longitude                 = var.f5xc_cluster_longitude,

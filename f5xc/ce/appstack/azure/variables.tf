@@ -72,6 +72,14 @@ variable "f5xc_ce_gateway_type_voltstack" {
   default = "voltstack"
 }
 
+variable "f5xc_ce_gateway_type" {
+  type = string
+  validation {
+    condition     = contains(["voltstack"], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: voltstack")
+  }
+}
+
 variable "azurerm_vnet_address_space" {
   type    = list(string)
   default = []
@@ -111,6 +119,27 @@ variable "f5xc_cluster_nodes" {
   }
 }
 
+variable "f5xc_ce_hosts_public_name" {
+  type    = string
+  default = "vip"
+}
+
+variable "f5xc_cluster_labels" {
+  type = map(string)
+}
+
+variable "f5xc_cluster_latitude" {
+  description = "geo latitude"
+  type        = number
+  default     = -73.935242
+}
+
+variable "f5xc_cluster_longitude" {
+  description = "geo longitude"
+  type        = number
+  default     = 40.730610
+}
+
 variable "azurerm_region" {
   type = string
 }
@@ -125,4 +154,87 @@ variable "azurerm_existing_resource_group_name" {
   description = "Azure existing resource group name"
   type        = string
   default     = ""
+}
+
+variable "azurerm_subscription_id" {
+  type = string
+}
+
+variable "azurerm_client_id" {
+  type = string
+}
+
+variable "azurerm_client_secret" {
+  type = string
+}
+
+variable "azurerm_tenant_id" {
+  type = string
+}
+
+variable "azurerm_instance_admin_username" {
+  type = string
+}
+
+variable "azurerm_instance_vm_size" {
+  type    = string
+  default = "Standard_D3_v2"
+}
+
+variable "azurerm_instance_disk_size" {
+  type    = number
+  default = 80
+}
+
+variable "f5xc_azure_marketplace_agreement_offers" {
+  type = map(string)
+  default = {
+    app_stack              = "entcloud_voltmesh_voltstack_node"
+    ingress_gateway        = "volterra-node"
+    ingress_egress_gateway = "entcloud_voltmesh_voltstack_node"
+  }
+}
+
+variable "f5xc_azure_marketplace_agreement_plans" {
+  type = map(string)
+  default = {
+    app_stack              = "freeplan_entcloud_voltmesh_voltstack_node"
+    ingress_gateway        = "volterra-node"
+    ingress_egress_gateway = "freeplan_entcloud_voltmesh_voltstack_node_multinic"
+  }
+}
+
+variable "f5xc_registration_wait_time" {
+  type    = number
+  default = 60
+}
+
+variable "f5xc_registration_retry" {
+  type    = number
+  default = 20
+}
+
+variable "azurerm_marketplace_version" {
+  type    = string
+  default = "latest"
+}
+
+variable "f5xc_azure_marketplace_agreement_publisher" {
+  type    = string
+  default = "volterraedgeservices"
+}
+
+variable "azurerm_instance_admin_password" {
+  type    = string
+  default = ""
+}
+
+variable "azurerm_disable_password_authentication" {
+  type    = bool
+  default = true
+}
+
+variable "azurerm_os_disk_storage_account_type" {
+  type    = string
+  default = "Standard_LRS"
 }
