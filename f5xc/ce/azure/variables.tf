@@ -17,6 +17,10 @@ variable "owner_tag" {
 variable "status_check_type" {
   type    = string
   default = "token"
+  validation {
+    condition     = contains(["token", "cert"], var.status_check_type)
+    error_message = format("Valid values for status_check_type: token or cert")
+  }
 }
 
 variable "azurerm_availability_set_id" {
