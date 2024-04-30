@@ -30,9 +30,9 @@ module "network_common" {
   azurerm_security_group_slo_id = length(var.azurerm_security_group_rules_slo) > 0 ? var.azurerm_security_group_rules_slo : module.ce_default_security_rules.sgr["security_group_rules_slo"]
 }
 
-module "network_node" {
+module "network_master_node" {
   source                            = "./network/node"
-  for_each                          = var.f5xc_azure_az_nodes
+  for_each                          = {for k, v in var.f5xc_cluster_nodes.master : k => v}
   has_public_ip                     = var.has_public_ip
   f5xc_node_name                    = format("%s-%s", var.f5xc_cluster_name, each.key)
   azurerm_zone                      = var.azurerm_availability_set_id == "" ? each.value["az"] : ""
@@ -40,7 +40,22 @@ module "network_node" {
   azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
   azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
-  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_azure_az_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
+  azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
+}
+
+module "network_worker_node" {
+  source                            = "./network/node"
+  for_each                          = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
+  has_public_ip                     = var.has_public_ip
+  f5xc_node_name                    = format("%s-%s", var.f5xc_cluster_name, each.key)
+  azurerm_zone                      = var.azurerm_availability_set_id == "" ? each.value["az"] : ""
+  azurerm_region                    = var.azurerm_region
+  azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
+  azurerm_resource_group_name       = local.f5xc_azure_resource_group
+  azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
+  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
 }

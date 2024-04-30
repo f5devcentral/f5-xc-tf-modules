@@ -103,11 +103,11 @@ variable "azurerm_security_group_rules_slo" {
   }))
 }
 
-variable "f5xc_azure_az_nodes" {
-  type = map(map(string))
+variable "f5xc_cluster_nodes" {
+  type = map(map(map(string)))
   validation {
-    condition     = length(var.f5xc_azure_az_nodes) == 1 || length(var.f5xc_azure_az_nodes) == 3
-    error_message = "f5xc_azure_az_nodes must be 1 or 3"
+    condition     = length(var.f5xc_cluster_nodes.master) == 1 && length(var.f5xc_cluster_nodes.worker) == 0 || length(var.f5xc_cluster_nodes.master) == 3 && length(var.f5xc_cluster_nodes.worker) >= 0 || length(var.f5xc_cluster_nodes.master) == 0
+    error_message = "Supported master / worker nodes: master 1 and no worker, master 3 and <n> worker"
   }
 }
 
