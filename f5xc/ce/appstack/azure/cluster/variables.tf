@@ -9,7 +9,7 @@ variable "f5xc_cluster_name" {
 
 variable "f5xc_certified_hardware" {
   type    = string
-  default = "aws-byol-voltstack-combo"
+  default = "azure-free-voltmesh"
 }
 
 variable "f5xc_master_nodes" {
