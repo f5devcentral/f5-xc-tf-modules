@@ -40,7 +40,7 @@ module "network_master_node" {
   azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
   azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
-  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes.master[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
 }
@@ -55,7 +55,7 @@ module "network_worker_node" {
   azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
   azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
-  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes.worker[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
 }
@@ -130,7 +130,7 @@ module "node_master" {
   owner_tag                               = var.owner_tag
   common_tags                             = local.common_tags
   ssh_public_key                          = var.ssh_public_key
-  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_cluster_nodes[each.key]), "az") ? var.f5xc_cluster_nodes[each.key]["az"] : null : null
+  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_cluster_nodes.master[each.key]), "az") ? var.f5xc_cluster_nodes.master[each.key]["az"] : null : null
   azurerm_region                          = var.azurerm_region
   azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size                = var.azurerm_instance_vm_size
@@ -152,7 +152,7 @@ module "node_master" {
   f5xc_api_token                          = var.f5xc_api_token
   f5xc_node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name                       = var.f5xc_cluster_name
-  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes)
+  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes.master)
   f5xc_instance_config                    = module.config_master_node[each.key].ce["user_data"]
   f5xc_registration_retry                 = var.f5xc_registration_retry
   f5xc_registration_wait_time             = var.f5xc_registration_wait_time
@@ -178,7 +178,7 @@ module "node_worker" {
   owner_tag                               = var.owner_tag
   common_tags                             = local.common_tags
   ssh_public_key                          = var.ssh_public_key
-  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_cluster_nodes[each.key]), "az") ? var.f5xc_cluster_nodes[each.key]["az"] : null : null
+  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_cluster_nodes.worker[each.key]), "az") ? var.f5xc_cluster_nodes.worker[each.key]["az"] : null : null
   azurerm_region                          = var.azurerm_region
   azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size                = var.azurerm_instance_vm_size
@@ -200,8 +200,8 @@ module "node_worker" {
   f5xc_api_token                          = var.f5xc_api_token
   f5xc_node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name                       = var.f5xc_cluster_name
-  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes)
-  f5xc_instance_config                    = module.config_master_node[each.key].ce["user_data"]
+  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes.worker)
+  f5xc_instance_config                    = module.config_worker_node[each.key].ce["user_data"]
   f5xc_registration_retry                 = var.f5xc_registration_retry
   f5xc_registration_wait_time             = var.f5xc_registration_wait_time
 }

@@ -69,14 +69,14 @@ variable "f5xc_api_p12_cert_password" {
 
 variable "f5xc_ce_gateway_type_voltstack" {
   type    = string
-  default = "voltstack"
+  default = "voltstack_gateway"
 }
 
 variable "f5xc_ce_gateway_type" {
   type = string
   validation {
-    condition     = contains(["voltstack"], var.f5xc_ce_gateway_type)
-    error_message = format("Valid values for gateway_type: voltstack")
+    condition     = contains(["voltstack_gateway"], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: voltstack_gateway")
   }
 }
 
@@ -189,8 +189,8 @@ variable "azurerm_instance_disk_size" {
 variable "f5xc_azure_marketplace_agreement_offers" {
   type = map(string)
   default = {
-    app_stack              = "entcloud_voltmesh_voltstack_node"
     ingress_gateway        = "volterra-node"
+    voltstack_gateway      = "entcloud_voltmesh_voltstack_node"
     ingress_egress_gateway = "entcloud_voltmesh_voltstack_node"
   }
 }
@@ -198,8 +198,8 @@ variable "f5xc_azure_marketplace_agreement_offers" {
 variable "f5xc_azure_marketplace_agreement_plans" {
   type = map(string)
   default = {
-    app_stack              = "freeplan_entcloud_voltmesh_voltstack_node"
     ingress_gateway        = "volterra-node"
+    voltstack_gateway      = "freeplan_entcloud_voltmesh_voltstack_node"
     ingress_egress_gateway = "freeplan_entcloud_voltmesh_voltstack_node_multinic"
   }
 }
