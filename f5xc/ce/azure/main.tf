@@ -135,7 +135,7 @@ module "config" {
 
 module "secure_mesh_site" {
   count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
-  source                                 = "../../secure-mesh-site"
+  source                                 = "../../secure_mesh_site"
   csp_provider                           = "azure"
   f5xc_nodes                             = [for k in keys(var.f5xc_azure_az_nodes) : { name = k }]
   f5xc_tenant                            = var.f5xc_tenant

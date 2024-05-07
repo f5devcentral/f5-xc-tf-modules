@@ -113,7 +113,8 @@ module "config_worker_node" {
 }
 
 module "cluster" {
-  source                = "./cluster"
+  source                = "../../../voltstack_site"
+  csp_provider          = "azure"
   f5xc_tenant           = var.f5xc_tenant
   f5xc_api_url          = var.f5xc_api_url
   f5xc_api_token        = var.f5xc_api_token
@@ -121,6 +122,7 @@ module "cluster" {
   f5xc_master_nodes     = [for node in keys(var.f5xc_cluster_nodes.master) : node]
   f5xc_worker_nodes     = [for node in keys(var.f5xc_cluster_nodes.worker) : node]
   f5xc_cluster_name     = var.f5xc_cluster_name
+  f5xc_ce_gateway_type  = var.f5xc_ce_gateway_type
   f5xc_k8s_cluster_name = var.f5xc_cluster_name
 }
 
@@ -173,6 +175,7 @@ module "site_wait_for_online_master" {
 }
 
 module "node_worker" {
+  depends_on                              = [module.node_master]
   source                                  = "./nodes"
   for_each                                = {for k, v in var.f5xc_cluster_nodes.worker : k => v}
   owner_tag                               = var.owner_tag
@@ -191,8 +194,8 @@ module "node_worker" {
   azurerm_instance_admin_username         = var.azurerm_instance_admin_username
   azurerm_instance_admin_password         = var.azurerm_instance_admin_password
   azurerm_os_disk_storage_account_type    = var.azurerm_os_disk_storage_account_type
-  azurerm_primary_network_interface_id    = module.network_master_node[each.key].ce["slo"]["id"]
-  azurerm_instance_network_interface_ids  = module.network_master_node[each.key].ce["interface_ids"]
+  azurerm_primary_network_interface_id    = module.network_worker_node[each.key].ce["slo"]["id"]
+  azurerm_instance_network_interface_ids  = module.network_worker_node[each.key].ce["interface_ids"]
   azurerm_disable_password_authentication = var.azurerm_disable_password_authentication
   f5xc_tenant                             = var.f5xc_tenant
   f5xc_api_url                            = var.f5xc_api_url
