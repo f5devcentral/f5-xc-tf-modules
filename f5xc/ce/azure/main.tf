@@ -42,7 +42,7 @@ module "network_common" {
 
 module "network_node" {
   source                            = "./network/node"
-  for_each                          = var.f5xc_azure_az_nodes
+  for_each                          = var.f5xc_cluster_nodes
   is_multi_nic                      = local.is_multi_nic
   has_public_ip                     = var.has_public_ip
   f5xc_node_name                    = format("%s-%s", var.f5xc_cluster_name, each.key)
@@ -52,8 +52,8 @@ module "network_node" {
   azurerm_resource_group_name       = local.f5xc_azure_resource_group
   azurerm_security_group_slo_id     = module.network_common.common["sg_slo"]["id"]
   azurerm_security_group_sli_id     = local.is_multi_nic ? module.network_common.common["sg_sli"]["id"] : ""
-  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_azure_az_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
-  azurerm_existing_subnet_name_sli  = contains(keys(var.f5xc_azure_az_nodes[each.key]), "existing_subnet_name_sli") ? each.value["existing_subnet_name_sli"] : null
+  azurerm_existing_subnet_name_slo  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_slo") ? each.value["existing_subnet_name_slo"] : null
+  azurerm_existing_subnet_name_sli  = contains(keys(var.f5xc_cluster_nodes[each.key]), "existing_subnet_name_sli") ? each.value["existing_subnet_name_sli"] : null
   azurerm_route_table_next_hop_type = var.azurerm_route_table_next_hop_type
   azurerm_subnet_slo_address_prefix = contains(keys(each.value), "subnet_slo") ? each.value["subnet_slo"] : ""
   azurerm_subnet_sli_address_prefix = local.is_multi_nic && contains(keys(each.value), "subnet_sli") ? each.value["subnet_sli"] : ""
@@ -61,7 +61,7 @@ module "network_node" {
 
 module "secure_ce" {
   source                         = "./network/secure"
-  for_each                       = var.f5xc_is_secure_cloud_ce ? var.f5xc_azure_az_nodes : {}
+  for_each                       = var.f5xc_is_secure_cloud_ce ? var.f5xc_cluster_nodes : {}
   f5xc_cluster_name              = var.f5xc_cluster_name
   azurerm_zones                  = local.azurerm_zones
   azurerm_region                 = var.azurerm_region
@@ -71,7 +71,7 @@ module "secure_ce" {
 
 module "private_ce" {
   source                         = "./network/private"
-  for_each                       = !var.has_public_ip && var.f5xc_is_private_cloud_ce ? var.f5xc_azure_az_nodes : {}
+  for_each                       = !var.has_public_ip && var.f5xc_is_private_cloud_ce ? var.f5xc_cluster_nodes : {}
   f5xc_cluster_name              = var.f5xc_cluster_name
   azurerm_zones                  = local.azurerm_zones
   azurerm_region                 = var.azurerm_region
@@ -88,13 +88,13 @@ module "nlb_common" {
   azurerm_resource_group_name          = local.f5xc_azure_resource_group
   azurerm_lb_frontend_ip_configuration = local.is_multi_nic ? tolist([local.slo_snet_ids[0], local.is_multi_nic[0]]) : tolist([local.slo_snet_ids[0]])
   f5xc_cluster_name                    = var.f5xc_cluster_name
-  f5xc_azure_az_nodes                  = var.f5xc_azure_az_nodes
+  f5xc_cluster_nodes                  = var.f5xc_cluster_nodes
   f5xc_site_set_vip_info_namespace     = var.f5xc_namespace
 }
 
 module "nlb_node" {
   source                              = "./network/nlb/node"
-  for_each                            = local.is_multi_node ? {for k, v in var.f5xc_azure_az_nodes : k => v} : {}
+  for_each                            = local.is_multi_node ? {for k, v in var.f5xc_cluster_nodes : k => v} : {}
   is_multi_nic                        = local.is_multi_nic
   f5xc_cluster_name                   = var.f5xc_cluster_name
   f5xc_node_name                      = format("%s-%s", var.f5xc_cluster_name, each.key)
@@ -109,7 +109,7 @@ module "nlb_node" {
 
 module "config" {
   source                          = "./config"
-  for_each                        = {for k, v in var.f5xc_azure_az_nodes : k => v}
+  for_each                        = {for k, v in var.f5xc_cluster_nodes : k => v}
   owner_tag                       = var.owner_tag
   is_multi_nic                    = local.is_multi_nic
   ssh_public_key                  = var.ssh_public_key
@@ -137,7 +137,7 @@ module "secure_mesh_site" {
   count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
   source                                 = "../../secure_mesh_site"
   csp_provider                           = "azure"
-  f5xc_nodes                             = [for k in keys(var.f5xc_azure_az_nodes) : { name = k }]
+  f5xc_nodes                             = [for k in keys(var.f5xc_cluster_nodes) : { name = k }]
   f5xc_tenant                            = var.f5xc_tenant
   f5xc_api_url                           = var.f5xc_api_url
   f5xc_namespace                         = var.f5xc_namespace
@@ -153,11 +153,11 @@ module "secure_mesh_site" {
 
 module "node" {
   source                                  = "./nodes"
-  for_each                                = {for k, v in var.f5xc_azure_az_nodes : k => v}
+  for_each                                = {for k, v in var.f5xc_cluster_nodes : k => v}
   owner_tag                               = var.owner_tag
   common_tags                             = local.common_tags
   ssh_public_key                          = var.ssh_public_key
-  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_azure_az_nodes[each.key]), "az") ? var.f5xc_azure_az_nodes[each.key]["az"] : null : null
+  azurerm_az                              = var.azurerm_availability_set_id == "" ? contains(keys(var.f5xc_cluster_nodes[each.key]), "az") ? var.f5xc_cluster_nodes[each.key]["az"] : null : null
   azurerm_region                          = var.azurerm_region
   azurerm_marketplace_plan                = var.f5xc_azure_marketplace_agreement_plans[var.f5xc_ce_gateway_type]
   azurerm_instance_vm_size                = var.azurerm_instance_vm_size
@@ -179,7 +179,7 @@ module "node" {
   f5xc_api_token                          = var.f5xc_api_token
   f5xc_node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name                       = var.f5xc_cluster_name
-  f5xc_cluster_size                       = length(var.f5xc_azure_az_nodes)
+  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes)
   f5xc_instance_config                    = module.config[each.key].ce["user_data"]
   f5xc_registration_retry                 = var.f5xc_registration_retry
   f5xc_registration_wait_time             = var.f5xc_registration_wait_time
