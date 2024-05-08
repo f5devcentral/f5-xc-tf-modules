@@ -61,8 +61,8 @@ variable "f5xc_site_type_certified_hw" {
       voltstack_gateway = "gcp-byol-voltstack-combo"
     }
     azure = {
-      #voltstack_gateway = "azure-byol-voltstack-combo"
       voltstack_gateway = "azure-free-voltmesh"
+      #voltstack_gateway = "azure-byol-voltstack-combo"
     }
   }
 }
