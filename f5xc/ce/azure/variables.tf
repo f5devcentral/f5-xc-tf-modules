@@ -249,11 +249,11 @@ variable "f5xc_site_set_vip_info_namespace" {
   default = "system"
 }
 
-variable "f5xc_azure_az_nodes" {
+variable "f5xc_cluster_nodes" {
   type = map(map(string))
   validation {
-    condition     = length(var.f5xc_azure_az_nodes) == 1 || length(var.f5xc_azure_az_nodes) == 3
-    error_message = "f5xc_azure_az_nodes must be 1 or 3"
+    condition     = length(var.f5xc_cluster_nodes) == 1 || length(var.f5xc_cluster_nodes) == 3
+    error_message = "f5xc_cluster_nodes must be 1 or 3"
   }
 }
 
@@ -307,7 +307,7 @@ variable "f5xc_namespace" {
 
 variable "f5xc_ce_gateway_type_voltstack" {
   type    = string
-  default = "voltstack"
+  default = "voltstack_gateway"
 }
 
 variable "f5xc_ce_gateway_type_ingress" {
@@ -323,8 +323,8 @@ variable "f5xc_ce_gateway_type_ingress_egress" {
 variable "f5xc_ce_gateway_type" {
   type = string
   validation {
-    condition     = contains(["ingress_egress_gateway", "ingress_gateway", "voltstack"], var.f5xc_ce_gateway_type)
-    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack")
+    condition     = contains(["ingress_egress_gateway", "ingress_gateway", "voltstack_gateway"], var.f5xc_ce_gateway_type)
+    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack_gateway")
   }
 }
 

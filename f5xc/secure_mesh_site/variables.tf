@@ -65,17 +65,14 @@ variable "f5xc_site_type_certified_hw" {
   default = {
     aws = {
       ingress_gateway        = "aws-byol-voltmesh"
-      voltstack_gateway      = "aws-byol-voltstack-combo"
       ingress_egress_gateway = "aws-byol-multi-nic-voltmesh"
     }
     gcp = {
       ingress_gateway        = "gcp-byol-voltmesh"
-      voltstack_gateway      = "gcp-byol-voltstack-combo"
       ingress_egress_gateway = "gcp-byol-multi-nic-voltmesh"
     }
     azure = {
       ingress_gateway        = "azure-byol-voltmesh"
-      voltstack_gateway      = "azure-byol-voltstack-combo"
       ingress_egress_gateway = "azure-byol-multi-nic-voltmesh"
     }
   }
@@ -85,9 +82,9 @@ variable "f5xc_ce_gateway_type" {
   type = string
   validation {
     condition = contains([
-      "ingress_egress_gateway", "ingress_gateway", "voltstack_gateway"
+      "ingress_egress_gateway", "ingress_gateway",
     ], var.f5xc_ce_gateway_type)
-    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway, voltstack_gateway")
+    error_message = format("Valid values for gateway_type: ingress_egress_gateway, ingress_gateway")
   }
 }
 

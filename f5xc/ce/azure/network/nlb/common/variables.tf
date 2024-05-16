@@ -44,7 +44,7 @@ variable "f5xc_site_set_vip_info_site_type" {
   default = "azure_vnet_site"
 }
 
-variable "f5xc_azure_az_nodes" {
+variable "f5xc_cluster_nodes" {
   type = map(map(string))
 }
 

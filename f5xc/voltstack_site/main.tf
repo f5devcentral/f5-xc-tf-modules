@@ -23,7 +23,7 @@ resource "volterra_voltstack_site" "cluster" {
   deny_all_usb            = true
   disable_gpu             = true
   no_bond_devices         = true
-  volterra_certified_hw   = var.f5xc_certified_hardware
+  volterra_certified_hw   = var.f5xc_site_type_certified_hw[var.csp_provider][var.f5xc_ce_gateway_type]
   default_network_config  = true
   default_storage_config  = true
   logs_streaming_disabled = true
@@ -44,7 +44,7 @@ resource "volterra_voltstack_site" "cluster" {
 
 module "kubeconfig" {
   depends_on            = [volterra_voltstack_site.cluster]
-  source                = "../../../../../../modules/utils/kubeconfig"
+  source                = "../../utils/kubeconfig"
   f5xc_api_url          = var.f5xc_api_url
   f5xc_api_token        = var.f5xc_api_token
   f5xc_k8s_config_type  = "global"

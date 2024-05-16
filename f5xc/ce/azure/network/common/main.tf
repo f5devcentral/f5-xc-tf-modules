@@ -13,8 +13,8 @@ module "sg_slo" {
   azure_region                                = var.azurerm_region
   azure_resource_group_name                   = var.azurerm_resource_group_name
   azure_security_group_name                   = format("%s-slo", var.f5xc_cluster_name)
-  azure_linux_security_rules                  = var.azurerm_security_group_slo_id
-  create_interface_security_group_association = false
+  azure_linux_security_rules                  = var.azurerm_security_group_rules_slo
+  create_interface_security_group_association = var.azurerm_create_interface_security_group_association
 }
 
 module "sg_sli" {
@@ -24,6 +24,6 @@ module "sg_sli" {
   azure_region                                = var.azurerm_region
   azure_resource_group_name                   = var.azurerm_resource_group_name
   azure_security_group_name                   = format("%s-sli", var.f5xc_cluster_name)
-  azure_linux_security_rules                  = var.azurerm_security_group_sli_id
-  create_interface_security_group_association = false
+  azure_linux_security_rules                  = var.azurerm_security_group_rules_sli
+  create_interface_security_group_association = var.azurerm_create_interface_security_group_association
 }
