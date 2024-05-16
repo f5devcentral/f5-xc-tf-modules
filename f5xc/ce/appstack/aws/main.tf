@@ -123,7 +123,7 @@ module "node_master" {
   f5xc_registration_wait_time = var.f5xc_registration_wait_time
   f5xc_ce_to_re_tunnel_type   = var.f5xc_ce_to_re_tunnel_type
   aws_instance_type           = var.aws_instance_type_master
-  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
+  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
   aws_interface_slo_id        = module.network_master_node[each.key].ce["slo"]["id"]
   aws_lb_target_group_arn     = length(var.f5xc_cluster_nodes.master) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null
   aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
@@ -151,7 +151,7 @@ module "node_worker" {
   owner_tag                   = var.owner_tag
   common_tags                 = local.common_tags
   aws_instance_type           = var.aws_instance_type_worker
-  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.f5xc_aws_region]
+  aws_instance_image          = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
   aws_interface_slo_id        = module.network_worker_node[each.key].ce["slo"]["id"]
   aws_iam_instance_profile_id = aws_iam_instance_profile.instance_profile.id
   ssh_public_key_name         = aws_key_pair.aws_key.key_name

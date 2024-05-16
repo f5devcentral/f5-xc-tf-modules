@@ -377,7 +377,7 @@ variable "f5xc_aws_vpc_az_nodes" {
   }
 }
 
-variable "f5xc_aws_region" {
+variable "aws_region" {
   description = "AWS region"
   type        = string
 }

@@ -67,7 +67,7 @@ variable "f5xc_namespace" {
   type        = string
 }
 
-variable "f5xc_aws_region" {
+variable "aws_region" {
   description = "AWS region"
   type        = string
 }
