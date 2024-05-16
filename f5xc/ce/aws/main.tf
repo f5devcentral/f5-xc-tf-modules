@@ -70,7 +70,7 @@ module "secure_ce" {
   for_each              = var.has_public_ip == false && var.f5xc_is_secure_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["aws_vpc_az_name"]
-  aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
+  aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["aws_vpc_nat_gw_subnet"]
   slo_subnet_id         = module.network_node[each.key].ce["slo_subnet"]["id"]
   slo_subnet_rt_id      = module.network_common.common["slo_subnet_rt"]["id"]
   f5xc_node_name        = format("%s-%s", var.f5xc_cluster_name, each.key)
@@ -82,7 +82,7 @@ module "private_ce" {
   for_each              = var.has_public_ip == false && var.f5xc_is_private_cloud_ce ? {for k, v in var.f5xc_aws_vpc_az_nodes : k => v} : {}
   aws_vpc_id            = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_vpc_az            = var.f5xc_aws_vpc_az_nodes[each.key]["aws_vpc_az_name"]
-  aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["f5xc_aws_vpc_nat_gw_subnet"]
+  aws_vpc_nat_gw_subnet = var.f5xc_aws_vpc_az_nodes[each.key]["aws_vpc_nat_gw_subnet"]
   slo_subnet_id         = module.network_node[each.key].ce["slo_subnet"]["id"]
   slo_subnet_rt_id      = module.network_common.common["slo_subnet_rt"]["id"]
   f5xc_node_name        = format("%s-%s", var.f5xc_cluster_name, each.key)
