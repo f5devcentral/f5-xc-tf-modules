@@ -1,5 +1,5 @@
 resource "aws_instance" "instance" {
-  ami                  = var.aws_instance_image
+  ami                  = "ami-0456e5ee3487081ac" #var.aws_instance_image
   tags                 = local.common_tags
   key_name             = var.ssh_public_key_name
   monitoring           = var.aws_instance_monitoring
