@@ -18,7 +18,7 @@ variable "has_public_ip" {
   default     = true
 }
 
-variable "instance_type" {
+variable "aws_instance_type" {
   description = "AWS EC2 instance flavour"
   type        = string
   default     = "t3.xlarge"
