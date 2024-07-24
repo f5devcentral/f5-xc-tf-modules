@@ -126,7 +126,7 @@ module "secure_mesh_site" {
   f5xc_namespace                         = var.f5xc_namespace
   f5xc_api_token                         = var.f5xc_api_token
   f5xc_cluster_name                      = var.f5xc_cluster_name
-  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
   f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
@@ -150,7 +150,7 @@ module "node" {
   f5xc_registration_retry       = var.f5xc_registration_retry
   f5xc_ce_to_re_tunnel_type     = var.f5xc_ce_to_re_tunnel_type
   f5xc_registration_wait_time   = var.f5xc_registration_wait_time
-  aws_instance_type             = var.instance_type
+  aws_instance_type             = var.aws_instance_type
   aws_instance_image            = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
   aws_interface_slo_id          = module.network_node[each.key].ce["slo"]["id"]
   aws_interface_sli_id          = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
