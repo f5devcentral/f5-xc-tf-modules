@@ -39,7 +39,6 @@ variable "ssh_public_key_name" {
 
 variable "aws_instance_disk_size" {
   type    = string
-  default = "40"
 }
 
 variable "aws_instance_monitoring" {

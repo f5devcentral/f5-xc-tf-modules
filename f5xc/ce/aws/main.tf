@@ -154,6 +154,7 @@ module "node" {
   aws_instance_image            = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
   aws_interface_slo_id          = module.network_node[each.key].ce["slo"]["id"]
   aws_interface_sli_id          = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
+  aws_instance_disk_size        = var.aws_instance_disk_size
   aws_lb_target_group_arn       = length(var.f5xc_aws_vpc_az_nodes) == 3 ? module.network_nlb[0].nlb["target_group"]["arn"] : null
   aws_iam_instance_profile_name = var.aws_existing_iam_profile_name != null ? data.aws_iam_instance_profile.existing_iam_profile.0.name : aws_iam_instance_profile.instance_profile.0.name
   ssh_public_key_name           = var.ssh_public_key != null ? aws_key_pair.aws_key.0.key_name : data.aws_key_pair.existing_aws_key.0.key_name
