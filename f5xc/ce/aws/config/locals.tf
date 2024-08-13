@@ -1,5 +1,5 @@
 locals {
-  gateway_type       = replace(var.f5xc_ce_gateway_type, "_", "-")
+  gateway_type = replace(var.f5xc_ce_gateway_type, "_", "-")
   hosts_context_node = templatefile("${path.module}/${var.templates_dir}/hosts",
     {
       public_name    = var.f5xc_ce_hosts_public_name
@@ -27,6 +27,11 @@ locals {
       MauriceEndpoint           = var.maurice_endpoint,
       MauricePrivateEndpoint    = var.maurice_mtls_endpoint,
       CertifiedHardwareEndpoint = var.f5xc_certified_hardware_endpoint,
+      Proxy = {
+        noProxy                   = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? var.f5xc_ce_no_proxy : ""
+        httpProxy                 = var.f5xc_ce_http_proxy
+        httpsProxy                = var.f5xc_ce_https_proxy
+      }
     }
     Kubernetes = {
       Server        = var.f5xc_ce_hosts_public_name

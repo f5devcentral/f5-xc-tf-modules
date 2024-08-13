@@ -106,6 +106,9 @@ module "config" {
   f5xc_cluster_name            = var.f5xc_cluster_name
   f5xc_server_roles            = local.server_roles[each.key]
   f5xc_cluster_labels = {} # var.f5xc_cluster_labels
+  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
+  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
   f5xc_cluster_workload        = var.cluster_workload
   f5xc_cluster_latitude        = var.f5xc_cluster_latitude
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude

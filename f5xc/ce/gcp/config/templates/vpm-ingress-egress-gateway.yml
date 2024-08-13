@@ -6,6 +6,10 @@ Vpm:
   Longitude: ${cluster_longitude}
   MauricePrivateEndpoint: ${maurice_mtls_endpoint}
   MauriceEndpoint: ${maurice_endpoint}
+  Proxy:
+    httpProxy: ${http_proxy}
+    httpsProxy: ${https_proxy}
+    noProxy: ${no_proxy}
   %{~ if length(cluster_labels) > 0 ~}
   Labels:
     %{~ for k, v in cluster_labels ~}
@@ -19,6 +23,6 @@ Vpm:
   PrivateNetworkName: ${name ~}
   %{ endfor }
 Kubernetes:
-  CloudProvider: ""
+  CloudProvider: "disabled"
   EtcdUseTLS: True
   Server: ${service_ip}
