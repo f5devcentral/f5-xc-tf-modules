@@ -28,9 +28,9 @@ locals {
       MauricePrivateEndpoint    = var.maurice_mtls_endpoint,
       CertifiedHardwareEndpoint = var.f5xc_certified_hardware_endpoint,
       Proxy = {
-        noProxy                   = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? var.f5xc_ce_no_proxy : ""
-        httpProxy                 = var.f5xc_ce_http_proxy
-        httpsProxy                = var.f5xc_ce_https_proxy
+        noProxy    = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? join(",", var.f5xc_ce_no_proxy) : ""
+        httpProxy  = var.f5xc_ce_http_proxy
+        httpsProxy = var.f5xc_ce_https_proxy
       }
     }
     Kubernetes = {
@@ -42,10 +42,10 @@ locals {
 
   cloud_config = templatefile("${path.module}/${var.templates_dir}/cloud-init.yml",
     {
-      ntp_servers       = var.ntp_servers
-      hosts_context     = base64encode(local.hosts_context_node)
-      ssh_public_key    = var.ssh_public_key
-      reboot_strategy   = var.reboot_strategy_node
+      ntp_servers     = var.ntp_servers
+      hosts_context = base64encode(local.hosts_context_node)
+      ssh_public_key  = var.ssh_public_key
+      reboot_strategy = var.reboot_strategy_node
       vp_manager_config = base64encode(local.vpm_config)
     })
 }
