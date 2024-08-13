@@ -370,6 +370,21 @@ variable "f5xc_ce_performance_enhancement_mode" {
   }
 }
 
+variable "f5xc_ce_http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_https_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_no_proxy" {
+  type = list(string)
+  default = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","100.127.0.0/18","100.127.192.0/18","169.254.0.0/16","int.ves.io","localhost"]
+}
+
 variable "f5xc_ip_ranges_Americas_TCP" {
   type    = list(string)
   default = ["84.54.62.0/25", "185.94.142.0/25", "185.94.143.0/25", "159.60.190.0/24", "5.182.215.0/25", "84.54.61.0/25", "23.158.32.0/25",]

@@ -116,6 +116,9 @@ module "config" {
   maurice_endpoint                = module.maurice.endpoints.maurice
   maurice_mtls_endpoint           = module.maurice.endpoints.maurice_mtls
   f5xc_cluster_name               = var.f5xc_cluster_name
+  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
+  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
   f5xc_cluster_labels             = var.f5xc_cluster_labels
   f5xc_cluster_latitude           = var.f5xc_cluster_latitude
   f5xc_cluster_longitude          = var.f5xc_cluster_longitude
