@@ -22,7 +22,7 @@ variable "f5xc_ce_hosts_public_name" {
 }
 
 variable "container_images" {
-  type    = map(string)
+  type = map(string)
   default = {
     "Hyperkube" = ""
     "CoreDNS"   = ""
@@ -79,15 +79,30 @@ variable "f5xc_cluster_type" {
   default = "ce"
 }
 
+variable "f5xc_ce_http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_https_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_no_http" {
+  type = list(string)
+  default = []
+}
+
 variable "vp_manager_node_skip_stages" {
-  type        = list(string)
-  default     = ["register", "ver"]
+  type = list(string)
+  default = ["register", "ver"]
   description = "List of VP manager stages to skip on node"
 }
 
 variable "vp_manager_pool_skip_stages" {
-  type        = list(string)
-  default     = ["register"]
+  type = list(string)
+  default = ["register"]
   description = "List of VP manager stages to skip on pool"
 }
 

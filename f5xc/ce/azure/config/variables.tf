@@ -49,6 +49,21 @@ variable "f5xc_ce_hosts_public_name" {
   type = string
 }
 
+variable "f5xc_ce_http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_https_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_no_http" {
+  type = list(string)
+  default = []
+}
+
 variable "azurerm_region" {
   type = string
 }

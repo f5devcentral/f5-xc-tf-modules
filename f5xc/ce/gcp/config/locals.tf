@@ -12,6 +12,9 @@ locals {
     maurice_endpoint            = var.maurice_endpoint
     maurice_mtls_endpoint       = var.maurice_mtls_endpoint
     certified_hardware_endpoint = var.certified_hardware_endpoint
+    noProxy                     = var.f5xc_ce_no_http
+    httpProxy                   = var.f5xc_ce_http_proxy
+    httpsProxy                  = var.f5xc_ce_https_proxy
     private_network             = var.private_network_name == "" ? {} : {
       name = var.private_network_name
     }
@@ -24,8 +27,8 @@ locals {
 
   cloud_init_master = {
     vp_manager_context = base64encode(local.vpm_config.config)
-    hosts_context      = base64encode(local.hosts_localhost.config)
-    user_pubkey        = var.ssh_public_key
+    hosts_context = base64encode(local.hosts_localhost.config)
+    user_pubkey = var.ssh_public_key
   }
 
   hosts_localhost = {
