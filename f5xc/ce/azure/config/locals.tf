@@ -44,7 +44,6 @@ locals {
     Kubernetes = {
       Server        = var.f5xc_ce_hosts_public_name
       EtcdUseTLS    = true
-      CloudProvider = "disabled"
     }
   })
 

@@ -25,5 +25,4 @@ Vpm:
   %{ endfor }
 Kubernetes:
   EtcdUseTLS: True
-  CloudProvider: "disabled"
   Server: ${service_ip}
