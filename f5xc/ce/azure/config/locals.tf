@@ -36,9 +36,9 @@ locals {
       MauricePrivateEndpoint    = var.maurice_mtls_endpoint,
       CertifiedHardwareEndpoint = var.f5xc_certified_hardware_endpoint,
       Proxy = {
-        noProxy    = var.f5xc_ce_no_http
-        httpProxy  = var.f5xc_ce_http_proxy
-        httpsProxy = var.f5xc_ce_https_proxy
+        noProxy                   = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? join(",", var.f5xc_ce_no_proxy) : ""
+        httpProxy                 = var.f5xc_ce_http_proxy
+        httpsProxy                = var.f5xc_ce_https_proxy
       }
     }
     Kubernetes = {
