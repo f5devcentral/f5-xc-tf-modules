@@ -14,10 +14,10 @@ module "network_common" {
   is_multi_nic                    = local.is_multi_nic
   create_network                  = local.create_network
   create_subnetwork               = local.create_subnetwork
-  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
+  f5xc_ce_no_proxy                = var.f5xc_ce_no_proxy
   f5xc_cluster_name               = var.f5xc_cluster_name
-  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
-  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
+  f5xc_ce_http_proxy              = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy             = var.f5xc_ce_https_proxy
   f5xc_is_secure_cloud_ce         = var.f5xc_is_secure_cloud_ce
   gcp_subnet_name_slo             = local.create_subnetwork ? "${var.f5xc_cluster_name}-slo-subnetwork" : null
   gcp_subnet_name_sli             = local.create_subnetwork && local.is_multi_nic ? "${var.f5xc_cluster_name}-sli-subnetwork" : null
@@ -111,7 +111,7 @@ module "node" {
   gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_node_azs
   f5xc_ce_user_data                                    = module.config.ce["user_data"]
   f5xc_cluster_name                                    = var.f5xc_cluster_name
-  f5xc_cluster_size                                    = length(var.f5xc_ce_nodes)
+  f5xc_cluster_size = length(var.f5xc_ce_nodes)
   f5xc_cluster_labels                                  = var.f5xc_cluster_labels
   f5xc_ce_gateway_type                                 = var.f5xc_ce_gateway_type
   f5xc_registration_retry                              = var.f5xc_registration_retry
@@ -127,7 +127,7 @@ module "node" {
 }*/
 
 module "site_wait_for_online" {
-  depends_on                 = [module.node]
+  depends_on = [module.node]
   source                     = "../../status/site"
   is_sensitive               = var.is_sensitive
   f5xc_tenant                = var.f5xc_tenant
