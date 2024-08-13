@@ -14,7 +14,10 @@ module "network_common" {
   is_multi_nic                    = local.is_multi_nic
   create_network                  = local.create_network
   create_subnetwork               = local.create_subnetwork
+  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
   f5xc_cluster_name               = var.f5xc_cluster_name
+  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
   f5xc_is_secure_cloud_ce         = var.f5xc_is_secure_cloud_ce
   gcp_subnet_name_slo             = local.create_subnetwork ? "${var.f5xc_cluster_name}-slo-subnetwork" : null
   gcp_subnet_name_sli             = local.create_subnetwork && local.is_multi_nic ? "${var.f5xc_cluster_name}-sli-subnetwork" : null
