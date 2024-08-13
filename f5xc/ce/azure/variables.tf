@@ -212,6 +212,21 @@ variable "f5xc_azure_marketplace_agreement_plans" {
   }
 }
 
+variable "f5xc_ce_http_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_https_proxy" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_ce_no_proxy" {
+  type = list(string)
+  default = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","100.127.0.0/18","100.127.192.0/18","169.254.0.0/16","int.ves.io","localhost"]
+}
+
 variable "azurerm_existing_vnet_name" {
   description = "Azure existing vnet name"
   type        = string
