@@ -28,7 +28,7 @@ locals {
       Labels                    = var.f5xc_cluster_labels,
       Latitude                  = var.f5xc_cluster_latitude,
       Longitude                 = var.f5xc_cluster_longitude,
-      InsideNic                 = var.is_multi_nic ? "eth1" = null
+      InsideNic                 = var.is_multi_nic ? "eth1" : null
       PrivateNIC                = "eth0"
       ClusterName               = var.f5xc_cluster_name,
       ClusterType               = var.f5xc_cluster_type,
