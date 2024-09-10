@@ -32,7 +32,7 @@ module "network_master_node" {
   node_name                  = format("%s-%s", var.f5xc_cluster_name, each.key)
   common_tags                = local.common_tags
   has_public_ip              = var.has_public_ip
-  aws_vpc_az                 = var.f5xc_cluster_nodes.master[each.key]["f5xc_aws_vpc_az_name"]
+  aws_vpc_az                 = var.f5xc_cluster_nodes.master[each.key]["aws_vpc_az_name"]
   aws_vpc_id                 = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_sg_slo_ids             = module.network_common.common["sg_slo_ids"]
   aws_subnet_slo_cidr        = var.f5xc_cluster_nodes.master[each.key]["aws_vpc_slo_subnet"]
@@ -47,7 +47,7 @@ module "network_worker_node" {
   node_name                  = format("%s-%s", var.f5xc_cluster_name, each.key)
   common_tags                = local.common_tags
   has_public_ip              = var.has_public_ip
-  aws_vpc_az                 = var.f5xc_cluster_nodes.worker[each.key]["f5xc_aws_vpc_az_name"]
+  aws_vpc_az                 = var.f5xc_cluster_nodes.worker[each.key]["aws_vpc_az_name"]
   aws_vpc_id                 = var.aws_existing_vpc_id != "" ? var.aws_existing_vpc_id : module.network_common.common["vpc"]["id"]
   aws_sg_slo_ids             = module.network_common.common["sg_slo_ids"]
   aws_subnet_slo_cidr        = var.f5xc_cluster_nodes.worker[each.key]["aws_vpc_slo_subnet"]
