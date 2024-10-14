@@ -435,6 +435,26 @@ variable "f5xc_ce_https_proxy" {
   default = ""
 }
 
+variable "f5xc_operating_system_version" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_volterra_software_version" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_default_os_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_default_sw_version" {
+  type    = bool
+  default = true
+}
+
 variable "f5xc_ce_no_proxy" {
   type = list(string)
   default = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","100.127.0.0/18","100.127.192.0/18","169.254.0.0/16","int.ves.io","localhost"]

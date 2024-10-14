@@ -133,6 +133,8 @@ module "secure_mesh_site" {
   f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
+  f5xc_operating_system_version          = !var.f5xc_default_os_version ? var.f5xc_operating_system_version : null
+  f5xc_volterra_software_version         = !var.f5xc_default_sw_version ? var.f5xc_volterra_software_version : null
   f5xc_ce_performance_enhancement_mode   = var.f5xc_ce_performance_enhancement_mode
   f5xc_enable_offline_survivability_mode = var.f5xc_enable_offline_survivability_mode
 }
