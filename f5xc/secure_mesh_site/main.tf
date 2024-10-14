@@ -9,8 +9,15 @@ resource "volterra_securemesh_site" "secure_mesh_site" {
   logs_streaming_disabled  = var.f5xc_cluster_logs_streaming_disabled
   default_blocked_services = var.f5xc_cluster_default_blocked_services
 
-  /*dynamic "bond_device_list" {
-  }*/
+  os {
+    default_os_version       = var.f5xc_default_os_version
+    operating_system_version = !var.f5xc_default_os_version ? var.f5xc_operating_system_version : null
+  }
+
+  sw {
+    default_sw_version        = var.f5xc_default_sw_version
+    volterra_software_version = !var.f5xc_default_sw_version ? var.f5xc_volterra_software_version : null
+  }
 
   offline_survivability_mode {
     no_offline_survivability_mode     = var.f5xc_enable_offline_survivability_mode == false ? true : false

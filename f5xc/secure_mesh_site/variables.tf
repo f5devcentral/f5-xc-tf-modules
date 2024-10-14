@@ -113,6 +113,26 @@ variable "f5xc_cluster_worker_nodes" {
   default = []
 }
 
+variable "f5xc_default_os_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_operating_system_version" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_default_sw_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_volterra_software_version" {
+  type    = string
+  default = null
+}
+
 variable "csp_provider" {
   type = string
   validation {
