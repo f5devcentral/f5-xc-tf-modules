@@ -359,6 +359,52 @@ variable "f5xc_enable_offline_survivability_mode" {
   default = false
 }
 
+variable "f5xc_sms_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_sms_default_sw_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_sms_default_os_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_sms_operating_system_version" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_sms_volterra_software_version" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_sms_block_all_services" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_dc_cluster_group_slo_name" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_dc_cluster_group_sli_name" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_sms_perf_mode_l7_enhanced" {
+  type = bool
+  default = true
+  description = "Secure Mesh Site V2 performance mode attribute"
+}
+
 variable "f5xc_ce_performance_enhancement_mode" {
   type = object({
     perf_mode_l7_enhanced = bool

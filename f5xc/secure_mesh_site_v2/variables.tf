@@ -1,11 +1,3 @@
-variable "f5xc_api_url" {
-  type = string
-}
-
-variable "f5xc_api_token" {
-  type = string
-}
-
 variable "f5xc_token_base_uri" {
   type    = string
   default = "/register/namespaces/%s/tokens"
@@ -55,11 +47,6 @@ variable "f5xc_sms_master_nodes_count" {
 variable "f5xc_sms_perf_mode_l7_enhanced" {
   type    = bool
   default = true
-}
-
-variable "f5xc_sms_perf_mode_l3_enhanced_jumbo" {
-  type    = bool
-  default = false
 }
 
 variable "f5xc_sms_enable_offline_survivability_mode" {
@@ -120,15 +107,6 @@ variable "f5xc_sms_block_all_services" {
   default = false
 }
 
-variable "f5xc_sms_re_select" {
-  type = object({
-    geo_proximity = bool
-  })
-  default = {
-    geo_proximity = true
-  }
-}
-
 variable "f5xc_sms_tunnel_type" {
   type    = string
   default = "SITE_TO_SITE_TUNNEL_IPSEC_OR_SSL"
@@ -166,15 +144,4 @@ variable "f5xc_dc_cluster_group_sli_name" {
 
 variable "f5xc_tenant" {
   type = string
-}
-
-variable "f5xc_ce_interface_list" {
-  type = list(object({
-    mtu         = string
-    name        = string
-    monitor = string #optional(string, "Disabled")
-    priority    = string
-    description = string
-  }))
-  default = []
 }
