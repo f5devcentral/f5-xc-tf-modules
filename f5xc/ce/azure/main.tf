@@ -107,6 +107,18 @@ module "nlb_node" {
   azurerm_backend_address_pool_id_sli = local.is_multi_nic ? module.nlb_common.0.common["backend_address_pool_sli"]["id"] : null
 }*/
 
+module "secure_mesh_site_v2" {
+  count                       = var.f5xc_secure_mesh_site_version == 2 && var.f5xc_sms_provider_name != null ? 1 : 0
+  source                      = "../../secure_mesh_site_v2"
+  f5xc_tenant                 = var.f5xc_tenant
+  f5xc_api_url                = var.f5xc_api_url
+  f5xc_sms_name               = var.f5xc_cluster_name
+  f5xc_api_token              = var.f5xc_api_token
+  f5xc_namespace              = var.f5xc_namespace
+  f5xc_sms_provider_name      = var.f5xc_sms_provider_name
+  f5xc_sms_master_nodes_count = var.f5xc_sms_master_nodes_count
+}
+
 module "config" {
   source                          = "./config"
   for_each                        = {for k, v in var.f5xc_cluster_nodes : k => v}
@@ -137,7 +149,7 @@ module "config" {
 }
 
 module "secure_mesh_site" {
-  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  count                                  = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   source                                 = "../../secure_mesh_site"
   csp_provider                           = "azure"
   f5xc_nodes                             = [for k in keys(var.f5xc_cluster_nodes) : { name = k }]
@@ -191,6 +203,7 @@ module "node" {
 module "site_wait_for_online" {
   depends_on                 = [module.node]
   source                     = "../../status/site"
+  count                      = var.wait_for_online ? 1 : 0
   is_sensitive               = var.is_sensitive
   f5xc_api_token             = var.f5xc_api_token
   f5xc_tenant                = var.f5xc_tenant
