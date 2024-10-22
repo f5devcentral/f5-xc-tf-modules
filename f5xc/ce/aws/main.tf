@@ -97,6 +97,18 @@ module "network_nlb" {
   aws_nlb_subnets   = [for node in module.network_node : node["ce"]["slo_subnet"]["id"]]
 }
 
+module "secure_mesh_site_v2" {
+  count                       = var.f5xc_secure_mesh_site_version == 2 && var.f5xc_sms_provider_name != null ? 1 : 0
+  source                      = "../../secure_mesh_site_v2"
+  f5xc_tenant                 = var.f5xc_tenant
+  f5xc_api_url                = var.f5xc_api_url
+  f5xc_sms_name               = var.f5xc_cluster_name
+  f5xc_api_token              = var.f5xc_api_token
+  f5xc_namespace              = var.f5xc_namespace
+  f5xc_sms_provider_name      = var.f5xc_sms_provider_name
+  f5xc_sms_master_nodes_count = var.f5xc_sms_master_nodes_count
+}
+
 module "config" {
   source                       = "./config"
   for_each                     = {for k, v in var.f5xc_aws_vpc_az_nodes : k => v}
@@ -120,7 +132,7 @@ module "config" {
 }
 
 module "secure_mesh_site" {
-  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  count                                  = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   source                                 = "../../secure_mesh_site"
   csp_provider                           = "aws"
   f5xc_nodes                             = [for k in keys(var.f5xc_aws_vpc_az_nodes) : { name = k }]

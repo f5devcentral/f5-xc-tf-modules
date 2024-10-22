@@ -2,14 +2,10 @@ terraform {
   required_version = ">= 1.7.0"
 
   required_providers {
-    volterra = {
-      source  = "volterraedge/volterra"
-      version = "= 0.11.32"
-    }
 
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 3.48.0"
+    http-full = {
+      source  = "salrashid123/http-full"
+      version = ">= 1.3.1"
     }
 
     restful = {
