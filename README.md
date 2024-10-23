@@ -6,11 +6,12 @@ This repository consists of terraform templates library to support various XC to
 
 To get started have a look at:
 
-| Provider | Documentation                                                                 |
-|----------|-------------------------------------------------------------------------------|
-| AWS      | [Topologies](https://github.com/f5devcentral/terraform-xc-aws-ce/tree/main)   |
-| GCP      | [Topologies](https://github.com/f5devcentral/terraform-xc-gcp-ce/tree/main)   |
-| Azure    | [Topologies](https://github.com/f5devcentral/terraform-xc-azure-ce/tree/main) |
+| Provider | Documentation                                                                   |
+|----------|---------------------------------------------------------------------------------|
+| AWS      | [Topologies](https://github.com/f5devcentral/terraform-xc-aws-ce/tree/main)     |
+| GCP      | [Topologies](https://github.com/f5devcentral/terraform-xc-gcp-ce/tree/main)     |
+| Azure    | [Topologies](https://github.com/f5devcentral/terraform-xc-azure-ce/tree/main)   |
+| rSeries  | [Topologies](https://github.com/f5devcentral/terraform-xc-rseries-ce/tree/main) |
 
 ## Support
 
