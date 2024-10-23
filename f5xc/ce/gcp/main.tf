@@ -1,4 +1,5 @@
-resource "volterra_token" "site" {
+resource "volterra_token" "token" {
+  count     = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   name      = var.f5xc_token_name
   namespace = var.f5xc_namespace
 }
@@ -14,10 +15,7 @@ module "network_common" {
   is_multi_nic                    = local.is_multi_nic
   create_network                  = local.create_network
   create_subnetwork               = local.create_subnetwork
-  f5xc_ce_no_proxy                = var.f5xc_ce_no_proxy
   f5xc_cluster_name               = var.f5xc_cluster_name
-  f5xc_ce_http_proxy              = var.f5xc_ce_http_proxy
-  f5xc_ce_https_proxy             = var.f5xc_ce_https_proxy
   f5xc_is_secure_cloud_ce         = var.f5xc_is_secure_cloud_ce
   gcp_subnet_name_slo             = local.create_subnetwork ? "${var.f5xc_cluster_name}-slo-subnetwork" : null
   gcp_subnet_name_sli             = local.create_subnetwork && local.is_multi_nic ? "${var.f5xc_cluster_name}-sli-subnetwork" : null
@@ -52,14 +50,36 @@ module "firewall" {
   }
 }
 
+module "secure_mesh_site_v2" {
+  count                                      = var.f5xc_secure_mesh_site_version == 2 && var.f5xc_sms_provider_name != null ? 1 : 0
+  source                                     = "../../secure_mesh_site_v2"
+  f5xc_tenant                                = var.f5xc_tenant
+  f5xc_sms_name                              = var.f5xc_cluster_name
+  f5xc_namespace                             = var.f5xc_namespace
+  f5xc_sms_provider_name                     = var.f5xc_sms_provider_name
+  f5xc_sms_block_all_services                = var.f5xc_sms_block_all_services
+  f5xc_sms_master_nodes_count                = var.f5xc_sms_master_nodes_count
+  f5xc_sms_default_sw_version                = var.f5xc_sms_default_sw_version
+  f5xc_sms_default_os_version                = var.f5xc_sms_default_os_version
+  f5xc_dc_cluster_group_slo_name             = var.f5xc_dc_cluster_group_slo_name
+  f5xc_dc_cluster_group_sli_name             = var.f5xc_dc_cluster_group_sli_name
+  f5xc_sms_perf_mode_l7_enhanced             = var.f5xc_sms_perf_mode_l7_enhanced
+  f5xc_sms_operating_system_version          = var.f5xc_sms_operating_system_version
+  f5xc_sms_volterra_software_version         = var.f5xc_sms_volterra_software_version
+  f5xc_sms_enable_offline_survivability_mode = var.f5xc_sms_enable_offline_survivability_mode
+}
+
 module "config" {
   source                       = "./config"
   cluster_name                 = var.f5xc_cluster_name
-  cluster_token                = volterra_token.site.id
+  cluster_token                = var.f5xc_secure_mesh_site_version == 1 ? volterra_token.token.0.id : module.secure_mesh_site_v2.0.secure_mesh_site.token.key
   cluster_labels               = var.f5xc_cluster_labels
   ssh_public_key               = var.ssh_public_key
   maurice_endpoint             = module.maurice.endpoints.maurice
   maurice_mtls_endpoint        = module.maurice.endpoints.maurice_mtls
+  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
+  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
   f5xc_ce_gateway_type         = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude        = var.f5xc_cluster_latitude
   f5xc_cluster_longitude       = var.f5xc_cluster_longitude
@@ -68,7 +88,7 @@ module "config" {
 }
 
 module "secure_mesh_site" {
-  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  count                                  = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   source                                 = "../../secure_mesh_site"
   csp_provider                           = "gcp"
   f5xc_nodes                             = [for k in keys(var.f5xc_ce_nodes) : { name = k }]
@@ -111,7 +131,7 @@ module "node" {
   gcp_instance_group_manager_distribution_policy_zones = local.f5xc_cluster_node_azs
   f5xc_ce_user_data                                    = module.config.ce["user_data"]
   f5xc_cluster_name                                    = var.f5xc_cluster_name
-  f5xc_cluster_size = length(var.f5xc_ce_nodes)
+  f5xc_cluster_size                                    = length(var.f5xc_ce_nodes)
   f5xc_cluster_labels                                  = var.f5xc_cluster_labels
   f5xc_ce_gateway_type                                 = var.f5xc_ce_gateway_type
   f5xc_registration_retry                              = var.f5xc_registration_retry
@@ -129,6 +149,7 @@ module "node" {
 module "site_wait_for_online" {
   depends_on = [module.node]
   source                     = "../../status/site"
+  count                      = var.wait_for_online ? 1 : 0
   is_sensitive               = var.is_sensitive
   f5xc_tenant                = var.f5xc_tenant
   f5xc_api_url               = var.f5xc_api_url

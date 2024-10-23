@@ -3,6 +3,12 @@ variable "is_sensitive" {
   type        = bool
 }
 
+variable "wait_for_online" {
+  type        = bool
+  default     = true
+  description = "enable wait_for_online status check. This will wait till CE fully operational"
+}
+
 variable "status_check_type" {
   type    = string
   default = "token"
@@ -396,6 +402,46 @@ variable "f5xc_enable_offline_survivability_mode" {
   default = false
 }
 
+variable "f5xc_sms_enable_offline_survivability_mode" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_sms_default_sw_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_sms_default_os_version" {
+  type    = bool
+  default = true
+}
+
+variable "f5xc_sms_operating_system_version" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_sms_volterra_software_version" {
+  type    = string
+  default = ""
+}
+
+variable "f5xc_sms_block_all_services" {
+  type    = bool
+  default = false
+}
+
+variable "f5xc_dc_cluster_group_slo_name" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_dc_cluster_group_sli_name" {
+  type    = string
+  default = null
+}
+
 variable "f5xc_api_p12_cert_password" {
   description = "XC API cert file password used later in status module to retrieve site status"
   type        = string
@@ -420,9 +466,23 @@ variable "f5xc_ce_slo_enable_secure_sg" {
   default     = false
 }
 
-variable "f5xc_site_type_is_secure_mesh_site" {
-  type    = bool
-  default = true
+variable "f5xc_secure_mesh_site_version" {
+  type    = number
+  default = 2
+  validation {
+    condition = contains([1, 2], var.f5xc_secure_mesh_site_version)
+    error_message = "f5xc_secure_mesh_site_version must be 1 or 2"
+  }
+}
+
+variable "f5xc_sms_provider_name" {
+  type    = string
+  default = null
+}
+
+variable "f5xc_sms_master_nodes_count" {
+  type    = number
+  default = 1
 }
 
 variable "f5xc_ce_http_proxy" {
@@ -609,6 +669,12 @@ variable "f5xc_ce_machine_image" {
       us-west-2      = "ami-073716a5d00689881"
     }
   }
+}
+
+variable "f5xc_sms_perf_mode_l7_enhanced" {
+  type = bool
+  default = true
+  description = "Secure Mesh Site V2 performance mode attribute"
 }
 
 variable "f5xc_ce_performance_enhancement_mode" {

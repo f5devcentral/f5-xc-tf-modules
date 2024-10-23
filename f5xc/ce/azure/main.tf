@@ -1,11 +1,12 @@
 resource "volterra_token" "token" {
+  count     = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   name      = var.f5xc_cluster_name
   namespace = var.f5xc_namespace
 }
 
 resource "azurerm_resource_group" "rg" {
   count    = var.azurerm_existing_resource_group_name != "" ? 0 : 1
-  name     = format("%s-rg", var.f5xc_cluster_name)
+  name = format("%s-rg", var.f5xc_cluster_name)
   location = var.azurerm_region
 }
 
@@ -45,7 +46,7 @@ module "network_node" {
   for_each                          = var.f5xc_cluster_nodes
   is_multi_nic                      = local.is_multi_nic
   has_public_ip                     = var.has_public_ip
-  f5xc_node_name                    = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_node_name = format("%s-%s", var.f5xc_cluster_name, each.key)
   azurerm_zone                      = var.azurerm_availability_set_id == "" ? each.value["az"] : ""
   azurerm_region                    = var.azurerm_region
   azurerm_vnet_name                 = module.network_common.common["vnet"]["name"]
@@ -107,6 +108,25 @@ module "nlb_node" {
   azurerm_backend_address_pool_id_sli = local.is_multi_nic ? module.nlb_common.0.common["backend_address_pool_sli"]["id"] : null
 }*/
 
+module "secure_mesh_site_v2" {
+  count                                      = var.f5xc_secure_mesh_site_version == 2 && var.f5xc_sms_provider_name != null ? 1 : 0
+  source                                     = "../../secure_mesh_site_v2"
+  f5xc_tenant                                = var.f5xc_tenant
+  f5xc_sms_name                              = var.f5xc_cluster_name
+  f5xc_namespace                             = var.f5xc_namespace
+  f5xc_sms_provider_name                     = var.f5xc_sms_provider_name
+  f5xc_sms_block_all_services                = var.f5xc_sms_block_all_services
+  f5xc_sms_master_nodes_count                = var.f5xc_sms_master_nodes_count
+  f5xc_sms_default_sw_version                = var.f5xc_sms_default_sw_version
+  f5xc_sms_default_os_version                = var.f5xc_sms_default_os_version
+  f5xc_dc_cluster_group_slo_name             = var.f5xc_dc_cluster_group_slo_name
+  f5xc_dc_cluster_group_sli_name             = var.f5xc_dc_cluster_group_sli_name
+  f5xc_sms_perf_mode_l7_enhanced             = var.f5xc_sms_perf_mode_l7_enhanced
+  f5xc_sms_operating_system_version          = var.f5xc_sms_operating_system_version
+  f5xc_sms_volterra_software_version         = var.f5xc_sms_volterra_software_version
+  f5xc_sms_enable_offline_survivability_mode = var.f5xc_sms_enable_offline_survivability_mode
+}
+
 module "config" {
   source                          = "./config"
   for_each                        = {for k, v in var.f5xc_cluster_nodes : k => v}
@@ -116,13 +136,13 @@ module "config" {
   maurice_endpoint                = module.maurice.endpoints.maurice
   maurice_mtls_endpoint           = module.maurice.endpoints.maurice_mtls
   f5xc_cluster_name               = var.f5xc_cluster_name
-  f5xc_ce_no_proxy             = var.f5xc_ce_no_proxy
-  f5xc_ce_http_proxy           = var.f5xc_ce_http_proxy
-  f5xc_ce_https_proxy          = var.f5xc_ce_https_proxy
+  f5xc_ce_no_proxy                = var.f5xc_ce_no_proxy
+  f5xc_ce_http_proxy              = var.f5xc_ce_http_proxy
+  f5xc_ce_https_proxy             = var.f5xc_ce_https_proxy
   f5xc_cluster_labels             = var.f5xc_cluster_labels
   f5xc_cluster_latitude           = var.f5xc_cluster_latitude
   f5xc_cluster_longitude          = var.f5xc_cluster_longitude
-  f5xc_registration_token         = volterra_token.token.id
+  f5xc_registration_token         = var.f5xc_secure_mesh_site_version == 1 ? volterra_token.token.0.id : module.secure_mesh_site_v2.0.secure_mesh_site.token.key
   f5xc_ce_hosts_public_name       = var.f5xc_ce_hosts_public_name
   azurerm_region                  = var.azurerm_region
   azurerm_vnet_name               = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
@@ -137,7 +157,7 @@ module "config" {
 }
 
 module "secure_mesh_site" {
-  count                                  = var.f5xc_site_type_is_secure_mesh_site ? 1 : 0
+  count                                  = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   source                                 = "../../secure_mesh_site"
   csp_provider                           = "azure"
   f5xc_nodes                             = [for k in keys(var.f5xc_cluster_nodes) : { name = k }]
@@ -180,17 +200,18 @@ module "node" {
   f5xc_api_url                            = var.f5xc_api_url
   f5xc_namespace                          = var.f5xc_namespace
   f5xc_api_token                          = var.f5xc_api_token
-  f5xc_node_name                          = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_node_name = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name                       = var.f5xc_cluster_name
-  f5xc_cluster_size                       = length(var.f5xc_cluster_nodes)
+  f5xc_cluster_size = length(var.f5xc_cluster_nodes)
   f5xc_instance_config                    = module.config[each.key].ce["user_data"]
   f5xc_registration_retry                 = var.f5xc_registration_retry
   f5xc_registration_wait_time             = var.f5xc_registration_wait_time
 }
 
 module "site_wait_for_online" {
-  depends_on                 = [module.node]
+  depends_on = [module.node]
   source                     = "../../status/site"
+  count                      = var.wait_for_online ? 1 : 0
   is_sensitive               = var.is_sensitive
   f5xc_api_token             = var.f5xc_api_token
   f5xc_tenant                = var.f5xc_tenant
