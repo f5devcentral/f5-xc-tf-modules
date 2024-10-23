@@ -1,8 +1,10 @@
 module "sms" {
   source                         = "../../secure_mesh_site_v2"
   f5xc_tenant                    = var.f5os_tenant
-  f5xc_namespace                 = var.f5xc_namespace
+  f5xc_api_url                   = var.f5xc_api_url
   f5xc_sms_name                  = var.f5xc_site_name
+  f5xc_api_token                 = var.f5xc_api_token
+  f5xc_namespace                 = var.f5xc_namespace
   f5xc_sms_labels                = var.f5xc_sms_labels
   f5xc_sms_provider_name         = var.f5xc_sms_provider_name
   f5xc_sms_master_nodes_count    = var.f5xc_sms_master_nodes_count
@@ -73,7 +75,7 @@ module "update_interface" {
   source              = "../../../utils/update"
   del_key             = ""
   merge_key           = "rseries.not_managed.node_list[0].interface_list"
-  merge_data          = jsonencode(var.f5xc_ce_interface_list)
+  merge_data = jsonencode(var.f5xc_ce_interface_list)
   f5xc_tenant         = var.f5xc_tenant
   f5xc_api_url        = var.f5xc_api_url
   f5xc_namespace      = var.f5xc_namespace

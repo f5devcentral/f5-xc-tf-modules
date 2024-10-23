@@ -42,15 +42,6 @@ resource "restful_resource" "site" {
       re_select = {
         geo_proximity = {}
       }
-      /*upgrade_settings : {
-        kubernetes_upgrade_drain : {
-          enable_upgrade_drain : {
-            drain_node_timeout : 300,
-            drain_max_unavailable_node_count : 1,
-            disable_vega_upgrade_mode : {}
-          }
-        }
-      },*/
       tunnel_type             = var.f5xc_sms_tunnel_type
       no_forward_proxy        = var.f5xc_sms_no_forward_proxy ? {} : null
       no_network_policy       = var.f5xc_sms_no_network_policy ? {} : null
