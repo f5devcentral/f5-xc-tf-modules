@@ -12,13 +12,13 @@ module "sms" {
   f5xc_dc_cluster_group_slo_name = var.f5xc_dc_cluster_group_slo_name
   f5xc_dc_cluster_group_sli_name = var.f5xc_dc_cluster_group_sli_name
   providers = {
-    restapi = restapi.f5xc
+    restapi = restful.f5xc
   }
 }
 
 resource "restful_resource" "f5os_tenant" {
   path        = var.f5os_tenant_base_uri
-  provider    = restapi.f5os
+  provider    = restful.f5os
   read_path   = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
   delete_path = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
   header = {
