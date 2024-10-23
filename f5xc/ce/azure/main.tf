@@ -1,4 +1,5 @@
 resource "volterra_token" "token" {
+  count     = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   name      = var.f5xc_cluster_name
   namespace = var.f5xc_namespace
 }
@@ -141,7 +142,7 @@ module "config" {
   f5xc_cluster_labels             = var.f5xc_cluster_labels
   f5xc_cluster_latitude           = var.f5xc_cluster_latitude
   f5xc_cluster_longitude          = var.f5xc_cluster_longitude
-  f5xc_registration_token         = volterra_token.token.id
+  f5xc_registration_token         = var.f5xc_secure_mesh_site_version == 1 ? volterra_token.token.0.id : module.secure_mesh_site_v2.0.secure_mesh_site.token.key
   f5xc_ce_hosts_public_name       = var.f5xc_ce_hosts_public_name
   azurerm_region                  = var.azurerm_region
   azurerm_vnet_name               = var.azurerm_existing_vnet_name != "" ? var.azurerm_existing_vnet_name : format("%s-vnet", var.f5xc_cluster_name)
