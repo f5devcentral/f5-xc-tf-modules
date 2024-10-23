@@ -1,5 +1,6 @@
 locals {
   gateway_type = replace(var.f5xc_ce_gateway_type, "_", "-")
+
   vpm_vars = {
     service_ip                  = var.f5xc_ce_hosts_public_name
     private_nic                 = var.slo_nic
@@ -13,11 +14,11 @@ locals {
     maurice_mtls_endpoint       = var.maurice_mtls_endpoint
     certified_hardware_endpoint = var.certified_hardware_endpoint
     Proxy = {
-        noProxy                   = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? join(",", var.f5xc_ce_no_proxy) : ""
-        httpProxy                 = var.f5xc_ce_http_proxy
-        httpsProxy                = var.f5xc_ce_https_proxy
-      }
-    private_network             = var.private_network_name == "" ? {} : {
+      noProxy    = var.f5xc_ce_http_proxy != "" || var.f5xc_ce_https_proxy != "" ? join(",", var.f5xc_ce_no_proxy) : ""
+      httpProxy  = var.f5xc_ce_http_proxy
+      httpsProxy = var.f5xc_ce_https_proxy
+    }
+    private_network = var.private_network_name == "" ? {} : {
       name = var.private_network_name
     }
   }
