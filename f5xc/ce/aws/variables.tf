@@ -46,6 +46,11 @@ variable "aws_ami_name" {
   default = ""
 }
 
+variable "aws_ami_owner_ids" {
+  type    = list(string)
+  default = ["434481986642"]
+}
+
 variable "owner_tag" {
   description = "set a tag called owner"
   type        = string
@@ -528,7 +533,7 @@ variable "f5xc_default_sw_version" {
 
 variable "f5xc_ce_no_proxy" {
   type = list(string)
-  default = ["10.0.0.0/8","172.16.0.0/12","192.168.0.0/16","100.127.0.0/18","100.127.192.0/18","169.254.0.0/16","int.ves.io","localhost"]
+  default = ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "100.127.0.0/18", "100.127.192.0/18", "169.254.0.0/16", "int.ves.io", "localhost"]
 }
 
 variable "f5xc_ce_machine_image" {
@@ -683,8 +688,8 @@ variable "f5xc_ce_machine_image" {
 }
 
 variable "f5xc_sms_perf_mode_l7_enhanced" {
-  type = bool
-  default = true
+  type        = bool
+  default     = true
   description = "Secure Mesh Site V2 performance mode attribute"
 }
 

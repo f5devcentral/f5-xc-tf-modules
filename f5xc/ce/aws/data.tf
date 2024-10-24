@@ -16,13 +16,14 @@ data "aws_iam_role" "existing_iam_role" {
 
 check "ami" {
   data "aws_ami_ids" "f5xc" {
-    owners = ["434481986642"]
+    owners = var.aws_ami_owner_ids
 
     filter {
-      name   = "name"
-      values = [ var.aws_ami_name ]
+      name = "name"
+      values = [var.aws_ami_name]
     }
   }
+
   assert {
     condition     = length(data.aws_ami_ids.f5xc.ids) > 0
     error_message = "${var.aws_ami_name} not found in region ${var.aws_region}."
@@ -30,14 +31,11 @@ check "ami" {
 }
 
 data "aws_ami_ids" "f5xc" {
-  owners = ["434481986642"]
+  count  = len(var.aws_ami_owner_ids) > 0
+  owners = var.aws_ami_owner_ids
 
   filter {
-    name   = "name"
-    values = [ var.aws_ami_name ]
+    name = "name"
+    values = [var.aws_ami_name]
   }
-}
-
-output "ami_ids" {
-  value = data.aws_ami_ids.smsv2
 }
