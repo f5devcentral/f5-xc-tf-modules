@@ -22,6 +22,7 @@ resource "restful_resource" "f5os_tenant" {
   read_path   = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
   delete_path = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
   header = {
+    Accept       = "application/yang-data+json"
     Content-Type = "application/yang-data+json"
   }
   body = jsonencode(
