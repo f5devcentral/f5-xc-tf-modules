@@ -1,4 +1,4 @@
-/*module "sms" {
+module "sms" {
   source                         = "../../secure_mesh_site_v2"
   f5xc_tenant                    = var.f5os_tenant
   f5xc_api_url                   = var.f5xc_api_url
@@ -67,10 +67,10 @@ module "site_wait_for_online" {
   f5xc_api_p12_file          = var.f5xc_api_p12_file
   status_check_type          = var.status_check_type
   f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
-}*/
+}
 
 module "update_interface" {
-  #depends_on = [module.site_wait_for_online]
+  depends_on = [module.site_wait_for_online]
   count               = var.f5xc_ce_gw_type == var.f5xc_ce_gateway_type_ingress_egress ? 1 : 0
   source              = "../../../utils/update"
   del_key             = ""
