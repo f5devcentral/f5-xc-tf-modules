@@ -10,7 +10,7 @@ terraform {
     restful = {
       source  = "magodo/restful"
       version = ">= 0.16.1"
-      configuration_aliases = [ restful.f5xc, restful.f5os ]
+      configuration_aliases = [restful.f5xc, restful.f5os]
     }
 
     local = ">= 2.2.3"

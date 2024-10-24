@@ -7,5 +7,7 @@ output "data" {
 }
 
 output "put_response" {
-  value = restful_resource.update.output
+  value = restful_operation.update.output
 }
+
+

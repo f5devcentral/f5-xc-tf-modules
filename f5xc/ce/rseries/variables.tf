@@ -170,15 +170,14 @@ variable "f5xc_ce_interface_list" {
   type = list(object({
     mtu           = string
     name          = string
-    labels        = map(string)
-    monitor       = optional(string, "Disabled")
+    labels = map(string)
     priority      = number
     is_primary    = bool
-    dhcp_client   = bool
+    dhcp_client = object({})
     description   = string
     is_management = bool
     network_option = object({
-      site_local_inside_network = bool
+      site_local_inside_network = object({})
     })
     vlan_interface = object({
       device  = string
