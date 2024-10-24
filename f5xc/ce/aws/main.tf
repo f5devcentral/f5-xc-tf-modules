@@ -168,9 +168,9 @@ module "node" {
   owner_tag                     = var.owner_tag
   common_tags                   = local.common_tags
   is_multi_nic                  = local.is_multi_nic
-  f5xc_node_name = format("%s-%s", var.f5xc_cluster_name, each.key)
+  f5xc_node_name                = format("%s-%s", var.f5xc_cluster_name, each.key)
   f5xc_cluster_name             = var.f5xc_cluster_name
-  f5xc_cluster_size = length(var.f5xc_aws_vpc_az_nodes)
+  f5xc_cluster_size             = length(var.f5xc_aws_vpc_az_nodes)
   f5xc_instance_config          = module.config[each.key].ce["user_data"]
   f5xc_cluster_latitude         = var.f5xc_cluster_latitude
   f5xc_cluster_longitude        = var.f5xc_cluster_longitude
@@ -178,7 +178,7 @@ module "node" {
   f5xc_ce_to_re_tunnel_type     = var.f5xc_ce_to_re_tunnel_type
   f5xc_registration_wait_time   = var.f5xc_registration_wait_time
   aws_instance_type             = var.aws_instance_type
-  aws_instance_image            = var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
+  aws_instance_image            = var.aws_ami_name != "" ? data.aws_ami_ids.f5xc[0] : var.f5xc_ce_machine_image[var.f5xc_ce_gateway_type][var.aws_region]
   aws_interface_slo_id          = module.network_node[each.key].ce["slo"]["id"]
   aws_interface_sli_id          = local.is_multi_nic ? module.network_node[each.key].ce["sli"]["id"] : null
   aws_instance_disk_size        = var.aws_instance_disk_size
