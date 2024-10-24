@@ -17,10 +17,10 @@ module "sms" {
 }
 
 resource "restful_resource" "f5os_tenant" {
-  path        = var.f5os_tenant_base_uri
-  provider    = restful.f5os
-  read_path   = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
-  delete_path = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
+  path          = var.f5os_tenant_base_uri
+  provider      = restful.f5os
+  read_path     = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
+  delete_path   = "${var.f5os_tenant_base_uri}${var.f5os_tenant_delete_path}${var.f5os_tenant}"
   header = {
     Accept       = "application/yang-data+json"
     Content-Type = "application/yang-data+json"
@@ -76,7 +76,7 @@ module "update_interface" {
   source              = "../../../utils/update"
   del_key             = ""
   merge_key           = "rseries.not_managed.node_list[0].interface_list"
-  merge_data          = jsonencode(var.f5xc_ce_interface_list)
+  merge_data = jsonencode(var.f5xc_ce_interface_list)
   f5xc_tenant         = var.f5xc_tenant
   f5xc_api_url        = var.f5xc_api_url
   f5xc_api_token      = var.f5xc_api_token
