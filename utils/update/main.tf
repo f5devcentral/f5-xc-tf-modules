@@ -1,40 +1,19 @@
-/*resource "restful_resource" "get" {
-  path = format(var.f5xc_sms_base_uri, var.f5xc_namespace)
-  read_path = format(var.f5xc_sms_read_uri, var.f5xc_namespace, var.f5xc_sms_name)
-  header = {
-    Content-Type = "application/json"
-  }
-  me
-  body = {
-  }
-}*/
-
 data "restful_resource" "get" {
   id = format("/%s?response_format=GET_RSP_FORMAT_DEFAULT", var.f5xc_api_get_uri)
   provider = restful
-}
-
-data "http" "get" {
-  url = format("%s/%s?response_format=GET_RSP_FORMAT_DEFAULT", var.f5xc_api_url, var.f5xc_api_get_uri)
-  method = "GET"
-  request_headers = {
+  header = {
     Accept                      = "application/json"
-    Authorization = format("APIToken %s", var.f5xc_api_token)
     x-volterra-apigw-tenant     = var.f5xc_tenant
     Access-Control-Allow-Origin = "*"
   }
-  provider = http-full
 }
 
 locals {
-  command = var.del_key != "" ? "echo '${data.http.get.response_body}' | jq . | jq 'del(.spec.${var.merge_key}.${var.del_key})' | jq '.spec.${var.merge_key} +=${var.merge_data}' > ${var.output_file_name}" : "echo '${data.http.get.response_body}' | jq . | jq '.spec.${var.merge_key} +=${var.merge_data}' > ${var.output_file_name}"
+  command = var.del_key != "" ? "echo '${data.restful_resource.get.output}' | jq . | jq 'del(.spec.${var.merge_key}.${var.del_key})' | jq '.spec.${var.merge_key} +=${var.merge_data}' > ${var.output_file_name}" : "echo '${data.restful_resource.get.output}' | jq . | jq '.spec.${var.merge_key} +=${var.merge_data}' > ${var.output_file_name}"
 }
 
 resource "terraform_data" "merge" {
-  depends_on = [data.http.get]
-  /*lifecycle {
-    replace_triggered_by = [data.http.get]
-  }*/
+  depends_on = [data.restful_resource.get]
   triggers_replace = timestamp()
   provisioner "local-exec" {
     command = local.command
@@ -46,16 +25,15 @@ data "local_file" "data" {
   filename = var.output_file_name
 }
 
-data "http" "update" {
-  depends_on = [data.local_file.data]
-  url = format("%s/%s?response_format=GET_RSP_FORMAT_DEFAULT", var.f5xc_api_url, var.f5xc_api_update_uri)
-  method = "PUT"
-  request_headers = {
+resource "restful_resource" "update" {
+  path = format("%s?response_format=GET_RSP_FORMAT_DEFAULT", var.f5xc_api_update_uri)
+  #update_path = ""
+  create_method = "PUT"
+  header = {
     Accept                      = "application/json"
-    Authorization = format("APIToken %s", var.f5xc_api_token)
+    Content-Type                = "application/json"
     x-volterra-apigw-tenant     = var.f5xc_tenant
     Access-Control-Allow-Origin = "*"
   }
-  request_body = data.local_file.data.content
-  provider     = http-full
+  body = data.local_file.data.content
 }

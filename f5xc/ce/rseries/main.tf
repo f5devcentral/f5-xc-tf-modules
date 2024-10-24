@@ -1,4 +1,4 @@
-module "sms" {
+/*module "sms" {
   source                         = "../../secure_mesh_site_v2"
   f5xc_tenant                    = var.f5os_tenant
   f5xc_api_url                   = var.f5xc_api_url
@@ -13,7 +13,6 @@ module "sms" {
   f5xc_dc_cluster_group_sli_name = var.f5xc_dc_cluster_group_sli_name
   providers = {
     restful = restful.f5xc
-
   }
 }
 
@@ -68,22 +67,21 @@ module "site_wait_for_online" {
   f5xc_api_p12_file          = var.f5xc_api_p12_file
   status_check_type          = var.status_check_type
   f5xc_api_p12_cert_password = var.f5xc_api_p12_cert_password
-}
+}*/
 
 module "update_interface" {
-  depends_on = [module.site_wait_for_online]
+  #depends_on = [module.site_wait_for_online]
   count               = var.f5xc_ce_gw_type == var.f5xc_ce_gateway_type_ingress_egress ? 1 : 0
   source              = "../../../utils/update"
   del_key             = ""
   merge_key           = "rseries.not_managed.node_list[0].interface_list"
-  merge_data = jsonencode(var.f5xc_ce_interface_list)
+  merge_data          = jsonencode(var.f5xc_ce_interface_list)
   f5xc_tenant         = var.f5xc_tenant
   f5xc_api_url        = var.f5xc_api_url
-  f5xc_namespace      = var.f5xc_namespace
   f5xc_api_token      = var.f5xc_api_token
   f5xc_api_get_uri    = "config/namespaces/${var.f5xc_namespace}/securemesh_site_v2s/${var.f5xc_site_name}"
   f5xc_api_update_uri = "config/namespaces/${var.f5xc_namespace}/securemesh_site_v2s/${var.f5xc_site_name}"
   providers = {
-    http-full = http-full.default
+    restful = restful.f5xc
   }
 }

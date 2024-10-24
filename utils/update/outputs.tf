@@ -1,5 +1,5 @@
 output "get_response" {
-  value = data.http.get.response_body
+  value = data.restful_resource.get.output
 }
 
 output "data" {
@@ -7,9 +7,5 @@ output "data" {
 }
 
 output "put_response" {
-  value = data.http.update.response_body
-}
-
-output "restful" {
-  value = data.restful_resource.get.output
+  value = restful_resource.update.output
 }

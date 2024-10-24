@@ -13,11 +13,6 @@ terraform {
       configuration_aliases = [ restful.f5xc, restful.f5os ]
     }
 
-    http-full = {
-      source  = "salrashid123/http-full"
-      version = ">= 1.3.1"
-    }
-
     local = ">= 2.2.3"
     null  = ">= 3.1.1"
   }
