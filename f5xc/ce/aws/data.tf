@@ -15,7 +15,7 @@ data "aws_iam_role" "existing_iam_role" {
 }
 
 check "ami" {
-  data "aws_ami_ids" "f5xc" {
+  data "aws_ami_ids" "f5xc_check" {
     owners = var.aws_ami_owner_ids
 
     filter {
@@ -31,7 +31,6 @@ check "ami" {
 }
 
 data "aws_ami_ids" "f5xc" {
-  count  = len(var.aws_ami_owner_ids) > 0
   owners = var.aws_ami_owner_ids
 
   filter {
