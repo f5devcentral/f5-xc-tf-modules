@@ -484,7 +484,7 @@ variable "f5xc_ce_slo_enable_secure_sg" {
 
 variable "f5xc_secure_mesh_site_version" {
   type    = number
-  default = 2
+  default = 1
   validation {
     condition = contains([1, 2], var.f5xc_secure_mesh_site_version)
     error_message = "f5xc_secure_mesh_site_version must be 1 or 2"
