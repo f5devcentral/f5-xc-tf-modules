@@ -41,7 +41,7 @@ variable "azurerm_vnet_address_space" {
 
 variable "azurerm_instance_vm_size" {
   type    = string
-  default = "Standard_D3_v2"
+  default = "Standard_B4s_v2"
 }
 
 variable "azurerm_instance_disk_size" {
