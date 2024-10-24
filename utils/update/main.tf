@@ -27,6 +27,7 @@ data "local_file" "data" {
 
 resource "restful_operation" "update" {
   path = format("%s?response_format=GET_RSP_FORMAT_DEFAULT", var.f5xc_api_update_uri)
+  method = "PUT"
   header = {
     Accept                      = "application/json"
     Content-Type                = "application/json"
@@ -34,5 +35,4 @@ resource "restful_operation" "update" {
     Access-Control-Allow-Origin = "*"
   }
   body = jsondecode(data.local_file.data.content)
-  method = "PUT"
 }
