@@ -13,3 +13,31 @@ data "aws_iam_role" "existing_iam_role" {
   count = var.aws_existing_iam_profile_name != null ? 1 : 0
   name  = data.aws_iam_instance_profile.existing_iam_profile.0.role_name
 }
+
+check "ami" {
+  data "aws_ami_ids" "f5xc" {
+    owners = ["434481986642"]
+
+    filter {
+      name   = "name"
+      values = [ var.aws_ami_name ]
+    }
+  }
+  assert {
+    condition     = length(data.aws_ami_ids.f5xc.ids) > 0
+    error_message = "${var.aws_ami_name} not found in region ${var.aws_region}."
+  }
+}
+
+data "aws_ami_ids" "f5xc" {
+  owners = ["434481986642"]
+
+  filter {
+    name   = "name"
+    values = [ var.aws_ami_name ]
+  }
+}
+
+output "ami_ids" {
+  value = data.aws_ami_ids.smsv2
+}

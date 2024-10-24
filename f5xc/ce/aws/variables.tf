@@ -24,6 +24,12 @@ variable "has_public_ip" {
   default     = true
 }
 
+variable "aws_vpc_cidr_block" {
+  description = "AWS vpc CIDR block"
+  type        = string
+  default     = ""
+}
+
 variable "aws_instance_type" {
   description = "AWS EC2 instance flavour"
   type        = string
@@ -33,6 +39,11 @@ variable "aws_instance_type" {
 variable "aws_instance_disk_size" {
   type    = string
   default = "80"
+}
+
+variable "aws_ami_name" {
+  type    = string
+  default = ""
 }
 
 variable "owner_tag" {
@@ -687,12 +698,6 @@ variable "f5xc_ce_performance_enhancement_mode" {
   default = {
     perf_mode_l7_enhanced = true
   }
-}
-
-variable "aws_vpc_cidr_block" {
-  description = "AWS vpc CIDR block"
-  type        = string
-  default     = ""
 }
 
 variable "f5xc_ip_ranges_Americas_TCP" {

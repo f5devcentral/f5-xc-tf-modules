@@ -101,6 +101,8 @@ module "secure_mesh_site_v2" {
   count                                      = var.f5xc_secure_mesh_site_version == 2 && var.f5xc_sms_provider_name != null ? 1 : 0
   source                                     = "../../secure_mesh_site_v2"
   f5xc_tenant                                = var.f5xc_tenant
+  f5xc_api_url                               = var.f5xc_api_url
+  f5xc_api_token                             = var.f5xc_api_token
   f5xc_sms_name                              = var.f5xc_cluster_name
   f5xc_namespace                             = var.f5xc_namespace
   f5xc_sms_provider_name                     = var.f5xc_sms_provider_name
@@ -114,6 +116,7 @@ module "secure_mesh_site_v2" {
   f5xc_sms_operating_system_version          = var.f5xc_sms_operating_system_version
   f5xc_sms_volterra_software_version         = var.f5xc_sms_volterra_software_version
   f5xc_sms_enable_offline_survivability_mode = var.f5xc_sms_enable_offline_survivability_mode
+
 }
 
 module "config" {
@@ -148,7 +151,7 @@ module "secure_mesh_site" {
   f5xc_namespace                         = var.f5xc_namespace
   f5xc_api_token                         = var.f5xc_api_token
   f5xc_cluster_name                      = var.f5xc_cluster_name
-  f5xc_cluster_labels = {} # var.f5xc_cluster_labels
+  f5xc_cluster_labels                    = {} # var.f5xc_cluster_labels
   f5xc_ce_gateway_type                   = var.f5xc_ce_gateway_type
   f5xc_cluster_latitude                  = var.f5xc_cluster_latitude
   f5xc_cluster_longitude                 = var.f5xc_cluster_longitude
