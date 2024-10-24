@@ -1,4 +1,5 @@
 resource "volterra_token" "token" {
+  count     = var.f5xc_secure_mesh_site_version == 1 ? 1 : 0
   name      = var.f5xc_token_name
   namespace = var.f5xc_namespace
 }
